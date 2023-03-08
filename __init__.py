@@ -31,6 +31,7 @@ bl_info = {
     "tracker_url": '',
 }
 
+
 class LP_PT_LightPaint(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_label = 'Light Paint'

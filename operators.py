@@ -37,35 +37,70 @@ def calc_screen_ray(context, event):
     coord = event.mouse_region_x, event.mouse_region_y
     view_vector = view3d_utils.region_2d_to_vector_3d(region, rv3d, coord)
     ray_origin = view3d_utils.region_2d_to_origin_3d(region, rv3d, coord)
-    return ray_origin, view_vector
+
+    ray_target = ray_origin + view_vector
+
+    return ray_origin, ray_target
 
 
-def raycast_meshes_within_collection(collection, matrix, ray_origin, ray_vector):
-    # for each collection instance, call raycast_meshes_within_collection(nested_coll, matrix, ray_origin, ray_vector)
-    # for each mesh, call obj.ray_cast
+def visible_objects_and_duplis(depsgraph):
+    """Loop over (object, matrix) pairs (mesh only)"""
+    for dup in depsgraph.object_instances:
+        if dup.is_instance:  # Real dupli instance
+            obj = dup.instance_object
+            if obj.type == 'MESH':
+                yield obj, dup.matrix_world.copy()
+        else:  # Usual object
+            obj = dup.object
+            if obj.type == 'MESH':
+                yield obj, obj.matrix_world.copy()
 
-    # pick closest mesh hit from all instances and meshes
-    # return matrix @ loc (for comparison with scene.ray_cast), object mesh data
-    pass
+
+def obj_ray_cast(obj, matrix, ray_origin, ray_target):
+    """Wrapper for ray casting that moves the ray into object space"""
+
+    # get the ray relative to the object
+    matrix_inv = matrix.inverted()
+    ray_origin_obj = matrix_inv @ ray_origin
+    ray_target_obj = matrix_inv @ ray_target
+    ray_direction_obj = ray_target_obj - ray_origin_obj
+
+    # cast the ray
+    success, location, normal, face_index = obj.ray_cast(ray_origin_obj, ray_direction_obj)
+
+    if success:
+        return location, normal, face_index
+
+    return None, None, None
 
 
-def raycast_to_bmesh(depsgraph, ray_origin, scene, view_vector):
-    # TODO if instances exist, call raycast_meshes_within_collection
-    # for each collection instance:
-    # get transform matrix through instances, cast a ray onto mesh BVH
-    # if hit and ray is shorter, generate a bmesh
-    # return bm_obj, hit_face_index, is_hit, matrix, hit_obj.name
+def raycast_to_bmesh(depsgraph, ray_origin, scene, ray_target):
+    hit_length_squared = -1.0
+    hit_obj = None
+    hit_face_index = 0
+    hit_matrix = None
+    hit_obj_name = ''
 
-    is_hit, loc, normal, hit_face_index, hit_obj, matrix = scene.ray_cast(depsgraph, ray_origin, view_vector)
+    for obj, matrix in visible_objects_and_duplis(depsgraph):
+        hit, normal, face_index = obj_ray_cast(obj, matrix, ray_origin, ray_target)
+        if hit is None:
+            continue
 
-    if not is_hit:
-        return 0, None, False, matrix, ''
+        hit_world = matrix @ hit
+        scene.cursor.location = hit_world
+        length_squared = (hit_world - ray_origin).length_squared
+        if hit_obj is None or length_squared < hit_length_squared:
+            hit_length_squared = length_squared
+            hit_obj = obj
+            hit_face_index = face_index
+            hit_matrix = matrix
+            hit_obj_name = obj.name
 
     bm_obj = bmesh.new()
     eval_mesh = hit_obj.evaluated_get(depsgraph).to_mesh(depsgraph=depsgraph)
     bm_obj.from_mesh(eval_mesh)
 
-    return bm_obj, hit_face_index, is_hit, matrix, hit_obj.name
+    return bm_obj, hit_face_index, hit_matrix, hit_obj_name
 
 
 def main(context, event):
@@ -73,42 +108,42 @@ def main(context, event):
     depsgraph = context.evaluated_depsgraph_get()
 
     # get the ray from the viewport and mouse cursor
-    ray_origin, view_vector = calc_screen_ray(context, event)
-    bm_obj, hit_index, is_hit, matrix, obj_name = raycast_to_bmesh(depsgraph, ray_origin, scene, view_vector)
+    ray_origin, ray_target = calc_screen_ray(context, event)
+    bm_obj, hit_index, matrix, obj_name = raycast_to_bmesh(depsgraph, ray_origin, scene, ray_target)
 
-    if is_hit:
-        # get coordinates of hit polygon - at least one triangle
+    if bm_obj is None:
+        return False, None, None
 
-        tris = bm_obj.calc_loop_triangles()
+    # get coordinates of hit polygon - at least one triangle
 
-        bm_obj.faces.ensure_lookup_table()
-        try:
-            face_vert_indices = tuple(v.index for v in bm_obj.faces[hit_index].verts)
-        except IndexError:
-            print('"{}" does not have a face of index {} - it only contains {}'
-                  .format(obj_name, hit_index, len(bm_obj.faces)))
-            return False, None, None
+    tris = bm_obj.calc_loop_triangles()
 
-        verts = []
-        all_indices = []
+    bm_obj.faces.ensure_lookup_table()
+    try:
+        face_vert_indices = tuple(v.index for v in bm_obj.faces[hit_index].verts)
+    except IndexError:
+        print('"{}" does not have a face of index {} - it only contains {}'
+              .format(obj_name, hit_index, len(bm_obj.faces)))
+        return False, None, None
 
-        for tri in tris:
-            if all(loop.vert.index in face_vert_indices for loop in tri):
-                tri_inds = []
-                for loop in tri:
-                    v_co = matrix @ loop.vert.co
-                    try:
-                        ind = verts.index(v_co)
-                        tri_inds.append(ind)
-                    except ValueError:
-                        verts.append(v_co)
-                        tri_inds.append(len(verts) - 1)
-                all_indices.append(tri_inds)
+    verts = []
+    all_indices = []
 
-        bm_obj.free()
-        return True, verts, all_indices
+    for tri in tris:
+        if all(loop.vert.index in face_vert_indices for loop in tri):
+            tri_inds = []
+            for loop in tri:
+                v_co = matrix @ loop.vert.co
+                try:
+                    ind = verts.index(v_co)
+                    tri_inds.append(ind)
+                except ValueError:
+                    verts.append(v_co)
+                    tri_inds.append(len(verts) - 1)
+            all_indices.append(tri_inds)
 
-    return False, None, None
+    bm_obj.free()
+    return True, verts, all_indices
 
 
 class LP_OT_Draw(bpy.types.Operator):
@@ -129,21 +164,20 @@ class LP_OT_Draw(bpy.types.Operator):
     def modal(self, context, event):
         if event.type in {'MIDDLEMOUSE', 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'}:
             return {'PASS_THROUGH'}
-
-        elif event.type == 'LEFTMOUSE':
-            self.lmb = (event.value == 'PRESS')
-
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
             if self.draw_handler is not None:
                 remove(bpy.types.SpaceView3D, self.draw_handler, bpy.context)
             return {'CANCELLED'}
+
+        if event.type == 'LEFTMOUSE':
+            self.lmb = (event.value == 'PRESS')
 
         # allows click-drag
         if self.lmb:
             is_hit, v_coords, tri_indices = main(context, event)
 
             if not is_hit:
-                return {'PASS_THROUGH'}
+                return {'RUNNING_MODAL'}
                 # need to offset new indices
             offset = len(self.vertices)
             self.vertices += v_coords
@@ -160,10 +194,10 @@ class LP_OT_Draw(bpy.types.Operator):
 
         return {'RUNNING_MODAL'}
 
-    def invoke(self, context, event):
-        if context.space_data.type == 'VIEW_3D':
-            context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
-        else:
+    def invoke(self, context, _event):
+        if context.space_data.type != 'VIEW_3D':
             self.report({'WARNING'}, "Active space must be a View3d")
             return {'CANCELLED'}
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
