@@ -20,6 +20,9 @@ import bpy
 import bmesh
 
 
+OFFSET = 0.001
+MAX_RAY_DISTANCE = 0.1
+
 def get_vertices_and_normals(context):
     gp_layer = context.active_annotation_layer
 
@@ -43,5 +46,14 @@ def get_vertices_and_normals(context):
     # now that we have the vertex normals, delete the mesh data
     bm_obj.free()
     bpy.data.meshes.remove(stroke_mesh, do_unlink=True)
+
+    offset_vertices = [v + n * OFFSET for v, n in zip(stroke_vertices, stroke_normals)]
+
+    scene = context.scene
+    depsgraph = context.evaluated_depsgraph_get()
+    for idx, v, n in zip(range(len(offset_vertices)), offset_vertices, stroke_normals):
+        is_hit, _loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, v, n * -1, distance=MAX_RAY_DISTANCE)
+        if is_hit:
+            stroke_normals[idx] = hit_normal
 
     return stroke_vertices, stroke_normals
