@@ -18,7 +18,7 @@
 
 import bpy
 
-from ..input import get_vertices_and_normals
+from ..input import axis_prop, get_strokes
 from .method_util import assign_emissive_material
 
 
@@ -28,11 +28,13 @@ class LP_OT_ConvexHull(bpy.types.Operator):
     bl_label = 'Light Paint Convex Hull'
     bl_options = {'REGISTER', 'UNDO'}
 
-    distance: bpy.props.FloatProperty(
+    axis: axis_prop()
+
+    offset: bpy.props.FloatProperty(
         name='Distance',
         description='Distance from the drawing along the vertex normal',
-        min=0.001,
-        default=5.0,
+        min=0.0,
+        default=0.0,
         unit='LENGTH'
     )
 
@@ -57,12 +59,12 @@ class LP_OT_ConvexHull(bpy.types.Operator):
         col.objects.link(obj)
         context.view_layer.objects.active = obj
 
-        vertices, normals = get_vertices_and_normals(context)
+        strokes = get_strokes(context, self.axis, self.offset)
+        vertices = []
+        for stroke in strokes:
+            vertices += stroke[0]
 
-        projected_vertices = [v + (norm * self.distance)
-                              for v, norm in zip(vertices, normals)]
-
-        mesh.from_pydata(projected_vertices, [], [])
+        mesh.from_pydata(vertices, [], [])
 
         # go into edit mode, convex hull, cleanup, then get out
         bpy.ops.object.editmode_toggle()

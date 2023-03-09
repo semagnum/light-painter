@@ -19,19 +19,17 @@
 import bpy
 import bmesh
 
+from .axis import offset_points
 
 OFFSET = 0.001
 MAX_RAY_DISTANCE = 0.1
 
-def get_vertices_and_normals(context):
-    gp_layer = context.active_annotation_layer
 
-    stroke_vertices = [point.co
-                       for stroke in gp_layer.active_frame.strokes
-                       for point in stroke.points]
+def get_stroke_vertices(context, stroke, axis, offset_amount):
+    stroke_vertices = [point.co for point in stroke.points]
     stroke_edge_indices = [(start_idx, end_idx)
-                           for start_idx, end_idx in zip(range(len(stroke_vertices)),
-                                                         list(range(1, len(stroke_vertices) - 1)) + [0])]
+                           for start_idx, end_idx in zip(range(len(stroke_vertices) - 1),
+                                                         range(1, len(stroke_vertices)))]
 
     # create mesh to get vertex normals
 
@@ -47,13 +45,17 @@ def get_vertices_and_normals(context):
     bm_obj.free()
     bpy.data.meshes.remove(stroke_mesh, do_unlink=True)
 
-    offset_vertices = [v + n * OFFSET for v, n in zip(stroke_vertices, stroke_normals)]
+    stroke_vertices, stroke_normals = offset_points(context, stroke_vertices, stroke_normals, axis, offset_amount)
 
-    scene = context.scene
-    depsgraph = context.evaluated_depsgraph_get()
-    for idx, v, n in zip(range(len(offset_vertices)), offset_vertices, stroke_normals):
-        is_hit, _loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, v, n * -1, distance=MAX_RAY_DISTANCE)
-        if is_hit:
-            stroke_normals[idx] = hit_normal
+    return stroke_vertices, stroke_edge_indices
 
-    return stroke_vertices, stroke_normals
+
+def get_strokes(context, axis: str, offset_amount: float):
+    gp_frame = context.active_annotation_layer.active_frame
+
+    stroke_data = []
+    for stroke in gp_frame.strokes:
+        vertices, edges = get_stroke_vertices(context, stroke, axis, offset_amount)
+        stroke_data.append((vertices, edges))
+
+    return stroke_data

@@ -18,7 +18,7 @@
 
 import bpy
 
-from ..input import get_vertices_and_normals
+from ..input import axis_prop, get_strokes
 from .method_util import assign_emissive_material
 
 
@@ -28,11 +28,13 @@ class LP_OT_Skin(bpy.types.Operator):
     bl_label = 'Light Paint Skin'
     bl_options = {'REGISTER', 'UNDO'}
 
-    distance: bpy.props.FloatProperty(
+    axis: axis_prop()
+
+    offset: bpy.props.FloatProperty(
         name='Distance',
         description='Distance from the drawing along the vertex normal',
-        min=0.001,
-        default=5.0,
+        min=0.0,
+        default=0.0,
         unit='LENGTH'
     )
 
@@ -88,31 +90,46 @@ class LP_OT_Skin(bpy.types.Operator):
         col.objects.link(obj)
         context.view_layer.objects.active = obj
 
-        vertices, normals = get_vertices_and_normals(context)
+        strokes = get_strokes(context, self.axis, self.offset)
+        vertices = []
+        edge_idx = []
+        for stroke in strokes:
+            offset = 0 if not vertices else edge_idx[-1][-1] + 1
+            stroke_vertices = stroke[0]
+            stroke_edges = stroke[1]
 
-        projected_vertices = [v + (norm * self.distance)
-                              for v, norm in zip(vertices, normals)]
-        stroke_edge_indices = [(start_idx, end_idx)
-                               for start_idx, end_idx in zip(range(len(projected_vertices) - 1),
-                                                             range(1, len(projected_vertices)))]
+            vertices += stroke_vertices
+            edge_idx += [(e_idx_1 + offset, e_idx_2 + offset) for e_idx_1, e_idx_2 in stroke_edges]
 
-        mesh.from_pydata(projected_vertices, stroke_edge_indices, [])
+        mesh.from_pydata(vertices, edge_idx, [])
 
-        bpy.ops.object.modifier_add(type='SUBSURF')
-        bpy.ops.object.modifier_add(type='SKIN')
-        bpy.ops.object.modifier_add(type='SUBSURF')
+        bpy.ops.object.editmode_toggle()
 
-        obj.modifiers["Subdivision"].levels = self.pre_subdiv
-        obj.modifiers["Subdivision"].render_levels = self.pre_subdiv
-        obj.modifiers["Skin"].use_smooth_shade = self.is_smooth
-        obj.modifiers["Subdivision.001"].levels = self.post_subdiv
-        obj.modifiers["Subdivision.001"].render_levels = self.post_subdiv
+        bpy.ops.mesh.separate(type='LOOSE')
 
-        for v in obj.data.skin_vertices[0].data:
-            v.radius = [self.skin_radius, self.skin_radius]
-        # obj.data.skin_vertices[0].data.foreach_set('radius', radii)
+        bpy.ops.object.editmode_toggle()
 
-        # assign emissive material to it
-        assign_emissive_material(obj, self.emit_value)
+        all_wire_objs = context.selected_objects[:] + [context.view_layer.objects.active]
+
+        for wire_obj in all_wire_objs:
+            bpy.ops.object.select_all(action='DESELECT')
+            wire_obj.select_set(True)
+            context.view_layer.objects.active = wire_obj
+
+            bpy.ops.object.modifier_add(type='SUBSURF')
+            bpy.ops.object.modifier_add(type='SKIN')
+            bpy.ops.object.modifier_add(type='SUBSURF')
+
+            wire_obj.modifiers["Subdivision"].levels = self.pre_subdiv
+            wire_obj.modifiers["Subdivision"].render_levels = self.pre_subdiv
+            wire_obj.modifiers["Skin"].use_smooth_shade = self.is_smooth
+            wire_obj.modifiers["Subdivision.001"].levels = self.post_subdiv
+            wire_obj.modifiers["Subdivision.001"].render_levels = self.post_subdiv
+
+            for v in wire_obj.data.skin_vertices[0].data:
+                v.radius = [self.skin_radius, self.skin_radius]
+
+            # assign emissive material to it
+            assign_emissive_material(wire_obj, self.emit_value)
 
         return {'FINISHED'}
