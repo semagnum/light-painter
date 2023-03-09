@@ -16,10 +16,13 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bpy
-from .operators import LP_OT_Draw
+
+from .operators import LP_OT_ConvexHull, LP_OT_Skin
+
+ADDON_NAME = 'Light Paint'
 
 bl_info = {
-    "name": 'Light Paint',
+    "name": ADDON_NAME,
     "author": 'Spencer Magnusson',
     "version": (0, 0, 1),
     "blender": (3, 3, 0),
@@ -34,23 +37,18 @@ bl_info = {
 
 class LP_PT_LightPaint(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
-    bl_label = 'Light Paint'
-    bl_category = 'Light Paint'
+    bl_label = ADDON_NAME
+    bl_category = ADDON_NAME
     bl_region_type = 'UI'
     bl_context = 'objectmode'
 
     def draw(self, context):
         layout = self.layout
-        # window_manager = context.window_manager
-        #
-        # layout.prop(window_manager, 'ld_use_budget')
-        #
-        # layout.prop(window_manager, 'ld_tri_budget')
-        # layout.prop(window_manager, 'ld_max_distance')
-        layout.operator(LP_OT_Draw.bl_idname)
+        layout.operator(LP_OT_ConvexHull.bl_idname)
+        layout.operator(LP_OT_Skin.bl_idname)
 
 
-classes = [LP_OT_Draw, LP_PT_LightPaint]
+classes = [LP_OT_ConvexHull, LP_OT_Skin, LP_PT_LightPaint]
 properties = []
 
 

@@ -1,0 +1,1 @@
+from .grease_pencil import get_vertices_and_normals
