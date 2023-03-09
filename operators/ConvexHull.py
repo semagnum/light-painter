@@ -60,9 +60,7 @@ class LP_OT_ConvexHull(bpy.types.Operator):
         context.view_layer.objects.active = obj
 
         strokes = get_strokes(context, self.axis, self.offset)
-        vertices = []
-        for stroke in strokes:
-            vertices += stroke[0]
+        vertices = [v for stroke in strokes for v in stroke]
 
         mesh.from_pydata(vertices, [], [])
 

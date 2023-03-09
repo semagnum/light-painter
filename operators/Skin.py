@@ -38,6 +38,14 @@ class LP_OT_Skin(bpy.types.Operator):
         unit='LENGTH'
     )
 
+    merge_distance: bpy.props.FloatProperty(
+        name='Merge by distance',
+        description='Merge adjacent vertices closer than this distance',
+        min=0.001,
+        default=0.1,
+        unit='LENGTH'
+    )
+
     skin_radius: bpy.props.FloatProperty(
         name='Skin radius',
         description='Radius of skin modifier',
@@ -94,17 +102,17 @@ class LP_OT_Skin(bpy.types.Operator):
         vertices = []
         edge_idx = []
         for stroke in strokes:
-            offset = 0 if not vertices else edge_idx[-1][-1] + 1
-            stroke_vertices = stroke[0]
-            stroke_edges = stroke[1]
-
-            vertices += stroke_vertices
-            edge_idx += [(e_idx_1 + offset, e_idx_2 + offset) for e_idx_1, e_idx_2 in stroke_edges]
+            vertices += stroke
+            offset = 0 if len(edge_idx) == 0 else edge_idx[-1][-1] + 1
+            edge_idx += [(start_idx + offset, end_idx + offset)
+                         for start_idx, end_idx in zip(range(len(stroke) - 1),
+                                                       range(1, len(stroke)))]
 
         mesh.from_pydata(vertices, edge_idx, [])
 
         bpy.ops.object.editmode_toggle()
 
+        bpy.ops.mesh.remove_doubles(threshold=self.merge_distance)
         bpy.ops.mesh.separate(type='LOOSE')
 
         bpy.ops.object.editmode_toggle()
