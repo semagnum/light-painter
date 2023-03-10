@@ -45,18 +45,21 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        draw_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw')
-        line_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.line')
-        poly_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.poly')
-        erase_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.eraser')
+
+        tool_names_label_icon = [
+            ('builtin.annotate', 'Draw light', 'ops.gpencil.draw'),
+            ('builtin.annotate_line', 'Draw light line', 'ops.gpencil.draw.line'),
+            ('builtin.annotate_polygon', 'Draw light polygon', 'ops.gpencil.draw.poly'),
+            ('builtin.annotate_eraser', 'Erase light', 'ops.gpencil.draw.eraser'),
+        ]
 
         op_name = 'wm.tool_set_by_id'
         col = layout.column(align=True)
-        col.operator(op_name, text='Draw light', icon_value=draw_icon_id).name = 'builtin.annotate'
-        col.operator(op_name, text='Draw light line', icon_value=line_icon_id).name = 'builtin.annotate_line'
-        col.operator(op_name, text='Draw light polygon', icon_value=poly_icon_id).name = 'builtin.annotate_polygon'
-        col.operator(op_name, text='Erase light', icon_value=erase_icon_id).name = 'builtin.annotate_eraser'
+        for name, label, icon in tool_names_label_icon:
+            icon_val = ToolSelectPanelHelper._icon_value_from_icon_handle(icon)
+            col.operator(op_name, text=label, icon_value=icon_val).name = name
 
+        erase_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.eraser')
         layout.operator('gpencil.annotation_active_frame_delete',
                         text='Clear all', icon_value=erase_icon_id)
 
