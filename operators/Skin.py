@@ -92,7 +92,7 @@ class LP_OT_Skin(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
 
-        mesh = bpy.data.meshes.new('ConvexHullLight')
+        mesh = bpy.data.meshes.new('LightPaint_Skin')
         obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
         col.objects.link(obj)
