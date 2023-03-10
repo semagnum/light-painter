@@ -23,16 +23,16 @@ from .operators import LP_OT_ConvexHull, LP_OT_Skin
 ADDON_NAME = 'Light Paint'
 
 bl_info = {
-    "name": ADDON_NAME,
-    "author": 'Spencer Magnusson',
-    "version": (0, 0, 1),
-    "blender": (3, 3, 0),
-    "description": 'Creates lights based on where the user paints',
-    "location": 'View 3D > Light Draw',
-    "support": 'COMMUNITY',
-    "category": '3D View',
-    "doc_url": '',
-    "tracker_url": '',
+    'name': ADDON_NAME,
+    'author': 'Spencer Magnusson',
+    'version': (0, 0, 1),
+    'blender': (3, 3, 0),
+    'description': 'Creates lights based on where the user paints',
+    'location': 'View 3D > Light Draw',
+    'support': 'COMMUNITY',
+    'category': '3D View',
+    'doc_url': '',
+    'tracker_url': '',
 }
 
 
@@ -52,10 +52,10 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
         op_name = 'wm.tool_set_by_id'
         col = layout.column(align=True)
-        col.operator(op_name, text='Draw light', icon_value=draw_icon_id).name = "builtin.annotate"
-        col.operator(op_name, text='Draw light line', icon_value=line_icon_id).name = "builtin.annotate_line"
-        col.operator(op_name, text='Draw light polygon', icon_value=poly_icon_id).name = "builtin.annotate_polygon"
-        col.operator(op_name, text='Erase light', icon_value=erase_icon_id).name = "builtin.annotate_eraser"
+        col.operator(op_name, text='Draw light', icon_value=draw_icon_id).name = 'builtin.annotate'
+        col.operator(op_name, text='Draw light line', icon_value=line_icon_id).name = 'builtin.annotate_line'
+        col.operator(op_name, text='Draw light polygon', icon_value=poly_icon_id).name = 'builtin.annotate_polygon'
+        col.operator(op_name, text='Erase light', icon_value=erase_icon_id).name = 'builtin.annotate_eraser'
 
         layout.operator(LP_OT_ConvexHull.bl_idname)
         layout.operator(LP_OT_Skin.bl_idname)

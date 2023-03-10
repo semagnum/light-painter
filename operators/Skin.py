@@ -92,7 +92,7 @@ class LP_OT_Skin(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
 
-        mesh = bpy.data.meshes.new("ConvexHullLight")
+        mesh = bpy.data.meshes.new('ConvexHullLight')
         obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
         col.objects.link(obj)
@@ -128,11 +128,11 @@ class LP_OT_Skin(bpy.types.Operator):
             bpy.ops.object.modifier_add(type='SKIN')
             bpy.ops.object.modifier_add(type='SUBSURF')
 
-            wire_obj.modifiers["Subdivision"].levels = self.pre_subdiv
-            wire_obj.modifiers["Subdivision"].render_levels = self.pre_subdiv
-            wire_obj.modifiers["Skin"].use_smooth_shade = self.is_smooth
-            wire_obj.modifiers["Subdivision.001"].levels = self.post_subdiv
-            wire_obj.modifiers["Subdivision.001"].render_levels = self.post_subdiv
+            wire_obj.modifiers['Subdivision'].levels = self.pre_subdiv
+            wire_obj.modifiers['Subdivision'].render_levels = self.pre_subdiv
+            wire_obj.modifiers['Skin'].use_smooth_shade = self.is_smooth
+            wire_obj.modifiers['Subdivision.001'].levels = self.post_subdiv
+            wire_obj.modifiers['Subdivision.001'].render_levels = self.post_subdiv
 
             for v in wire_obj.data.skin_vertices[0].data:
                 v.radius = [self.skin_radius, self.skin_radius]

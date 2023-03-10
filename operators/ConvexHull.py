@@ -53,7 +53,7 @@ class LP_OT_ConvexHull(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
 
-        mesh = bpy.data.meshes.new("ConvexHullLight")
+        mesh = bpy.data.meshes.new('ConvexHullLight')
         obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
         col.objects.link(obj)

@@ -33,7 +33,7 @@ def get_stroke_vertices(context, stroke, axis, offset_amount):
 
     # create mesh to get vertex normals
 
-    stroke_mesh = bpy.data.meshes.new("myBeautifulMesh")  # add the new mesh
+    stroke_mesh = bpy.data.meshes.new('myBeautifulMesh')  # add the new mesh
     stroke_mesh.from_pydata(stroke_vertices, stroke_edge_indices, tuple())
 
     bm_obj = bmesh.new()
