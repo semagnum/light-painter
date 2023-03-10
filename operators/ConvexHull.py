@@ -45,6 +45,13 @@ class LP_OT_ConvexHull(bpy.types.Operator):
         default=2.0,
     )
 
+    visible_to_camera: bpy.props.BoolProperty(
+        name='Visible to Camera',
+        description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
+        options=set(),
+        default=True
+    )
+
     @classmethod
     def poll(cls, context):
         return hasattr(context.active_annotation_layer,
@@ -73,5 +80,7 @@ class LP_OT_ConvexHull(bpy.types.Operator):
 
         # assign emissive material to it
         assign_emissive_material(obj, self.emit_value)
+
+        obj.visible_camera = self.visible_to_camera
 
         return {'FINISHED'}

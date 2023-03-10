@@ -25,7 +25,7 @@ ADDON_NAME = 'Light Paint'
 bl_info = {
     'name': ADDON_NAME,
     'author': 'Spencer Magnusson',
-    'version': (0, 0, 1),
+    'version': (0, 0, 2),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
