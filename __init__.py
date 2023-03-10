@@ -23,7 +23,7 @@ from .operators import LP_OT_ConvexHull, LP_OT_Skin
 ADDON_NAME = 'Light Paint'
 
 bl_info = {
-    'name': ADDON_NAME,
+    'name': 'Light Paint',
     'author': 'Spencer Magnusson',
     'version': (0, 0, 3),
     'blender': (3, 3, 0),
