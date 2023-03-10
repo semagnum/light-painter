@@ -25,7 +25,7 @@ ADDON_NAME = 'Light Paint'
 bl_info = {
     'name': ADDON_NAME,
     'author': 'Spencer Magnusson',
-    'version': (0, 0, 2),
+    'version': (0, 0, 3),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
@@ -56,6 +56,13 @@ class LP_PT_LightPaint(bpy.types.Panel):
         col.operator(op_name, text='Draw light line', icon_value=line_icon_id).name = 'builtin.annotate_line'
         col.operator(op_name, text='Draw light polygon', icon_value=poly_icon_id).name = 'builtin.annotate_polygon'
         col.operator(op_name, text='Erase light', icon_value=erase_icon_id).name = 'builtin.annotate_eraser'
+
+        layout.operator('gpencil.annotation_active_frame_delete',
+                        text='Clear all', icon_value=erase_icon_id)
+
+        layout.separator()
+
+        layout.label(text='Apply')
 
         layout.operator(LP_OT_ConvexHull.bl_idname)
         layout.operator(LP_OT_Skin.bl_idname)
