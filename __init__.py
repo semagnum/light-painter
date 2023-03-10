@@ -16,6 +16,7 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bpy
+from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
 from .operators import LP_OT_ConvexHull, LP_OT_Skin
 
@@ -44,6 +45,18 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        draw_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw')
+        line_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.line')
+        poly_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.poly')
+        erase_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.eraser')
+
+        op_name = 'wm.tool_set_by_id'
+        col = layout.column(align=True)
+        col.operator(op_name, text='Draw light', icon_value=draw_icon_id).name = "builtin.annotate"
+        col.operator(op_name, text='Draw light line', icon_value=line_icon_id).name = "builtin.annotate_line"
+        col.operator(op_name, text='Draw light polygon', icon_value=poly_icon_id).name = "builtin.annotate_polygon"
+        col.operator(op_name, text='Erase light', icon_value=erase_icon_id).name = "builtin.annotate_eraser"
+
         layout.operator(LP_OT_ConvexHull.bl_idname)
         layout.operator(LP_OT_Skin.bl_idname)
 
