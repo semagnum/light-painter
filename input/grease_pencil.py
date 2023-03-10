@@ -47,10 +47,15 @@ def get_stroke_vertices(context, stroke, axis, offset_amount):
 
     stroke_vertices, stroke_normals = offset_points(context, stroke_vertices, stroke_normals, axis, offset_amount)
 
-    return stroke_vertices
+    return stroke_vertices, stroke_normals
 
 
 def get_strokes(context, axis: str, offset_amount: float):
+    return [stroke_data[0]
+            for stroke_data in get_strokes_and_normals(context, axis, offset_amount)]
+
+
+def get_strokes_and_normals(context, axis: str, offset_amount: float):
     gp_frame = context.active_annotation_layer.active_frame
 
     return [get_stroke_vertices(context, stroke, axis, offset_amount)

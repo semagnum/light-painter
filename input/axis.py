@@ -16,12 +16,12 @@ def axis_prop():
         name='Axis',
         description='Determine axis of offset',
         items=[
-            ('X', 'X', '', 1),
-            ('Y', 'Y', '', 2),
-            ('Z', 'Z', '', 3),
-            ('NORMAL', 'Normal', 'Along annotation\'s vertex normal', 4),
-            ('NORMAL-RAY', 'Normal + Surface', 'Casts rays to estimate normal of underlying surface', 5),
-            ('REFLECT', 'Reflect to camera', 'Casts rays from camera to determine offset, best for reflections', 6),
+            ('X', 'X', ''),
+            ('Y', 'Y', ''),
+            ('Z', 'Z', ''),
+            ('NORMAL', 'Normal', 'Along annotation\'s vertex normal'),
+            ('NORMAL-RAY', 'Normal + Surface', 'Casts rays to estimate normal of underlying surface'),
+            ('REFLECT', 'Reflect to camera', 'Casts rays from camera to determine offset, best for reflections'),
         ],
         default='NORMAL-RAY'
     )

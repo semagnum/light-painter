@@ -18,7 +18,7 @@
 import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
-from .operators import LP_OT_ConvexHull, LP_OT_Skin
+from .operators import LP_OT_AreaLight, LP_OT_ConvexHull, LP_OT_Skin
 
 ADDON_NAME = 'Light Paint'
 
@@ -67,11 +67,12 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
         layout.label(text='Apply')
 
+        layout.operator(LP_OT_AreaLight.bl_idname)
         layout.operator(LP_OT_ConvexHull.bl_idname)
         layout.operator(LP_OT_Skin.bl_idname)
 
 
-classes = [LP_OT_ConvexHull, LP_OT_Skin, LP_PT_LightPaint]
+classes = [LP_OT_ConvexHull, LP_OT_Skin, LP_OT_AreaLight, LP_PT_LightPaint]
 properties = []
 
 
