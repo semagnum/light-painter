@@ -19,7 +19,7 @@
 import bpy
 
 from ..input import axis_prop, get_strokes
-from .method_util import assign_emissive_material
+from .method_util import assign_emissive_material, has_strokes
 
 
 class LP_OT_Skin(bpy.types.Operator):
@@ -86,8 +86,7 @@ class LP_OT_Skin(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return hasattr(context.active_annotation_layer,
-                       'active_frame') and context.active_annotation_layer.active_frame.strokes
+        return has_strokes(context)
 
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
@@ -139,5 +138,7 @@ class LP_OT_Skin(bpy.types.Operator):
 
             # assign emissive material to it
             assign_emissive_material(wire_obj, self.emit_value)
+
+        bpy.ops.gpencil.annotation_active_frame_delete()
 
         return {'FINISHED'}

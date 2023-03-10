@@ -3,6 +3,12 @@ import bpy
 MATERIAL_NAME = 'LightPaint_Emissive'
 
 
+def has_strokes(context):
+    annot_layer = context.active_annotation_layer
+    return hasattr(annot_layer, 'active_frame') and hasattr(annot_layer.active_frame,
+                                                            'strokes') and annot_layer.active_frame.strokes
+
+
 def generate_material(emit_value: float):
     material = bpy.data.materials.new(name=MATERIAL_NAME)
 
