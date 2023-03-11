@@ -80,7 +80,9 @@ class LP_OT_AreaLight(bpy.types.Operator):
         avg_normal.normalized()
         avg_normal.negate()
 
-        projected_vertices = tuple(v.project(avg_normal) for v in vertices)
+        farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
+
+        projected_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
 
         center = sum(projected_vertices, start=Vector()) / len(vertices)
 
