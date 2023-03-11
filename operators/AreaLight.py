@@ -26,8 +26,8 @@ from .method_util import assign_emissive_material, has_strokes
 
 class LP_OT_AreaLight(bpy.types.Operator):
     """Modal object selection with a ray cast"""
-    bl_idname = 'semagnum.lp_area_light'
-    bl_label = 'Light Paint Area Light'
+    bl_idname = 'semagnum.lp_light_lamp'
+    bl_label = 'Light Paint: Lamp'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()

@@ -43,14 +43,16 @@ class LP_PT_LightPaint(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_context = 'objectmode'
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
+        layout.label(text='Light draw')
+
         tool_names_label_icon = [
-            ('builtin.annotate', 'Draw light', 'ops.gpencil.draw'),
-            ('builtin.annotate_line', 'Draw light line', 'ops.gpencil.draw.line'),
-            ('builtin.annotate_polygon', 'Draw light polygon', 'ops.gpencil.draw.poly'),
-            ('builtin.annotate_eraser', 'Erase light', 'ops.gpencil.draw.eraser'),
+            ('builtin.annotate', 'Freehand', 'ops.gpencil.draw'),
+            ('builtin.annotate_line', 'Lines', 'ops.gpencil.draw.line'),
+            ('builtin.annotate_polygon', 'Polygons', 'ops.gpencil.draw.poly'),
+            ('builtin.annotate_eraser', 'Eraser', 'ops.gpencil.draw.eraser'),
         ]
 
         op_name = 'wm.tool_set_by_id'
@@ -67,9 +69,9 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
         layout.label(text='Apply')
 
-        layout.operator(LP_OT_AreaLight.bl_idname)
-        layout.operator(LP_OT_ConvexLight.bl_idname)
-        layout.operator(LP_OT_Skin.bl_idname)
+        layout.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='As Lamp')
+        layout.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='As Hull')
+        layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='As Light Tubes')
 
 
 

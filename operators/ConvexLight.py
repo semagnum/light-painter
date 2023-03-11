@@ -24,8 +24,8 @@ from .method_util import assign_emissive_material, has_strokes
 
 class LP_OT_ConvexLight(bpy.types.Operator):
     """Modal object selection with a ray cast"""
-    bl_idname = 'semagnum.lp_convex_light'
-    bl_label = 'Light Paint Convex Hull'
+    bl_idname = 'semagnum.lp_light_hull'
+    bl_label = 'Light Paint: Light Hull'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()
