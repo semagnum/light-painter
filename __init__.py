@@ -43,10 +43,12 @@ class LP_PT_LightPaint(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_context = 'objectmode'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.label(text='Light draw')
+
+        layout.prop(context.scene.tool_settings, 'annotation_stroke_placement_view3d', text='')
 
         tool_names_label_icon = (
             ('builtin.annotate', 'Freehand', 'ops.gpencil.draw'),
