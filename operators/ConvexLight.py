@@ -17,8 +17,9 @@
 
 
 import bpy
+from mathutils import Vector
 
-from ..input import axis_prop, get_strokes
+from ..input import axis_prop, get_strokes, get_strokes_and_normals
 from .method_util import assign_emissive_material, has_strokes
 
 
@@ -36,6 +37,13 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         min=0.0,
         default=0.0,
         unit='LENGTH'
+    )
+
+    flatten: bpy.props.BoolProperty(
+        name='Flatten',
+        description='If checked, projected vertices will be flattened before processing the convex hull',
+        options=set(),
+        default=True
     )
 
     visible_to_camera: bpy.props.BoolProperty(
@@ -73,10 +81,25 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         col.objects.link(obj)
         context.view_layer.objects.active = obj
 
-        strokes = get_strokes(context, self.axis, self.offset)
-        vertices = tuple(v for stroke in strokes for v in stroke)
+        if not self.flatten:
+            strokes = get_strokes(context, self.axis, self.offset)
+            vertices = tuple(v for stroke in strokes for v in stroke)
 
-        mesh.from_pydata(vertices, [], [])
+            mesh.from_pydata(vertices, [], [])
+        else:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+            vertices = tuple(v for stroke in strokes for v in stroke[0])
+            normals = tuple(v for stroke in strokes for v in stroke[1])
+
+            # get average, negated normal
+            avg_normal = sum(normals, start=Vector())
+            avg_normal.normalized()
+
+            farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
+
+            projected_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
+
+            mesh.from_pydata(projected_vertices, [], [])
 
         # go into edit mode, convex hull, cleanup, then get out
         bpy.ops.object.editmode_toggle()
