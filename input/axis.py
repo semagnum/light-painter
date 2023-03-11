@@ -15,26 +15,26 @@ def axis_prop():
     return bpy.props.EnumProperty(
         name='Axis',
         description='Determine axis of offset',
-        items=[
+        items=(
             ('X', 'X', ''),
             ('Y', 'Y', ''),
             ('Z', 'Z', ''),
             ('NORMAL', 'Normal', 'Along annotation\'s vertex normal'),
             ('NORMAL-RAY', 'Normal + Surface', 'Casts rays to estimate normal of underlying surface'),
             ('REFLECT', 'Reflect to camera', 'Casts rays from camera to determine offset, best for reflections'),
-        ],
+        ),
         default='NORMAL-RAY'
     )
 
 
 def offset_points(context, vertices, normals, axis_val: str, offset_amount: float) -> Vector:
     if axis_val in VECTORS:
-        vertices = [v + VECTORS[axis_val] * offset_amount for v in vertices]
+        vertices = tuple(v + VECTORS[axis_val] * offset_amount for v in vertices)
 
     elif axis_val == 'NORMAL':
-        vertices = [v + n * offset_amount for v, n in zip(vertices, normals)]
+        vertices = tuple(v + n * offset_amount for v, n in zip(vertices, normals))
     elif axis_val == 'NORMAL-RAY':
-        offset_vertices = [v + n * RAY_OFFSET for v, n in zip(vertices, normals)]
+        offset_vertices = tuple(v + n * RAY_OFFSET for v, n in zip(vertices, normals))
 
         scene = context.scene
         depsgraph = context.evaluated_depsgraph_get()

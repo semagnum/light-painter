@@ -74,7 +74,7 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         context.view_layer.objects.active = obj
 
         strokes = get_strokes(context, self.axis, self.offset)
-        vertices = [v for stroke in strokes for v in stroke]
+        vertices = tuple(v for stroke in strokes for v in stroke)
 
         mesh.from_pydata(vertices, [], [])
 

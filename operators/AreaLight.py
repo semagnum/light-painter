@@ -72,8 +72,8 @@ class LP_OT_AreaLight(bpy.types.Operator):
 
     def execute(self, context):
         strokes = get_strokes_and_normals(context, self.axis, self.offset)
-        vertices = [v for stroke in strokes for v in stroke[0]]
-        normals = [n for stroke in strokes for n in stroke[1]]
+        vertices = tuple(v for stroke in strokes for v in stroke[0])
+        normals = (n for stroke in strokes for n in stroke[1])
 
         # get average, negated normal
         avg_normal = sum(normals, start=Vector())

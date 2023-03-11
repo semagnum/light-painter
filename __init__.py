@@ -48,12 +48,12 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
         layout.label(text='Light draw')
 
-        tool_names_label_icon = [
+        tool_names_label_icon = (
             ('builtin.annotate', 'Freehand', 'ops.gpencil.draw'),
             ('builtin.annotate_line', 'Lines', 'ops.gpencil.draw.line'),
             ('builtin.annotate_polygon', 'Polygons', 'ops.gpencil.draw.poly'),
             ('builtin.annotate_eraser', 'Eraser', 'ops.gpencil.draw.eraser'),
-        ]
+        )
 
         op_name = 'wm.tool_set_by_id'
         col = layout.column(align=True)
@@ -74,9 +74,8 @@ class LP_PT_LightPaint(bpy.types.Panel):
         layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='As Light Tubes')
 
 
-
-classes = [LP_OT_ConvexLight, LP_OT_Skin, LP_OT_AreaLight, LP_PT_LightPaint]
-properties = []
+classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_AreaLight, LP_PT_LightPaint)
+properties = tuple()
 
 
 def register():

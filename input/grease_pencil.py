@@ -27,9 +27,9 @@ MAX_RAY_DISTANCE = 0.1
 
 def get_stroke_vertices(context, stroke, axis, offset_amount):
     stroke_vertices = [point.co for point in stroke.points]
-    stroke_edge_indices = [(start_idx, end_idx)
-                           for start_idx, end_idx in zip(range(len(stroke_vertices) - 1),
-                                                         range(1, len(stroke_vertices)))]
+    stroke_edge_indices = tuple((start_idx, end_idx)
+                                for start_idx, end_idx in zip(range(len(stroke_vertices) - 1),
+                                                              range(1, len(stroke_vertices))))
 
     # create mesh to get vertex normals
 
@@ -51,12 +51,12 @@ def get_stroke_vertices(context, stroke, axis, offset_amount):
 
 
 def get_strokes(context, axis: str, offset_amount: float):
-    return [stroke_data[0]
-            for stroke_data in get_strokes_and_normals(context, axis, offset_amount)]
+    return tuple(stroke_data[0]
+                 for stroke_data in get_strokes_and_normals(context, axis, offset_amount))
 
 
 def get_strokes_and_normals(context, axis: str, offset_amount: float):
     gp_frame = context.active_annotation_layer.active_frame
 
-    return [get_stroke_vertices(context, stroke, axis, offset_amount)
-            for stroke in gp_frame.strokes]
+    return tuple(get_stroke_vertices(context, stroke, axis, offset_amount)
+                 for stroke in gp_frame.strokes)
