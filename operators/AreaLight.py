@@ -40,15 +40,6 @@ class LP_OT_AreaLight(bpy.types.Operator):
         unit='LENGTH'
     )
 
-    power: bpy.props.FloatProperty(
-        name='Power',
-        description='Area light\'s emit value',
-        min=0.001,
-        default=10,
-        subtype='POWER',
-        unit='POWER'
-    )
-
     shape: bpy.props.EnumProperty(
         name='Shape',
         description='Determine axis of offset',
@@ -58,6 +49,22 @@ class LP_OT_AreaLight(bpy.types.Operator):
         ],
         default='SQUARE'
     )
+
+    power: bpy.props.FloatProperty(
+        name='Power',
+        description='Area light\'s emit value',
+        min=0.001,
+        default=10,
+        subtype='POWER',
+        unit='POWER'
+    )
+
+    light_color: bpy.props.FloatVectorProperty(name="Light Color",
+                                               size=3,
+                                               default=[1.0, 1.0, 1.0],
+                                               min=0.0,
+                                               soft_max=1.0,
+                                               subtype='COLOR')
 
     @classmethod
     def poll(cls, context):
@@ -91,6 +98,7 @@ class LP_OT_AreaLight(bpy.types.Operator):
         # set light data properties
 
         context.object.rotation_euler = rotation
+        context.object.data.color = self.light_color
         context.object.data.size = size
         context.object.data.energy = self.power
         context.object.data.shape = self.shape
