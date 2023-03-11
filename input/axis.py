@@ -29,7 +29,7 @@ def axis_prop():
 
 def offset_points(context, vertices, normals, axis_val: str, offset_amount: float) -> Vector:
     if axis_val in VECTORS:
-        vertices = tuple(v + VECTORS[axis_val] * offset_amount for v in vertices)
+        return tuple(v + VECTORS[axis_val] * offset_amount for v in vertices), tuple(VECTORS[axis_val] for _ in vertices)
 
     elif axis_val == 'NORMAL':
         vertices = tuple(v + n * offset_amount for v, n in zip(vertices, normals))
