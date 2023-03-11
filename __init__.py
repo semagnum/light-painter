@@ -18,14 +18,14 @@
 import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
-from .operators import LP_OT_AreaLight, LP_OT_ConvexHull, LP_OT_Skin
+from .operators import LP_OT_AreaLight, LP_OT_ConvexLight, LP_OT_Skin
 
 ADDON_NAME = 'Light Paint'
 
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 0, 3),
+    'version': (0, 0, 4),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
@@ -68,11 +68,12 @@ class LP_PT_LightPaint(bpy.types.Panel):
         layout.label(text='Apply')
 
         layout.operator(LP_OT_AreaLight.bl_idname)
-        layout.operator(LP_OT_ConvexHull.bl_idname)
+        layout.operator(LP_OT_ConvexLight.bl_idname)
         layout.operator(LP_OT_Skin.bl_idname)
 
 
-classes = [LP_OT_ConvexHull, LP_OT_Skin, LP_OT_AreaLight, LP_PT_LightPaint]
+
+classes = [LP_OT_ConvexLight, LP_OT_Skin, LP_OT_AreaLight, LP_PT_LightPaint]
 properties = []
 
 

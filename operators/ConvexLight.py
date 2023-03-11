@@ -22,9 +22,9 @@ from ..input import axis_prop, get_strokes
 from .method_util import assign_emissive_material, has_strokes
 
 
-class LP_OT_ConvexHull(bpy.types.Operator):
+class LP_OT_ConvexLight(bpy.types.Operator):
     """Modal object selection with a ray cast"""
-    bl_idname = 'semagnum.lp_convex_hull'
+    bl_idname = 'semagnum.lp_convex_light'
     bl_label = 'Light Paint Convex Hull'
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -38,6 +38,20 @@ class LP_OT_ConvexHull(bpy.types.Operator):
         unit='LENGTH'
     )
 
+    visible_to_camera: bpy.props.BoolProperty(
+        name='Visible to Camera',
+        description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
+        options=set(),
+        default=True
+    )
+
+    light_color: bpy.props.FloatVectorProperty(name="Light Color",
+                                              size=4,
+                                              default=[1.0, 1.0, 1.0, 1.0],
+                                              min=0.0,
+                                              soft_max=1.0,
+                                              subtype='COLOR')
+
     emit_value: bpy.props.FloatProperty(
         name='Emit Value',
         description='Emission shader\'s emit value',
@@ -45,12 +59,6 @@ class LP_OT_ConvexHull(bpy.types.Operator):
         default=2.0,
     )
 
-    visible_to_camera: bpy.props.BoolProperty(
-        name='Visible to Camera',
-        description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
-        options=set(),
-        default=True
-    )
 
     @classmethod
     def poll(cls, context):
@@ -78,7 +86,7 @@ class LP_OT_ConvexHull(bpy.types.Operator):
         bpy.ops.object.editmode_toggle()
 
         # assign emissive material to it
-        assign_emissive_material(obj, self.emit_value)
+        assign_emissive_material(obj, self.light_color, self.emit_value)
 
         obj.visible_camera = self.visible_to_camera
 

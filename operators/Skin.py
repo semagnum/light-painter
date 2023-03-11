@@ -77,18 +77,25 @@ class LP_OT_Skin(bpy.types.Operator):
         soft_max=4,
     )
 
-    emit_value: bpy.props.FloatProperty(
-        name='Emit Value',
-        description='Emission shader\'s emit value',
-        min=0.001,
-        default=2.0,
-    )
-
     visible_to_camera: bpy.props.BoolProperty(
         name='Visible to Camera',
         description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
         options=set(),
         default=True
+    )
+
+    light_color: bpy.props.FloatVectorProperty(name="Light Color",
+                                               size=4,
+                                               default=[1.0, 1.0, 1.0, 1.0],
+                                               min=0.0,
+                                               soft_max=1.0,
+                                               subtype='COLOR')
+
+    emit_value: bpy.props.FloatProperty(
+        name='Emit Value',
+        description='Emission shader\'s emit value',
+        min=0.001,
+        default=2.0,
     )
 
     @classmethod
@@ -144,7 +151,7 @@ class LP_OT_Skin(bpy.types.Operator):
                 v.radius = [self.skin_radius, self.skin_radius]
 
             # assign emissive material to it
-            assign_emissive_material(wire_obj, self.emit_value)
+            assign_emissive_material(wire_obj, self.light_color, self.emit_value)
 
             wire_obj.visible_camera = self.visible_to_camera
 
