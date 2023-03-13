@@ -21,7 +21,8 @@ def axis_prop():
             ('Z', 'Z', ''),
             ('NORMAL', 'Normal', 'Along annotation\'s vertex normal'),
             ('NORMAL-RAY', 'Normal + Surface', 'Casts rays to estimate normal of underlying surface'),
-            ('REFLECT', 'Reflect to camera', 'Casts rays from camera to determine offset, best for reflections'),
+            ('REFLECT', 'Reflect to camera', 'Casts rays from camera to determine offset,'
+                                             'best for rim lighting and reflections'),
         ),
         default='NORMAL-RAY'
     )
