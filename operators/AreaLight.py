@@ -17,11 +17,40 @@
 
 
 import bpy
-from math import sqrt
-from mathutils import Vector
+import math
+from mathutils import Matrix, Vector
+from mathutils.geometry import box_fit_2d
 
 from ..input import axis_prop, get_strokes_and_normals
-from .method_util import assign_emissive_material, has_strokes
+from .method_util import has_strokes
+
+
+def get_box(vertices, normal):
+    # rotate hull so normal is pointed up, so we can ignore Z
+    # find angle of fitted box
+    align_to_z = normal.rotation_difference(Vector((0.0, 0.0, 1.0))).to_matrix()
+    flattened_2d = [align_to_z @ v for v in vertices]
+
+    # rotate hull by angle
+    # get length and width
+    angle = box_fit_2d([(v[0], v[1]) for v in flattened_2d])
+    box_mat = Matrix.Rotation(angle, 3, 'Z')
+    aligned_2d = [(box_mat @ Vector((co[0], co[1], 0))) for co in flattened_2d]
+    xs = tuple(co[0] for co in aligned_2d)
+    ys = tuple(co[1] for co in aligned_2d)
+
+    x_min, x_max = min(xs), max(xs)
+    y_min, y_max = min(ys), max(ys)
+
+    length = x_max - x_min
+    width = y_max - y_min
+
+    center = align_to_z.inverted_safe() @ box_mat.inverted_safe() @ Vector((x_min + (length / 2),
+                                                                            y_min + (width / 2),
+                                                                            flattened_2d[0][2]))
+
+    # return matrix, length and width of box
+    return center, align_to_z.inverted_safe() @ box_mat.inverted_safe(), length, width
 
 
 class LP_OT_AreaLight(bpy.types.Operator):
@@ -44,10 +73,12 @@ class LP_OT_AreaLight(bpy.types.Operator):
         name='Shape',
         description='Determine axis of offset',
         items=[
+            ('RECTANGLE', 'Rectangle', ''),
             ('SQUARE', 'Square', ''),
             ('DISK', 'Disk', ''),
+            ('ELLIPSE', 'Ellipse', ''),
         ],
-        default='SQUARE'
+        default='RECTANGLE'
     )
 
     power: bpy.props.FloatProperty(
@@ -84,24 +115,18 @@ class LP_OT_AreaLight(bpy.types.Operator):
 
         projected_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
 
-        center = sum(projected_vertices, start=Vector()) / len(vertices)
-
-        # length_squared is to reduce calculations to just the final sqrt,
-        # to get the actual distance from center.
-        # multiplying by 2 to get the diagonal (d), the equation for area (A) is:
-        # A = (d ** 2) / 2
-        size = ((sqrt(max((center - v).length_squared for v in projected_vertices)) * 2) ** 2) / 2
-        rotation = Vector((0, 0, -1)).rotation_difference(avg_normal).to_euler()
+        center, mat, x_size, y_size = get_box(projected_vertices, avg_normal)
+        rotation = mat.to_euler()
+        rotation.rotate_axis('X', math.radians(180.0))
 
         bpy.ops.object.select_all(action='DESELECT')
 
-        bpy.ops.object.light_add(type='AREA', align='WORLD', location=center, rotation=(0, 0, 0), scale=(1, 1, 1))
+        bpy.ops.object.light_add(type='AREA', align='WORLD', location=center, rotation=rotation, scale=(1, 1, 1))
 
         # set light data properties
-
-        context.object.rotation_euler = rotation
         context.object.data.color = self.light_color
-        context.object.data.size = size
+        context.object.data.size = x_size
+        context.object.data.size_y = y_size
         context.object.data.energy = self.power
         context.object.data.shape = self.shape
 
