@@ -68,8 +68,8 @@ class LP_OT_AreaLight(bpy.types.Operator):
     axis: axis_prop()
 
     offset: bpy.props.FloatProperty(
-        name='Distance',
-        description='Distance from the drawing along the vertex normal',
+        name='Offset',
+        description='Light\'s offset from annotation along specified axis',
         min=0.0,
         default=1.0,
         unit='LENGTH'
@@ -96,23 +96,41 @@ class LP_OT_AreaLight(bpy.types.Operator):
         unit='POWER'
     )
 
-    min_size: bpy.props.FloatVectorProperty(name='Minimum light size',
-                                            description='Lamp size will be clamped to these minimum values',
-                                            size=2,
-                                            min=0.001,
-                                            default=(0.01, 0.01),
-                                            unit='LENGTH')
+    min_size: bpy.props.FloatVectorProperty(
+        name='Minimum size',
+        description='Lamp size will be clamped to these minimum values',
+        size=2,
+        min=0.001,
+        default=(0.01, 0.01),
+        unit='LENGTH'
+    )
 
-    light_color: bpy.props.FloatVectorProperty(name="Light Color",
-                                               size=3,
-                                               default=(1.0, 1.0, 1.0),
-                                               min=0.0,
-                                               soft_max=1.0,
-                                               subtype='COLOR')
+    light_color: bpy.props.FloatVectorProperty(
+        name='Color',
+        size=3,
+        default=(1.0, 1.0, 1.0),
+        min=0.0,
+        soft_max=1.0,
+        subtype='COLOR'
+    )
 
     @classmethod
     def poll(cls, context):
         return has_strokes(context)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        layout.prop(self, 'axis')
+        layout.prop(self, 'offset')
+
+        layout.separator()
+        layout.label(text='Lamp')
+        layout.prop(self, 'shape')
+        layout.prop(self, 'light_color')
+        layout.prop(self, 'power')
+        layout.prop(self, 'min_size')
 
     def execute(self, context):
         strokes = get_strokes_and_normals(context, self.axis, self.offset)

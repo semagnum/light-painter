@@ -32,8 +32,8 @@ class LP_OT_ConvexLight(bpy.types.Operator):
     axis: axis_prop()
 
     offset: bpy.props.FloatProperty(
-        name='Distance',
-        description='Distance from the drawing along the vertex normal',
+        name='Offset',
+        description='Hull\'s offset from annotation along specified axis',
         min=0.0,
         default=0.0,
         unit='LENGTH'
@@ -53,12 +53,14 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         default=True
     )
 
-    light_color: bpy.props.FloatVectorProperty(name="Light Color",
-                                              size=4,
-                                              default=[1.0, 1.0, 1.0, 1.0],
-                                              min=0.0,
-                                              soft_max=1.0,
-                                              subtype='COLOR')
+    light_color: bpy.props.FloatVectorProperty(
+        name='Light Color',
+        size=4,
+        default=[1.0, 1.0, 1.0, 1.0],
+        min=0.0,
+        soft_max=1.0,
+        subtype='COLOR'
+    )
 
     emit_value: bpy.props.FloatProperty(
         name='Emit Value',
@@ -66,7 +68,6 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         min=0.001,
         default=2.0,
     )
-
 
     @classmethod
     def poll(cls, context):

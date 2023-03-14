@@ -61,7 +61,7 @@ def generate_flag_material(color):
     tree = material.node_tree
 
     # find PBR and set color
-    pbr_node = tree.nodes["Principled BSDF"]
+    pbr_node = tree.nodes['Principled BSDF']
     pbr_node.inputs[0].default_value = color
 
     return material
@@ -79,7 +79,7 @@ def assign_flag_material(obj, color):
     tree = material.node_tree
 
     # find PBR and set color
-    pbr_node = tree.nodes["Principled BSDF"]
+    pbr_node = tree.nodes['Principled BSDF']
     pbr_node.inputs[0].default_value = color
 
     # Assign the new material.

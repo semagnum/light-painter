@@ -31,8 +31,8 @@ class LP_OT_Skin(bpy.types.Operator):
     axis: axis_prop()
 
     offset: bpy.props.FloatProperty(
-        name='Distance',
-        description='Distance from the drawing along the vertex normal',
+        name='Offset',
+        description='Wire\'s offset from annotation along specified axis',
         min=0.0,
         default=0.0,
         unit='LENGTH'
@@ -42,36 +42,35 @@ class LP_OT_Skin(bpy.types.Operator):
         name='Merge by distance',
         description='Merge adjacent vertices closer than this distance',
         min=0.001,
-        default=0.1,
+        default=0.05,
         unit='LENGTH'
     )
 
     skin_radius: bpy.props.FloatProperty(
-        name='Skin radius',
-        description='Radius of skin modifier',
+        name='Wire radius',
         min=0.001,
         default=0.1,
         unit='LENGTH'
     )
 
     is_smooth: bpy.props.BoolProperty(
-        name='Smooth',
+        name='Smooth shading',
         description='If checked, skin modifier will set smooth faces',
         options=set(),
         default=True
     )
 
     pre_subdiv: bpy.props.IntProperty(
-        name='Pre-skin Subdivision',
-        description='Subdivision level before skin modifier - will smooth the wire path',
+        name='Wire path Subdivision',
+        description='Subdivision level to smooth the wire path',
         min=0,
         default=2,
         soft_max=4,
     )
 
     post_subdiv: bpy.props.IntProperty(
-        name='Post-skin subdivision',
-        description='Subdivision level after skin modifier - will smooth the wire itself',
+        name='Wire surface subdivision',
+        description='Subdivision level to smooth the wire\'s surface',
         min=0,
         default=2,
         soft_max=4,
@@ -84,12 +83,14 @@ class LP_OT_Skin(bpy.types.Operator):
         default=True
     )
 
-    light_color: bpy.props.FloatVectorProperty(name="Light Color",
-                                               size=4,
-                                               default=[1.0, 1.0, 1.0, 1.0],
-                                               min=0.0,
-                                               soft_max=1.0,
-                                               subtype='COLOR')
+    light_color: bpy.props.FloatVectorProperty(
+        name='Light Color',
+        size=4,
+        default=[1.0, 1.0, 1.0, 1.0],
+        min=0.0,
+        soft_max=1.0,
+        subtype='COLOR'
+    )
 
     emit_value: bpy.props.FloatProperty(
         name='Emit Value',
@@ -101,6 +102,27 @@ class LP_OT_Skin(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return has_strokes(context)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        layout.prop(self, 'axis')
+        layout.prop(self, 'offset')
+
+        layout.separator()
+        layout.label(text='Wire')
+        layout.prop(self, 'merge_distance')
+        layout.prop(self, 'skin_radius')
+        layout.prop(self, 'is_smooth')
+        layout.prop(self, 'pre_subdiv', text='Path subdivision')
+        layout.prop(self, 'post_subdiv', text='Surface subdivision')
+
+        layout.separator()
+        layout.label(text='Shading')
+        layout.prop(self, 'visible_to_camera')
+        layout.prop(self, 'light_color')
+        layout.prop(self, 'emit_value')
 
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
