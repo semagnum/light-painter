@@ -21,11 +21,16 @@ import bmesh
 
 from .axis import offset_points
 
-OFFSET = 0.001
-MAX_RAY_DISTANCE = 0.1
 
+def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tuple:
+    """Given a annotation stroke, return its point and normal data.
 
-def get_stroke_vertices(context, stroke, axis, offset_amount):
+    :param context: Blender context
+    :param stroke: individual stroke annotation data
+    :param axis: enumerator describing direction or axis of offset
+    :param offset_amount: offset distance
+    :return: tuple of stroke coordinates and correlating normals
+    """
     stroke_vertices = [point.co for point in stroke.points]
     stroke_edge_indices = tuple((start_idx, end_idx)
                                 for start_idx, end_idx in zip(range(len(stroke_vertices) - 1),
@@ -50,12 +55,26 @@ def get_stroke_vertices(context, stroke, axis, offset_amount):
     return stroke_vertices, stroke_normals
 
 
-def get_strokes(context, axis: str, offset_amount: float):
+def get_strokes(context, axis: str, offset_amount: float) -> tuple:
+    """Get scene's current annotation stroke data.
+
+    :param context: Blender context
+    :param axis: enumerator describing direction or axis of offset
+    :param offset_amount: offset distance
+    :return: tuple of strokes, each a list of stroke coordinates
+    """
     return tuple(stroke_data[0]
                  for stroke_data in get_strokes_and_normals(context, axis, offset_amount))
 
 
-def get_strokes_and_normals(context, axis: str, offset_amount: float):
+def get_strokes_and_normals(context, axis: str, offset_amount: float) -> tuple:
+    """Get scene's current annotation stroke data, including estimated normals.
+
+    :param context: Blender context
+    :param axis: enumerator describing direction or axis of offset
+    :param offset_amount: offset distance
+    :return: tuple of strokes, each a tuple of a list of stroke coordinates and correlating normals
+    """
     gp_frame = context.active_annotation_layer.active_frame
 
     return tuple(get_stroke_vertices(context, stroke, axis, offset_amount)

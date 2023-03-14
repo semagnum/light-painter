@@ -2,16 +2,21 @@ import bpy
 from mathutils import Vector
 
 VECTORS = {'X': Vector((1, 0, 0)), 'Y': Vector((0, 1, 0)), 'Z': Vector((0, 0, 1))}
+"""List of arbitrary axes and their given vector."""
 RAY_OFFSET = 0.001
+"""Epsilon offset for raycasts, to prevent self-collisions."""
 MAX_RAY_DISTANCE = 0.1
+"""Maximum distance for raycasts. Lowering this improves performance drastically."""
 
 
-def reflect_vector(input_vector, normal):
+def reflect_vector(input_vector: Vector, normal: Vector) -> Vector:
+    """Reflects input vector based on a given normal."""
     dn = 2 * input_vector.dot(normal)
     return input_vector - normal * dn
 
 
-def axis_prop():
+def axis_prop() -> bpy.props.EnumProperty:
+    """Returns axis property to be used by multiple operators."""
     return bpy.props.EnumProperty(
         name='Axis',
         description='Determine axis of offset',
@@ -28,7 +33,17 @@ def axis_prop():
     )
 
 
-def offset_points(context, vertices, normals, axis_val: str, offset_amount: float) -> Vector:
+def offset_points(context, vertices: list[Vector], normals: list[Vector],
+                  axis_val: str, offset_amount: float) -> tuple[Vector, Vector]:
+    """Offset the position of given vertices.
+
+    :param context: Blender context
+    :param vertices: list of vertices
+    :param normals: correlating normal vectors
+    :param axis_val: enumerator describing direction or axis of offset
+    :param offset_amount: magnitude of offset
+    :return: offset vertices and updated normals
+    """
     if axis_val in VECTORS:
         return tuple(v + VECTORS[axis_val] * offset_amount for v in vertices), tuple(VECTORS[axis_val] for _ in vertices)
 

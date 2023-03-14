@@ -15,12 +15,11 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 import bpy
-from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
 from .operators import LP_OT_AreaLight, LP_OT_ConvexLight, LP_OT_Skin
-
-ADDON_NAME = 'Light Paint'
+from .panel import LP_PT_LightPaint
 
 bl_info = {
     'name': 'Light Paint',
@@ -35,71 +34,17 @@ bl_info = {
     'tracker_url': '',
 }
 
-
-class LP_PT_LightPaint(bpy.types.Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_label = ADDON_NAME
-    bl_category = ADDON_NAME
-    bl_region_type = 'UI'
-    bl_context = 'objectmode'
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.label(text='Light draw')
-
-        layout.prop(context.scene.tool_settings, 'annotation_stroke_placement_view3d', text='')
-
-        tool_names_label_icon = (
-            ('builtin.annotate', 'Freehand', 'ops.gpencil.draw'),
-            ('builtin.annotate_line', 'Lines', 'ops.gpencil.draw.line'),
-            ('builtin.annotate_polygon', 'Polygons', 'ops.gpencil.draw.poly'),
-            ('builtin.annotate_eraser', 'Eraser', 'ops.gpencil.draw.eraser'),
-        )
-
-        op_name = 'wm.tool_set_by_id'
-        col = layout.column(align=True)
-        for name, label, icon in tool_names_label_icon:
-            icon_val = ToolSelectPanelHelper._icon_value_from_icon_handle(icon)
-            col.operator(op_name, text=label, icon_value=icon_val).name = name
-
-        erase_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.eraser')
-        layout.operator('gpencil.annotation_active_frame_delete',
-                        text='Clear all', icon_value=erase_icon_id)
-
-        layout.separator()
-
-        layout.label(text='Apply')
-
-        layout.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='As Lamp')
-        layout.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='As Hull')
-        layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='As Light Tubes')
-
-
 classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_AreaLight, LP_PT_LightPaint)
-properties = tuple()
 
 
 def register():
-    window_manager = bpy.types.WindowManager
-
     for cls in classes:
         bpy.utils.register_class(cls)
-
-    for name, prop in properties:
-        setattr(window_manager, name, prop)
 
 
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
-
-    window_manager = bpy.types.WindowManager
-    for name, _ in properties[::-1]:
-        try:
-            delattr(window_manager, name)
-        except AttributeError:
-            pass
 
 
 if __name__ == '__main__':

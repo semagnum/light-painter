@@ -26,6 +26,12 @@ from .method_util import has_strokes
 
 
 def get_box(vertices, normal):
+    """Given a set of vertices flattened along a plane and their normal, return an aligned rectangle.
+
+    :param vertices: list of vertex coordinates in world space
+    :param normal: normal of vertices for rectangle to be projected to
+    :return: tuple of (coordinate of rect center, matrix for rotation, rect length, and rect width
+    """
     # rotate hull so normal is pointed up, so we can ignore Z
     # find angle of fitted box
     align_to_z = normal.rotation_difference(Vector((0.0, 0.0, 1.0))).to_matrix()
