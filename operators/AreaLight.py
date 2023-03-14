@@ -90,9 +90,16 @@ class LP_OT_AreaLight(bpy.types.Operator):
         unit='POWER'
     )
 
+    min_size: bpy.props.FloatVectorProperty(name='Minimum light size',
+                                            description='Lamp size will be clamped to these minimum values',
+                                            size=2,
+                                            min=0.001,
+                                            default=(0.01, 0.01),
+                                            unit='LENGTH')
+
     light_color: bpy.props.FloatVectorProperty(name="Light Color",
                                                size=3,
-                                               default=[1.0, 1.0, 1.0],
+                                               default=(1.0, 1.0, 1.0),
                                                min=0.0,
                                                soft_max=1.0,
                                                subtype='COLOR')
@@ -125,8 +132,8 @@ class LP_OT_AreaLight(bpy.types.Operator):
 
         # set light data properties
         context.object.data.color = self.light_color
-        context.object.data.size = x_size
-        context.object.data.size_y = y_size
+        context.object.data.size = max(self.min_size[0], x_size)
+        context.object.data.size_y = max(self.min_size[1], y_size)
         context.object.data.energy = self.power
         context.object.data.shape = self.shape
 
