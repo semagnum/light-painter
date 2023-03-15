@@ -12,7 +12,9 @@ MAX_RAY_DISTANCE = 0.1
 def reflect_vector(input_vector: Vector, normal: Vector) -> Vector:
     """Reflects input vector based on a given normal."""
     dn = 2 * input_vector.dot(normal)
-    return input_vector - normal * dn
+    reflected_v = input_vector - normal * dn
+    reflected_v.normalize()
+    return reflected_v
 
 
 def axis_prop() -> bpy.props.EnumProperty:
