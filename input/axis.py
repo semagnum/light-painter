@@ -46,6 +46,9 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
     :param offset_amount: magnitude of offset
     :return: offset vertices and updated normals
     """
+    if offset_amount == 0:
+        return vertices, normals
+
     if axis_val in VECTORS:
         return tuple(v + VECTORS[axis_val] * offset_amount for v in vertices), tuple(VECTORS[axis_val] for _ in vertices)
 
