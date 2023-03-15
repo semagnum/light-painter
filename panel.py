@@ -19,7 +19,7 @@
 import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
-from .operators import LP_OT_AreaLight, LP_OT_ConvexLight, LP_OT_Skin
+from .operators import LP_OT_AreaLight, LP_OT_ConvexLight, LP_OT_Skin, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight
 
 
 ADDON_NAME = 'Light Paint'
@@ -35,7 +35,7 @@ class LP_PT_LightPaint(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.label(text='Light draw')
+        layout.label(text='Paint')
 
         layout.prop(context.scene.tool_settings, 'annotation_stroke_placement_view3d', text='')
 
@@ -58,8 +58,18 @@ class LP_PT_LightPaint(bpy.types.Panel):
 
         layout.separator()
 
-        layout.label(text='Apply')
+        layout.label(text='Light')
 
-        layout.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='As Lamp')
-        layout.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='As Hull')
-        layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='As Light Tubes')
+        row = layout.row()
+        row.alignment = 'CENTER'
+
+        row.operator(LP_OT_PointLight.bl_idname, icon='LIGHT_POINT', text='')
+        row.operator(LP_OT_SunLight.bl_idname, icon='LIGHT_SUN', text='')
+        row.operator(LP_OT_SpotLight.bl_idname, icon='LIGHT_SPOT', text='')
+        row.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='')
+
+        row = layout.row()
+        row.alignment = 'CENTER'
+
+        row.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='')
+        row.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='')
