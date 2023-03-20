@@ -16,7 +16,6 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import bpy
 import bmesh
 
 from .axis import offset_points
@@ -38,7 +37,9 @@ def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tup
 
     # create mesh to get vertex normals
 
-    stroke_mesh = bpy.data.meshes.new('myBeautifulMesh')  # add the new mesh
+    bpy_data = context.blend_data
+
+    stroke_mesh = bpy_data.meshes.new('myBeautifulMesh')  # add the new mesh
     stroke_mesh.from_pydata(stroke_vertices, stroke_edge_indices, tuple())
 
     bm_obj = bmesh.new()
@@ -48,7 +49,7 @@ def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tup
 
     # now that we have the vertex normals, delete the mesh data
     bm_obj.free()
-    bpy.data.meshes.remove(stroke_mesh, do_unlink=True)
+    bpy_data.meshes.remove(stroke_mesh, do_unlink=True)
 
     stroke_vertices, stroke_normals = offset_points(context, stroke_vertices, stroke_normals, axis, offset_amount)
 
