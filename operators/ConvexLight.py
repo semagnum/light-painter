@@ -94,7 +94,7 @@ class LP_OT_ConvexLight(bpy.types.Operator):
 
             # get average, negated normal
             avg_normal = sum(normals, start=Vector())
-            avg_normal.normalized()
+            avg_normal.normalize()
 
             farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
 

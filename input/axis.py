@@ -79,7 +79,7 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
         depsgraph = context.evaluated_depsgraph_get()
         for idx, v, n in zip(range(len(vertices)), vertices, normals):
             direction = v - camera_origin
-            direction.normalized()
+            direction.normalize()
             is_hit, _loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, camera_origin, direction)
             if is_hit:
                 normals[idx] = reflect_vector(direction, hit_normal)
