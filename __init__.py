@@ -18,13 +18,14 @@
 
 import bpy
 
-from .operators import LP_OT_AreaLight, LP_OT_ConvexLight, LP_OT_Skin, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight
+from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
+from .operators import LP_OT_ConvexLight, LP_OT_Skin
 from .panel import LP_PT_LightPaint
 
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 2, 3),
+    'version': (0, 2, 4),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
@@ -34,7 +35,9 @@ bl_info = {
     'tracker_url': '',
 }
 
-classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_PT_LightPaint)
+classes = (LP_OT_ConvexLight, LP_OT_Skin,
+           LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky,
+           LP_PT_LightPaint)
 
 
 def register():

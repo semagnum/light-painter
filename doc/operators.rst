@@ -44,10 +44,26 @@ lightpaint.operators.SpotLight module
    :undoc-members:
    :show-inheritance:
 
+lightpaint.operators.SkyTexture module
+------------------------------------
+
+.. automodule:: lightpaint.operators.SkyTexture
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 lightpaint.operators.SunLight module
 ------------------------------------
 
 .. automodule:: lightpaint.operators.SunLight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+lightpaint.operators.sun_utils module
+------------------------------------
+
+.. automodule:: lightpaint.operators.sun_utils
    :members:
    :undoc-members:
    :show-inheritance:

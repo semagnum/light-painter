@@ -17,6 +17,7 @@
 
 
 import bpy
+from math import atan, atan2, pi, sqrt
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes_and_normals
@@ -24,10 +25,10 @@ from .method_util import has_strokes
 from .sun_utils import SunProps
 
 
-class LP_OT_SunLight(bpy.types.Operator, SunProps):
+class LP_OT_Sky(bpy.types.Operator, SunProps):
     """Modal object selection with a ray cast"""
-    bl_idname = 'semagnum.lp_light_sun'
-    bl_label = 'Paint Sun Lamp'
+    bl_idname = 'semagnum.lp_sky'
+    bl_label = 'Paint Sky texture'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()
@@ -38,10 +39,7 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
 
     def draw(self, _context):
         layout = self.layout
-        layout.use_property_split = True
-
         layout.prop(self, 'axis')
-
         self.draw_sun_props(layout)
 
     def execute(self, context):
@@ -55,17 +53,33 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         if self.normal_method == 'OCCLUSION':
             sun_normal = self.get_occlusion_based_normal(context, vertices, avg_normal)
         else:
-            sun_normal = Vector(avg_normal)
+            sun_normal = avg_normal
 
-        sun_normal.negate()
+        # get world texture
+        bpy_data = context.blend_data
+        new_world = bpy_data.worlds.new('Light Painter World')
+        context.scene.world = new_world
+        new_world.use_nodes = True
+        world_node_tree = new_world.node_tree
 
-        # rotation difference
-        rotation = Vector((0.0, 0.0, -1.0)).rotation_difference(sun_normal).to_euler()
+        # add sky texture node, connect to background node
+        background_node = world_node_tree.nodes['Background']
+        sky_node = world_node_tree.nodes.new('ShaderNodeTexSky')
+        world_node_tree.links.new(sky_node.outputs[0], background_node.inputs[0])
 
-        bpy.ops.object.select_all(action='DESELECT')
+        # add data for sky texture
+        # set sky type based on render engine
+        if context.scene.render.engine == 'CYCLES':
+            sky_node.sky_type = 'NISHITA'
+            x, y, z = sun_normal
+            if z == 0:  # prevent division by zero
+                z = 0.0001
+            sky_node.sun_elevation = atan((sqrt(x*x + y*y)) / z) + (pi * 0.5)
+            sky_node.sun_rotation = atan2(x, y) + pi
+        else:
+            sky_node.sky_type = 'PREETHAM'
+            sky_node.sun_direction = sun_normal  # vector pointing towards sun
 
-        center = context.scene.cursor.location
-
-        bpy.ops.object.light_add(type='SUN', align='WORLD', location=center, rotation=rotation, scale=(1, 1, 1))
+        # connect both nodes
 
         return {'FINISHED'}

@@ -19,7 +19,8 @@
 import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
-from .operators import LP_OT_AreaLight, LP_OT_ConvexLight, LP_OT_Skin, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight
+from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
+from .operators import LP_OT_ConvexLight, LP_OT_Skin
 
 
 ADDON_NAME = 'Light Paint'
@@ -67,6 +68,7 @@ class LP_PT_LightPaint(bpy.types.Panel):
         row.operator(LP_OT_SunLight.bl_idname, icon='LIGHT_SUN', text='')
         row.operator(LP_OT_SpotLight.bl_idname, icon='LIGHT_SPOT', text='')
         row.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='')
+        row.operator(LP_OT_Sky.bl_idname, icon='WORLD', text='')
 
         row = layout.row()
         row.alignment = 'CENTER'
