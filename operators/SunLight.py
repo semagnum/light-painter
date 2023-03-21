@@ -19,7 +19,7 @@
 import bpy
 from mathutils import Vector
 
-from ..input import axis_prop, get_strokes_and_normals
+from ..input import axis_prop, get_strokes, RAY_OFFSET
 from .method_util import has_strokes
 
 
@@ -31,11 +31,12 @@ class LP_OT_SunLight(bpy.types.Operator):
 
     axis: axis_prop()
 
-    offset: bpy.props.FloatProperty(
-        name='Offset',
-        description='Light\'s offset from annotation along specified axis',
-        min=0.0,
-        default=1.0,
+    shadow_distance: bpy.props.FloatProperty(
+        name='Shadow detection ray distance',
+        description='Distance from brushstrokes for occlusion tests.'
+                    'The higher the value, the "higher" in the sky your sun will likely be.',
+        min=0.001,
+        default=100.0,
         unit='LENGTH'
     )
 
@@ -46,15 +47,6 @@ class LP_OT_SunLight(bpy.types.Operator):
         default=10,
         subtype='POWER',
         unit='POWER'
-    )
-
-    min_size: bpy.props.FloatVectorProperty(
-        name='Minimum size',
-        description='Lamp size will be clamped to these minimum values',
-        size=2,
-        min=0.001,
-        default=(0.01, 0.01),
-        unit='LENGTH'
     )
 
     light_color: bpy.props.FloatVectorProperty(
@@ -70,39 +62,50 @@ class LP_OT_SunLight(bpy.types.Operator):
     def poll(cls, context):
         return has_strokes(context)
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.use_property_split = True
 
         layout.prop(self, 'axis')
-        layout.prop(self, 'offset')
+        layout.prop(self, 'shadow_distance')
 
         layout.separator()
         layout.label(text='Lamp')
         layout.prop(self, 'light_color')
         layout.prop(self, 'power')
-        layout.prop(self, 'min_size')
 
     def execute(self, context):
-        strokes = get_strokes_and_normals(context, self.axis, self.offset)
-        vertices = tuple(v for stroke in strokes for v in stroke[0])
-        normals = (n for stroke in strokes for n in stroke[1])
+        vertices = tuple(v for stroke in get_strokes(context, self.axis, 0.0) for v in stroke)
+        offset_dist = self.shadow_distance
+        hit_vertices = tuple(v for stroke in get_strokes(context, self.axis, offset_dist) for v in stroke)
 
         # get average, negated normal
-        avg_normal = sum(normals, start=Vector())
+        def is_blocked(scene, depsgraph, origin, direction):
+            offset_origin = origin + direction * RAY_OFFSET
+            is_hit, _, _, _idx, _, _ = scene.ray_cast(depsgraph, offset_origin, direction)
+            return is_hit
+
+        scene = context.scene
+        depsgraph = context.evaluated_depsgraph_get()
+
+        # get average, negated normal
+        avg_normal = Vector()
+        for v in vertices:
+            for hit_v in hit_vertices:
+                potential_normal = hit_v - v
+                potential_normal.normalized()
+                if not is_blocked(scene, depsgraph, v, potential_normal):
+                    avg_normal += potential_normal
+
         avg_normal.normalized()
         avg_normal.negate()
-
-        farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
-
-        projected_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
-
-        center = sum(projected_vertices, start=Vector()) / len(projected_vertices)
 
         # rotation difference
         rotation = Vector((0.0, 0.0, -1.0)).rotation_difference(avg_normal).to_euler()
 
         bpy.ops.object.select_all(action='DESELECT')
+
+        center = scene.cursor.location
 
         bpy.ops.object.light_add(type='SUN', align='WORLD', location=center, rotation=rotation, scale=(1, 1, 1))
 
