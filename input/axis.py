@@ -46,14 +46,16 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
     :param offset_amount: magnitude of offset
     :return: offset vertices and updated normals
     """
-    if offset_amount == 0:
-        return vertices, normals
 
     if axis_val in VECTORS:
-        return tuple(v + VECTORS[axis_val] * offset_amount for v in vertices), tuple(VECTORS[axis_val] for _ in vertices)
+        vertices = tuple(v + VECTORS[axis_val] * offset_amount
+                         for v in vertices)
+        normals = tuple(VECTORS[axis_val]
+                        for _ in vertices)
 
-    elif axis_val == 'NORMAL':
-        vertices = tuple(v + n * offset_amount for v, n in zip(vertices, normals))
+    elif axis_val == 'NORMAL' and offset_amount != 0:
+        vertices = tuple(v + n * offset_amount
+                         for v, n in zip(vertices, normals))
     elif axis_val == 'NORMAL-RAY':
         offset_vertices = tuple(v + n * RAY_OFFSET for v, n in zip(vertices, normals))
 
@@ -65,7 +67,9 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
             if is_hit:
                 normals[idx] = hit_normal
 
-        vertices = [v + n * offset_amount for v, n in zip(vertices, normals)]
+        if offset_amount != 0:
+            vertices = tuple(v + n * offset_amount
+                             for v, n in zip(vertices, normals))
     elif axis_val == 'REFLECT':
         scene = context.scene
         camera = scene.camera
@@ -80,6 +84,8 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
             if is_hit:
                 normals[idx] = reflect_vector(direction, hit_normal)
 
-        vertices = [v + n * offset_amount for v, n in zip(vertices, normals)]
+        if offset_amount != 0:
+            vertices = tuple(v + n * offset_amount
+                             for v, n in zip(vertices, normals))
 
     return vertices, normals
