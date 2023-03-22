@@ -125,7 +125,7 @@ class SunProps:
                         if not (x == 0 and y == 0 and z == 0))
 
         for x, y, z in samples_loop:
-            curr_vector = Vector((x, y, z)).normalized()
+            curr_vector = (avg_normal + Vector((x, y, z))).normalized()
 
             # clamp tested vectors to prevent lighting from straight above,
             # to force lower sun angles and therefore more dynamic lighting
