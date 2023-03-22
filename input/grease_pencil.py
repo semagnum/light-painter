@@ -45,7 +45,7 @@ def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tup
     bm_obj = bmesh.new()
     bm_obj.from_mesh(stroke_mesh)
 
-    stroke_normals = [v.normal for v in bm_obj.verts]
+    stroke_normals = [v.normal.normalized() for v in bm_obj.verts]
 
     # now that we have the vertex normals, delete the mesh data
     bm_obj.free()
