@@ -5,8 +5,6 @@ VECTORS = {'X': Vector((1, 0, 0)), 'Y': Vector((0, 1, 0)), 'Z': Vector((0, 0, 1)
 """List of arbitrary axes and their given vector."""
 RAY_OFFSET = 0.001
 """Epsilon offset for raycasts, to prevent self-collisions."""
-MAX_RAY_DISTANCE = 0.1
-"""Maximum distance for raycasts. Lowering this improves performance drastically."""
 
 
 def reflect_vector(input_vector: Vector, normal: Vector) -> Vector:
@@ -62,10 +60,10 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
         scene = context.scene
         depsgraph = context.evaluated_depsgraph_get()
         for idx, v, n in zip(range(len(offset_vertices)), offset_vertices, normals):
-            is_hit, _loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, v, n * -1,
-                                                                           distance=MAX_RAY_DISTANCE)
+            is_hit, hit_loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, v, n * -1)
             if is_hit:
                 normals[idx] = hit_normal
+                vertices[idx] = hit_loc
 
         if offset_amount != 0:
             vertices = tuple(v + n * offset_amount
@@ -80,9 +78,10 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
         for idx, v, n in zip(range(len(vertices)), vertices, normals):
             direction = v - camera_origin
             direction.normalize()
-            is_hit, _loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, camera_origin, direction)
+            is_hit, hit_loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, camera_origin, direction)
             if is_hit:
                 normals[idx] = reflect_vector(direction, hit_normal)
+                vertices[idx] = hit_loc
 
         if offset_amount != 0:
             vertices = tuple(v + n * offset_amount
