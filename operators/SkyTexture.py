@@ -51,7 +51,12 @@ class LP_OT_Sky(bpy.types.Operator, SunProps):
         avg_normal.normalize()
 
         if self.normal_method == 'OCCLUSION':
-            sun_normal = self.get_occlusion_based_normal(context, vertices, avg_normal)
+            try:
+                sun_normal = self.get_occlusion_based_normal(context, vertices, avg_normal)
+            except ValueError:
+                self.report({'ERROR'}, 'No valid directions found '
+                                       '(add more samples or increase the elevation clamp!), using average normal')
+                sun_normal = avg_normal
         else:
             sun_normal = avg_normal
 
