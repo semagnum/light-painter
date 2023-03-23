@@ -17,11 +17,13 @@
 
 
 import bpy
+from math import cos, pi, radians, sin
 from mathutils import Vector
 import numpy as np
 from typing import Iterable
 
 EPSILON = 0.01
+PI_OVER_2 = pi / 2
 
 
 def is_blocked(scene, depsgraph, origin: Vector, direction: Vector) -> bool:
@@ -48,6 +50,15 @@ def calc_rank(dot_product: float, count: int) -> float:
     return (dot_product + 1) * count
 
 
+def geo_to_dir(latitude, longitude) -> Vector:
+    if latitude == pi/2:
+        return Vector((0, 0, 1))
+    x = sin(longitude)
+    y = cos(longitude)
+    z = sin(latitude)
+    return Vector((x, y, z))
+
+
 class SunProps:
     """Sun operator related properties and functions."""
     normal_method: bpy.props.EnumProperty(
@@ -62,18 +73,20 @@ class SunProps:
 
     samples: bpy.props.IntProperty(
         name='Samples',
-        description='Samples of normals to determine occlusion',
-        min=2,
+        description='Samples of normals per latitude and longitude to test occlusion.'
+                    'Increasing samples improves precision at the cost of processing time',
+        min=4,
         default=12,
     )
 
-    z_dot: bpy.props.FloatProperty(
-        name='Z Dot Product',
-        description='Anything ray above this dot product of Z will be excluded.'
-                    'Forces the sun closer to the horizon, if possible, for more "dynamic shots".',
+    sun_elevation_clamp: bpy.props.FloatProperty(
+        name='Sun Elevation Clamp',
+        description='Tested normals will clamp to this elevation.'
+                    'Forces the sun closer to the horizon, allowing more dynamic lighting.',
         min=0.0, soft_min=0.0,
-        max=1.0, soft_max=1.0,
-        default=0.75,
+        max=PI_OVER_2, soft_max=PI_OVER_2,
+        default=radians(60),
+        subtype='ANGLE'
     )
 
     def draw_sun_props(self, layout):
@@ -82,7 +95,7 @@ class SunProps:
 
         if self.normal_method == 'OCCLUSION':
             layout.prop(self, 'samples')
-            layout.prop(self, 'z_dot')
+            layout.prop(self, 'sun_elevation_clamp', slider=True)
 
     def get_occlusion_based_normal(self, context, vertices: Iterable, avg_normal: Vector) -> Vector:
         """Find a normal that best points toward a given normal that's visible by the most points.
@@ -92,55 +105,29 @@ class SunProps:
         :param avg_normal: average normal as the preferred direction towards the sun lamp
         :return: world space Vector pointing towards the sun
         """
-        # get an arbitrary X and Y axis
-        x_axis = avg_normal.cross(Vector((0, 0, 1)))
-        y_axis = avg_normal.cross(x_axis)
-
-        axes = (x_axis, y_axis, avg_normal)
         sample_size = self.samples
-        max_z_dot = self.z_dot
-
-        def get_axis_linspace(idx: int):
-            """Get a linear sample for a given axis."""
-            sample_min = min(axis[idx] for axis in axes)
-            sample_max = max(axis[idx] for axis in axes)
-            return np.linspace(sample_min, sample_max, sample_size)
-
-        x_samples = get_axis_linspace(0)
-        y_samples = get_axis_linspace(1)
-        z_samples = get_axis_linspace(2)
+        max_sun_elevation = self.sun_elevation_clamp
+        longitude_samples = np.linspace(0, 2 * pi, sample_size, endpoint=False)
+        latitude_samples = np.linspace(0, max_sun_elevation, sample_size)
 
         # iterate over each axis
         # if the resulting vector is all zeroes or the dot product of it and Z axis is too high, skip
         # if the dot product of it and Z axis is less than zero, skip (to avoid night)
         scene = context.scene
         depsgraph = context.evaluated_depsgraph_get()
-        sun_normal = Vector((0, 0, -1))
-        sun_rank = 0
 
-        samples_loop = ((x, y, z)
-                        for x in x_samples
-                        for y in y_samples
-                        for z in z_samples
-                        if not (x == 0 and y == 0 and z == 0))
+        samples_loop = (geo_to_dir(lat, long).normalized()
+                        for long in longitude_samples
+                        for lat in latitude_samples
+                        if geo_to_dir(lat, long).normalized().dot(avg_normal) > 0)
 
-        for x, y, z in samples_loop:
-            curr_vector = (avg_normal + Vector((x, y, z))).normalized()
+        def normal_rank(normal):
+            vertex_visibility_count = sum(1 for v in vertices
+                                          if not is_blocked(scene, depsgraph, v, normal))
 
-            # clamp tested vectors to prevent lighting from straight above,
-            # to force lower sun angles and therefore more dynamic lighting
-            z_dot = curr_vector.dot(Vector((0, 0, 1)))
-            if z_dot < 0 or z_dot > max_z_dot:
-                continue
+            curr_rank = calc_rank(normal.dot(avg_normal), vertex_visibility_count)
+            return curr_rank, normal
 
-            vertex_visibility_count = 0
-            for v in vertices:
-                if not is_blocked(scene, depsgraph, v, curr_vector):
-                    vertex_visibility_count += 1
-
-            curr_rank = calc_rank(curr_vector.dot(avg_normal), vertex_visibility_count)
-            if calc_rank(curr_vector.dot(avg_normal), vertex_visibility_count) > sun_rank:
-                sun_rank = curr_rank
-                sun_normal = curr_vector
+        sun_normal = max(normal_rank(normal) for normal in samples_loop)[1]
 
         return sun_normal
