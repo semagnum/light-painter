@@ -26,18 +26,15 @@ from .operators import LP_OT_ConvexLight, LP_OT_Skin
 ADDON_NAME = 'Light Paint'
 
 
-class LP_PT_LightPaint(bpy.types.Panel):
+class LP_PT_Paint(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
-    bl_label = ADDON_NAME
+    bl_label = 'Paint'
     bl_category = ADDON_NAME
     bl_region_type = 'UI'
     bl_context = 'objectmode'
 
     def draw(self, context):
         layout = self.layout
-
-        layout.label(text='Paint')
-
         layout.prop(context.scene.tool_settings, 'annotation_stroke_placement_view3d', text='')
 
         tool_names_label_icon = (
@@ -57,10 +54,16 @@ class LP_PT_LightPaint(bpy.types.Panel):
         layout.operator('gpencil.annotation_active_frame_delete',
                         text='Clear all', icon_value=erase_icon_id)
 
-        layout.separator()
 
-        layout.label(text='Light')
+class LP_PT_Light(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_label = 'Light'
+    bl_category = ADDON_NAME
+    bl_region_type = 'UI'
+    bl_context = 'objectmode'
 
+    def draw(self, _context):
+        layout = self.layout
         row = layout.row()
         row.alignment = 'CENTER'
 
