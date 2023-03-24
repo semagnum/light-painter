@@ -71,17 +71,25 @@ class SunProps:
         default='AVERAGE'
     )
 
-    samples: bpy.props.IntProperty(
-        name='Samples',
-        description='Samples of normals per latitude and longitude to test occlusion.'
+    longitude_samples: bpy.props.IntProperty(
+        name='Azimuth Samples',
+        description='Samples of normals around the azimuth. '
                     'Increasing samples improves precision at the cost of processing time',
         min=4,
-        default=12,
+        default=6,
+    )
+
+    latitude_samples: bpy.props.IntProperty(
+        name='Elevation Samples',
+        description='Samples of normals from the horizon to straight up on the Z-axis. '
+                    'Increasing samples improves precision at the cost of processing time',
+        min=3,
+        default=6,
     )
 
     sun_elevation_clamp: bpy.props.FloatProperty(
-        name='Sun Elevation Clamp',
-        description='Tested normals will clamp to this elevation.'
+        name='Max Sun Elevation',
+        description='Tested normals will be scaled to at most this elevation.'
                     'Forces the sun closer to the horizon, allowing more dynamic lighting.',
         min=0.0, soft_min=0.0,
         max=PI_OVER_2, soft_max=PI_OVER_2,
@@ -94,7 +102,9 @@ class SunProps:
         layout.prop(self, 'normal_method', expand=True)
 
         if self.normal_method == 'OCCLUSION':
-            layout.prop(self, 'samples')
+            col = layout.column(align=True)
+            col.prop(self, 'longitude_samples')
+            col.prop(self, 'latitude_samples')
             layout.prop(self, 'sun_elevation_clamp', slider=True)
 
     def get_occlusion_based_normal(self, context, vertices: Iterable, avg_normal: Vector) -> Vector:
@@ -105,10 +115,14 @@ class SunProps:
         :param avg_normal: average normal as the preferred direction towards the sun lamp
         :return: world space Vector pointing towards the sun
         """
-        sample_size = self.samples
         max_sun_elevation = self.sun_elevation_clamp
-        longitude_samples = np.linspace(0, 2 * pi, sample_size, endpoint=False)
-        latitude_samples = np.linspace(0, max_sun_elevation, sample_size)
+        latitude_sample_size = self.latitude_samples
+        latitude_samples = np.linspace(0, max_sun_elevation, latitude_sample_size)
+
+        # since about half of longitudinal samples will not be viable (ie pointing away from ideal normal),
+        # we will double its sample size.
+        longitude_sample_size = self.longitude_samples * 2
+        longitude_samples = np.linspace(0, 2 * pi, longitude_sample_size, endpoint=False)
 
         # iterate over each axis
         # if the resulting vector is all zeroes or the dot product of it and Z axis is too high, skip
