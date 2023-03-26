@@ -5,3 +5,5 @@ from .PointLight import LP_OT_PointLight
 from .SunLight import LP_OT_SunLight
 from .SpotLight import LP_OT_SpotLight
 from .SkyTexture import LP_OT_Sky
+
+from .method_util import has_strokes

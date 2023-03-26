@@ -63,6 +63,7 @@ class LP_OT_AreaLight(bpy.types.Operator):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_area'
     bl_label = 'Paint Area Lamp'
+    bl_description = 'Adds an area lamp to the scene that is positioned and rotated to light surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()

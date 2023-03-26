@@ -27,6 +27,7 @@ class LP_OT_ConvexLight(bpy.types.Operator):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_hull'
     bl_label = 'Paint Light Hull'
+    bl_description = 'Adds an emissive convex hull to the scene that is positioned to light surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()

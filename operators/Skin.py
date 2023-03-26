@@ -26,6 +26,7 @@ class LP_OT_Skin(bpy.types.Operator):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_tube'
     bl_label = 'Paint Light Tubes'
+    bl_description = 'Adds an emissive tube to the scene that is positioned to light surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()

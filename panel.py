@@ -19,6 +19,7 @@
 import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
+from .operators import has_strokes
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
 from .operators import LP_OT_ConvexLight, LP_OT_Skin
 
@@ -50,31 +51,29 @@ class LP_PT_Paint(bpy.types.Panel):
             icon_val = ToolSelectPanelHelper._icon_value_from_icon_handle(icon)
             col.operator(op_name, text=label, icon_value=icon_val).name = name
 
-        erase_icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('ops.gpencil.draw.eraser')
-        layout.operator('gpencil.annotation_active_frame_delete',
-                        text='Clear all', icon_value=erase_icon_id)
+        layout.operator('gpencil.annotation_active_frame_delete', text='Clear all')
 
 
 class LP_PT_Light(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
-    bl_label = 'Light'
+    bl_label = 'Add Light'
     bl_category = ADDON_NAME
     bl_region_type = 'UI'
     bl_context = 'objectmode'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
-        row = layout.row()
-        row.alignment = 'CENTER'
 
-        row.operator(LP_OT_PointLight.bl_idname, icon='LIGHT_POINT', text='')
-        row.operator(LP_OT_SunLight.bl_idname, icon='LIGHT_SUN', text='')
-        row.operator(LP_OT_SpotLight.bl_idname, icon='LIGHT_SPOT', text='')
-        row.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='')
-        row.operator(LP_OT_Sky.bl_idname, icon='WORLD', text='')
+        if not has_strokes(context):
+            layout.label(text='No annotation strokes found. Use the "Paint" panel to add strokes.', icon='ERROR')
 
-        row = layout.row()
-        row.alignment = 'CENTER'
+        layout.operator(LP_OT_PointLight.bl_idname, icon='LIGHT_POINT', text='Point')
+        layout.operator(LP_OT_SunLight.bl_idname, icon='LIGHT_SUN', text='Sun')
+        layout.operator(LP_OT_SpotLight.bl_idname, icon='LIGHT_SPOT', text='Spot')
+        layout.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='Area')
+        layout.operator(LP_OT_Sky.bl_idname, icon='WORLD', text='Sky Texture')
 
-        row.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='')
-        row.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='')
+        layout.separator()
+
+        layout.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='Mesh Hull')
+        layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='Light Tubes')

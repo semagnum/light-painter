@@ -29,6 +29,7 @@ class LP_OT_Sky(bpy.types.Operator, SunProps):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_sky'
     bl_label = 'Paint Sky texture'
+    bl_description = 'Adds a sky texture to the scene world where the sun is rotated to light surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()

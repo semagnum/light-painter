@@ -28,6 +28,7 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_sun'
     bl_label = 'Paint Sun Lamp'
+    bl_description = 'Adds a sun lamp to the scene at the 3D cursor that is rotated to light surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()

@@ -27,6 +27,7 @@ class LP_OT_SpotLight(bpy.types.Operator):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_spot'
     bl_label = 'Paint Spot Lamp'
+    bl_description = 'Adds a spot lamp to the scene that is positioned and rotated to light surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()
