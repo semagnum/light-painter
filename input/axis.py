@@ -24,10 +24,9 @@ def axis_prop() -> bpy.props.EnumProperty:
             ('X', 'X', ''),
             ('Y', 'Y', ''),
             ('Z', 'Z', ''),
-            ('NORMAL', 'Normal', 'Along annotation\'s vertex normal'),
-            ('NORMAL-RAY', 'Normal + Surface', 'Casts rays to estimate normal of underlying surface'),
-            ('REFLECT', 'Reflect to camera', 'Casts rays from camera to determine offset,'
-                                             'best for rim lighting and reflections'),
+            ('NORMAL', 'Stroke Normal', 'Along annotation stroke\'s normal'),
+            ('NORMAL-RAY', 'Surface Normal', 'Casts rays to estimate normal of underlying surface'),
+            ('REFLECT', 'Rim lighting', 'Positions light to reflect onto the specified surface directly into the scene camera'),
         ),
         default='NORMAL-RAY'
     )
