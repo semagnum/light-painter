@@ -53,8 +53,16 @@ they will not work in Eevee):
 - emissive tube - each annotation stroke becomes a "tube" of light -
   great for neon lighting or custom-shaped lighting.
 
-You can press `F9` or click the collapsed panel in the bottom-left corner of the 3D view
+You can press `F9` or click the collapsed Redo Panel in the bottom-left corner of the 3D view
 to tweak parameters such as light distance, power and color.
+
+**Remember that the operator will use all annotations on
+the current frame as part of the evaluation.**
+The add-on cannot remove the annotations post-operation for you, 
+that would prevent the Redo Panel from working
+(since it could not redo the operation if the annotations are no longer there).
+There is a convenience button in the pie menu and panel
+to clear all strokes on the current frame.
 
 ### Sun lamp and Sky texture operators
 
