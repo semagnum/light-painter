@@ -33,6 +33,24 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
 
     axis: axis_prop()
 
+    power: bpy.props.FloatProperty(
+        name='Power',
+        description='Area light\'s emit value',
+        min=0.001,
+        default=10,
+        subtype='POWER',
+        unit='POWER'
+    )
+
+    light_color: bpy.props.FloatVectorProperty(
+        name='Color',
+        size=3,
+        default=(1.0, 1.0, 1.0),
+        min=0.0,
+        soft_max=1.0,
+        subtype='COLOR'
+    )
+
     @classmethod
     def poll(cls, context):
         return has_strokes(context)
@@ -44,6 +62,10 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         layout.prop(self, 'axis')
 
         self.draw_sun_props(layout)
+
+        layout.separator()
+        layout.prop(self, 'light_color')
+        layout.prop(self, 'power')
 
     def execute(self, context):
         strokes = get_strokes_and_normals(context, self.axis, 0.0)
@@ -73,5 +95,9 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         center = context.scene.cursor.location
 
         bpy.ops.object.light_add(type='SUN', align='WORLD', location=center, rotation=rotation, scale=(1, 1, 1))
+
+        # set light data properties
+        context.object.data.color = self.light_color
+        context.object.data.energy = self.power
 
         return {'FINISHED'}
