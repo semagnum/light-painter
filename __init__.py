@@ -20,12 +20,13 @@ import bpy
 
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
 from .operators import LP_OT_ConvexLight, LP_OT_Skin
+from .pie import PIE_MT_Light, PIE_MT_Paint
 from .panel import LP_PT_Paint, LP_PT_Light
 
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 3, 2),
+    'version': (0, 3, 4),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
@@ -37,17 +38,37 @@ bl_info = {
 
 classes = (LP_OT_ConvexLight, LP_OT_Skin,
            LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky,
-           LP_PT_Paint, LP_PT_Light)
+           LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint)
 
+addon_pie_keymap = []
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    wm = bpy.context.window_manager
+    if wm.keyconfigs.addon:
+        kc = wm.keyconfigs.addon
+        km = kc.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'P', 'PRESS', shift=True)
+        kmi.properties.name = "PIE_MT_Light"
+        addon_pie_keymap.append((km, kmi))
+
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'P', 'PRESS', ctrl=True, shift=True)
+        kmi.properties.name = "PIE_MT_Paint"
+        addon_pie_keymap.append((km, kmi))
+
 
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
+
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+    if kc:
+        for km, kmi in addon_pie_keymap:
+            km.keymap_items.remove(kmi)
+    addon_pie_keymap.clear()
 
 
 if __name__ == '__main__':
