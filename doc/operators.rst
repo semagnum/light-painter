@@ -45,7 +45,7 @@ lightpaint.operators.SpotLight module
    :show-inheritance:
 
 lightpaint.operators.SkyTexture module
-------------------------------------
+--------------------------------------
 
 .. automodule:: lightpaint.operators.SkyTexture
    :members:
@@ -61,7 +61,7 @@ lightpaint.operators.SunLight module
    :show-inheritance:
 
 lightpaint.operators.sun_utils module
-------------------------------------
+-------------------------------------
 
 .. automodule:: lightpaint.operators.sun_utils
    :members:
