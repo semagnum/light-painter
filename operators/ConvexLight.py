@@ -35,7 +35,7 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         name='Offset',
         description='Hull\'s offset from annotation along specified axis',
         min=0.0,
-        default=0.0,
+        default=1.0,
         unit='LENGTH'
     )
 
