@@ -11,6 +11,11 @@ NORMAL_ERROR = ('Mean of normals resulted in zero vector - '
 
 
 def get_average_normal(normals: Iterable[Vector]) -> Vector:
+    """Calculates average normal. Handles zero vector edge case as an error.
+
+    :param normals: list of normal vectors
+    :return: single normalized Vector representing the average
+    """
     avg_normal = sum(normals, start=Vector())
     avg_normal.normalize()
     if avg_normal == Vector((0, 0, 0)):
