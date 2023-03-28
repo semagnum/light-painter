@@ -68,7 +68,12 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         layout.prop(self, 'power')
 
     def execute(self, context):
-        strokes = get_strokes_and_normals(context, self.axis, 0.0)
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, 0.0)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
         vertices = tuple(v for stroke in strokes for v in stroke[0])
         normals = tuple(n for stroke in strokes for n in stroke[1])
 

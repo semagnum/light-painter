@@ -134,7 +134,12 @@ class LP_OT_Skin(bpy.types.Operator):
         col.objects.link(obj)
         context.view_layer.objects.active = obj
 
-        strokes = get_strokes(context, self.axis, self.offset)
+        try:
+            strokes = get_strokes(context, self.axis, self.offset)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
         vertices = []
         edge_idx = []
         for stroke in strokes:

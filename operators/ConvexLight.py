@@ -82,14 +82,23 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         col = context.collection
         col.objects.link(obj)
         context.view_layer.objects.active = obj
-
         if not self.flatten:
-            strokes = get_strokes(context, self.axis, self.offset)
+            try:
+                strokes = get_strokes(context, self.axis, self.offset)
+            except ValueError as e:
+                self.report({'ERROR'}, str(e))
+                return {'CANCELLED'}
+
             vertices = tuple(v for stroke in strokes for v in stroke)
 
             mesh.from_pydata(vertices, [], [])
         else:
-            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+            try:
+                strokes = get_strokes_and_normals(context, self.axis, self.offset)
+            except ValueError as e:
+                self.report({'ERROR'}, str(e))
+                return {'CANCELLED'}
+
             vertices = tuple(v for stroke in strokes for v in stroke[0])
             normals = tuple(v for stroke in strokes for v in stroke[1])
 

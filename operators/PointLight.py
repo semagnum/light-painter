@@ -84,7 +84,12 @@ class LP_OT_PointLight(bpy.types.Operator):
         layout.prop(self, 'radius')
 
     def execute(self, context):
-        strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
         vertices = tuple(v for stroke in strokes for v in stroke[0])
         normals = (n for stroke in strokes for n in stroke[1])
 

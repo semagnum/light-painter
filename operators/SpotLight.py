@@ -85,7 +85,12 @@ class LP_OT_SpotLight(bpy.types.Operator):
         layout.prop(self, 'min_size')
 
     def execute(self, context):
-        strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
         vertices = tuple(v for stroke in strokes for v in stroke[0])
         normals = (n for stroke in strokes for n in stroke[1])
 
@@ -101,7 +106,12 @@ class LP_OT_SpotLight(bpy.types.Operator):
         center = sum(projected_vertices, start=Vector()) / len(projected_vertices)
         rotation = Vector((0.0, 0.0, -1.0)).rotation_difference(avg_normal).to_euler()
 
-        orig_strokes = get_strokes(context, self.axis, 0.0)
+        try:
+            orig_strokes = get_strokes(context, self.axis, 0.0)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
         orig_vertices = tuple(v for stroke in orig_strokes for v in stroke)
         orig_center = sum(orig_vertices, start=Vector()) / len(orig_vertices)
         centers_dir = (orig_center - center).normalized()

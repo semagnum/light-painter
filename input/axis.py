@@ -70,6 +70,10 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
     elif axis_val == 'REFLECT':
         scene = context.scene
         camera = scene.camera
+
+        if camera is None:
+            raise ValueError('Set a camera for your scene to use rim lighting!')
+
         camera_origin = camera.matrix_world.translation
 
         scene = context.scene
