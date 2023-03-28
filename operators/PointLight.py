@@ -20,7 +20,7 @@ import bpy
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes_and_normals
-from .method_util import has_strokes
+from .method_util import get_average_normal, has_strokes
 
 
 class LP_OT_PointLight(bpy.types.Operator):
@@ -94,9 +94,12 @@ class LP_OT_PointLight(bpy.types.Operator):
         normals = (n for stroke in strokes for n in stroke[1])
 
         # get average, negated normal
-        avg_normal = sum(normals, start=Vector())
-        avg_normal.normalize()
-        avg_normal.negate()
+        try:
+            avg_normal = get_average_normal(normals)
+            avg_normal.negate()
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
 
         farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
 

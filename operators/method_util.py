@@ -1,7 +1,22 @@
+from typing import Iterable
+
 import bpy
+from mathutils import Vector
 
 EMISSIVE_MAT_NAME = 'LightPaint_Emissive'
 FLAG_MAT_NAME = 'LightPaint_Shadow'
+
+NORMAL_ERROR = ('Mean of normals resulted in zero vector - '
+                'avoid drawing equally on surfaces facing opposite directions!')
+
+
+def get_average_normal(normals: Iterable[Vector]) -> Vector:
+    avg_normal = sum(normals, start=Vector())
+    avg_normal.normalize()
+    if avg_normal == Vector((0, 0, 0)):
+        raise ValueError(NORMAL_ERROR)
+
+    return avg_normal
 
 
 def has_strokes(context) -> bool:

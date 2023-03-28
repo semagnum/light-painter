@@ -18,10 +18,9 @@
 
 import bpy
 from math import atan, atan2, pi, sqrt
-from mathutils import Vector
 
 from ..input import axis_prop, get_strokes_and_normals
-from .method_util import has_strokes
+from .method_util import get_average_normal, has_strokes
 from .sun_utils import SunProps
 
 
@@ -53,8 +52,11 @@ class LP_OT_Sky(bpy.types.Operator, SunProps):
         vertices = tuple(v for stroke in strokes for v in stroke[0])
         normals = tuple(n for stroke in strokes for n in stroke[1])
 
-        avg_normal = sum(normals, start=Vector())
-        avg_normal.normalize()
+        try:
+            avg_normal = get_average_normal(normals)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
 
         if self.normal_method == 'OCCLUSION':
             try:
