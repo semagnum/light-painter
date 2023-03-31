@@ -10,8 +10,9 @@ These tools are also provided as a pie menu
 (default shortcut is `Ctrl + Shift + P` in the 3D view)
 and in the Light Painter panel for convenience.
 
-The stroke placement setting is preferred to be "Surface" instead of the default 3D cursor.
-You can find this also in the Light Painter panel as well
+Regarding the stroke placement setting, the two options I'd recommend is "View"
+(especially from the camera - just don't adjust your view!) or "Surface".
+You can find this setting in the Light Painter panel as well
 as in the tool settings of the 3D view header.
 
 Now just paint where you want the light to hit your objects' surfaces!
@@ -26,10 +27,15 @@ will also influence where the light will be finally positioned.
 The tool also works best
 when your annotation matches the shape of the type of lamp that you want.
 
-- Spot lamps prefer circular shapes.
+Here are some general painting tips:
+
+- Draw on multiple surfaces, preferably ones facing different directions.
+- The operators can handle some cases where the surfaces you paint face different directions,
+  but avoid complete opposite directions for better results.
+- Spot lamps prefer circular strokes.
   But if you do not trust your drawing ability,
-  a line or two representing the elliptical width and height is sufficient.
-- For area lamps, rectangles, squares, circles or a single line work best.
+  a painted line representing the diameter is sufficient.
+- Area lamps prefer rectangles, squares, circles or a single painted line.
 - Point lamps are the most forgiving since a point lamp's rotation is irrelevant.
 
 ## Painting lights
@@ -79,8 +85,3 @@ To give the artist more control, there is a "Max Sun Elevation" parameter
 where you can specify the max elevation of the sun.
 This can force the operator to only sample the sun at lower elevations,
 giving more dynamic lighting.
-
-
-
-
-
