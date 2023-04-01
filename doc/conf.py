@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../..'))
 
-project = 'Light Paint'
+project = 'Light Painter'
 copyright = '2023, Spencer Magnusson'
 author = 'Spencer Magnusson'
 html_logo = 'assets/logo.png'
