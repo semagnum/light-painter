@@ -1,6 +1,8 @@
-# Light Painter
+![Light Painter](/doc/assets/logo.png)
 
 ## Painting
+
+![pie menu for annotations](/doc/assets/pie_menu_paint.png)
 
 The painting is done using Blender's
 [annotation tools](https://docs.blender.org/manual/en/latest/interface/annotate_tool.html)
@@ -18,6 +20,8 @@ as in the tool settings of the 3D view header.
 Now just paint where you want the light to hit your objects' surfaces!
 
 ### What's the best way to paint?
+
+![Adding a light, step by step](/doc/assets/painting_steps.gif)
 
 You do not need to fill _every_ surface with the annotation tool.
 Draw some simple strokes over surfaces that you would like highlighted by your light.
@@ -38,7 +42,9 @@ Here are some general painting tips:
 - Area lamps prefer rectangles, squares, circles or a single painted line.
 - Point lamps are the most forgiving since a point lamp's rotation is irrelevant.
 
-## Painting lights
+## Adding lights
+
+![pie menu for adding lights](/doc/assets/pie_menu_light.png)
 
 You can find the light operators as a pie menu
 (default shortcut is `Shift + P` in the 3D view)
@@ -53,7 +59,7 @@ There are several light types:
 - world sky texture
 
 Also included are these (but since they use emissive materials,
-they will not work in Eevee):
+they will not work the same outside of Eevee):
 
 - emissive mesh object as a convex hull
 - emissive tube - each annotation stroke becomes a "tube" of light -
@@ -64,13 +70,17 @@ to tweak parameters such as light distance, power and color.
 
 **Remember that the operator will use all annotations on
 the current frame as part of the evaluation.**
-The add-on cannot remove the annotations post-operation for you, 
+The add-on cannot remove annotations post-operation for you, 
 that would prevent the Redo Panel from working
 (since it could not redo the operation if the annotations are no longer there).
 There is a convenience button in the pie menu and panel
 to clear all strokes on the current frame.
+So you must create strokes, add a light, clear or erase strokes,
+and new strokes to add the next light.
 
 ### Sun lamp and Sky texture operators
+
+![Adding sky texture](/doc/assets/sky_texture.gif)
 
 These two have some unique settings, so I will go over that.
 There are two options to determine direction: "average" -

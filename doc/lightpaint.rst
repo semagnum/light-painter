@@ -1,5 +1,5 @@
-lightpaint package
-==================
+Python package
+==============
 
 Subpackages
 -----------
