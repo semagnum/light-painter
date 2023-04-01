@@ -9,6 +9,14 @@ copyright = '2023, Spencer Magnusson'
 author = 'Spencer Magnusson'
 html_logo = 'assets/logo.png'
 
+html_context = {
+    "display_github": True,
+    "github_user": "semagnum",
+    "github_repo": "lightpaint",
+    "github_version": "main",
+    "conf_py_path": "/doc/",
+}
+
 extensions = ['sphinx.ext.autodoc',
               'sphinx_autodoc_typehints',
               'myst_parser',
