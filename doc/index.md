@@ -18,8 +18,8 @@ These tools are also provided as a pie menu
 (default shortcut is `Ctrl + Shift + P` in the 3D view)
 and in the Light Painter panel for convenience.
 
-Regarding the stroke placement setting, the two options I'd recommend is "View"
-(especially from the camera - just don't adjust your view!) or "Surface".
+Regarding the stroke placement setting,
+the two options I'd recommend is "3D Cursor" or "Surface".
 You can find this setting in the Light Painter panel as well
 as in the tool settings of the 3D view header.
 
