@@ -3,7 +3,7 @@
 Welcome to the official Light Painter documentation!
 Here you can learn how to use the Blender add-on and dive into the Python package.
 
-View the repository at [github.com/semagnum/lightpaint](https://github.com/semagnum/lightpaint).
+View the repository at [github.com/semagnum/light-painter](https://github.com/semagnum/light-painter).
 
 
 ## Painting
