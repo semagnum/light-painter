@@ -19,14 +19,14 @@
 import bpy
 
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
-from .operators import LP_OT_ConvexLight, LP_OT_Skin
+from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow
 from .pie import PIE_MT_Light, PIE_MT_Paint
 from .panel import LP_PT_Paint, LP_PT_Light
 
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 3, 6),
+    'version': (0, 4, 0),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
@@ -36,7 +36,7 @@ bl_info = {
     'tracker_url': '',
 }
 
-classes = (LP_OT_ConvexLight, LP_OT_Skin,
+classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow,
            LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky,
            LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint)
 

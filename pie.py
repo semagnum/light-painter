@@ -19,7 +19,7 @@ import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
-from .operators import LP_OT_ConvexLight, LP_OT_Skin
+from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow
 
 
 class PIE_MT_Paint(bpy.types.Menu):
@@ -71,15 +71,13 @@ class PIE_MT_Light(bpy.types.Menu):
         1 2 3
         """
         """
-        1, 2 = mesh hull, light tubes
+        1, 2, 4 = mesh hull, light tubes, shadow card
         7, 8, 9, 6, 3 = sky texture, sun, point, spot, area
         """
         layout = self.layout.menu_pie()
         layout.scale_y = 1.2
 
-        # 4
-        layout.separator()
-
+        layout.operator(LP_OT_ConvexShadow.bl_idname, icon='MESH_ICOSPHERE', text='Flag')
         layout.operator(LP_OT_SpotLight.bl_idname, icon='LIGHT_SPOT', text='Spot')
         layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='Light Tubes')
         layout.operator(LP_OT_SunLight.bl_idname, icon='LIGHT_SUN', text='Sun')

@@ -28,6 +28,14 @@ lightpaint.operators.PointLight module
    :undoc-members:
    :show-inheritance:
 
+lightpaint.operators.ShadowCard module
+--------------------------------------
+
+.. automodule:: lightpaint.operators.ShadowCard
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 lightpaint.operators.Skin module
 --------------------------------
 

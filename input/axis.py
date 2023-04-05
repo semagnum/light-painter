@@ -1,4 +1,5 @@
 import bpy
+import bmesh
 from mathutils import Vector
 
 VECTORS = {'X': Vector((1, 0, 0)), 'Y': Vector((0, 1, 0)), 'Z': Vector((0, 0, 1))}
@@ -32,9 +33,34 @@ def axis_prop() -> bpy.props.EnumProperty:
     )
 
 
-def offset_points(context, vertices: list[Vector], normals: list[Vector],
-                  axis_val: str, offset_amount: float) -> tuple[Vector, Vector]:
-    """Offset the position of given vertices.
+def get_stroke_normals(context, vertices: tuple[Vector]) -> list[Vector]:
+    """Get grease pencil stroke (approximated) normals
+
+    :param context: Blender context
+    :param vertices: world space coordinates of grease pencil points
+    :return: list of normalized normals in world space per vertex
+    """
+    stroke_edge_indices = tuple((start_idx, end_idx)
+                                for start_idx, end_idx in zip(range(len(vertices) - 1),
+                                                              range(1, len(vertices))))
+    bpy_data = context.blend_data
+
+    stroke_mesh = bpy_data.meshes.new('myBeautifulMesh')  # add the new mesh
+    stroke_mesh.from_pydata(vertices, stroke_edge_indices, tuple())
+
+    bm_obj = bmesh.new()
+    bm_obj.from_mesh(stroke_mesh)
+
+    normals = [v.normal.normalized() for v in bm_obj.verts]
+
+    # now that we have the vertex normals, delete the mesh data
+    bm_obj.free()
+    bpy_data.meshes.remove(stroke_mesh, do_unlink=True)
+    return normals
+
+
+def get_normals(context, vertices: list[Vector], axis_val: str) -> tuple[Vector, Vector]:
+    """Update normals of given vertices based on the axis value.
 
     :param context: Blender context
     :param vertices: list of vertices
@@ -45,15 +71,9 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
     """
 
     if axis_val in VECTORS:
-        vertices = tuple(v + VECTORS[axis_val] * offset_amount
-                         for v in vertices)
-        normals = tuple(VECTORS[axis_val]
-                        for _ in vertices)
-
-    elif axis_val == 'NORMAL' and offset_amount != 0:
-        vertices = tuple(v + n * offset_amount
-                         for v, n in zip(vertices, normals))
+        normals = tuple(VECTORS[axis_val] for _ in vertices)
     elif axis_val == 'NORMAL-RAY':
+        normals = get_stroke_normals(context, vertices)
         offset_vertices = tuple(v + n * RAY_OFFSET for v, n in zip(vertices, normals))
 
         scene = context.scene
@@ -64,9 +84,6 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
                 normals[idx] = hit_normal
                 vertices[idx] = hit_loc
 
-        if offset_amount != 0:
-            vertices = tuple(v + n * offset_amount
-                             for v, n in zip(vertices, normals))
     elif axis_val == 'REFLECT':
         scene = context.scene
         camera = scene.camera
@@ -75,6 +92,8 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
             raise ValueError('Set a camera for your scene to use rim lighting!')
 
         camera_origin = camera.matrix_world.translation
+
+        normals = get_stroke_normals(context, vertices)
 
         scene = context.scene
         depsgraph = context.evaluated_depsgraph_get()
@@ -85,9 +104,7 @@ def offset_points(context, vertices: list[Vector], normals: list[Vector],
             if is_hit:
                 normals[idx] = reflect_vector(direction, hit_normal)
                 vertices[idx] = hit_loc
-
-        if offset_amount != 0:
-            vertices = tuple(v + n * offset_amount
-                             for v, n in zip(vertices, normals))
+    else:
+        normals = get_stroke_normals(context, vertices)
 
     return vertices, normals

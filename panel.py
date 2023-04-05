@@ -21,7 +21,7 @@ from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
 from .operators import has_strokes
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
-from .operators import LP_OT_ConvexLight, LP_OT_Skin
+from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow
 
 
 ADDON_NAME = 'Light Paint'
@@ -77,3 +77,6 @@ class LP_PT_Light(bpy.types.Panel):
 
         layout.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='Mesh Hull')
         layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='Light Tubes')
+
+        layout.separator()
+        layout.operator(LP_OT_ConvexShadow.bl_idname, icon='MESH_ICOSPHERE', text='Flag')
