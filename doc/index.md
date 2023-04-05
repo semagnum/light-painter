@@ -102,6 +102,28 @@ where you can specify the max elevation of the sun.
 This can force the operator to only sample the sun at lower elevations,
 giving more dynamic lighting.
 
+## Adding shadows
+
+![Adding shadows](/assets/shadow_card.gif)
+
+Flags can be used to prevent surfaces from receiving light.
+It takes the surfaces drawn and generates makes a convex mesh hull to block the light.
+Parameters can be changed such as position, the flag's color (for bounce lighting) and opacity.
+
+1. First, add the lights.
+2. Paint the surfaces you want to be darkened.
+   These annotations will be considered edges of a convex hull.
+3. Select all the lights you want to be considered for your flag(s).
+4. Run the Flag operator. This will add a flag for each light.
+   Note that, for each light, an annotation will only be considered if its surface is visible by the light.
+   Otherwise, it will not be used for calculating its black flag.
+
+Currently, black flags for skies are not supported.
+
+# Python Package
+
+If you are interested in contributing or simply browsing, check out the code!
+
 ```{toctree}
 :maxdepth: 3
 lightpaint.rst

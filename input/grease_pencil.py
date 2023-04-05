@@ -15,10 +15,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import bmesh
-
-from .axis import offset_points
+from .axis import get_normals
 
 
 def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tuple:
@@ -31,27 +28,11 @@ def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tup
     :return: tuple of stroke coordinates and correlating normals
     """
     stroke_vertices = [point.co for point in stroke.points]
-    stroke_edge_indices = tuple((start_idx, end_idx)
-                                for start_idx, end_idx in zip(range(len(stroke_vertices) - 1),
-                                                              range(1, len(stroke_vertices))))
+    stroke_vertices, stroke_normals = get_normals(context, stroke_vertices, axis)
 
-    # create mesh to get vertex normals
-
-    bpy_data = context.blend_data
-
-    stroke_mesh = bpy_data.meshes.new('myBeautifulMesh')  # add the new mesh
-    stroke_mesh.from_pydata(stroke_vertices, stroke_edge_indices, tuple())
-
-    bm_obj = bmesh.new()
-    bm_obj.from_mesh(stroke_mesh)
-
-    stroke_normals = [v.normal.normalized() for v in bm_obj.verts]
-
-    # now that we have the vertex normals, delete the mesh data
-    bm_obj.free()
-    bpy_data.meshes.remove(stroke_mesh, do_unlink=True)
-
-    stroke_vertices, stroke_normals = offset_points(context, stroke_vertices, stroke_normals, axis, offset_amount)
+    if offset_amount != 0.0:
+        stroke_vertices = tuple(v + n * offset_amount
+                                for v, n in zip(stroke_vertices, stroke_normals))
 
     return stroke_vertices, stroke_normals
 

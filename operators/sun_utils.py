@@ -22,22 +22,10 @@ from mathutils import Vector
 import numpy as np
 from typing import Iterable
 
+from .method_util import is_blocked
+
 EPSILON = 0.01
 PI_OVER_2 = pi / 2
-
-
-def is_blocked(scene, depsgraph, origin: Vector, direction: Vector) -> bool:
-    """Check if a given point is occluded in a given direction.
-
-    :param scene: scene
-    :param depsgraph: scene dependency graph
-    :param origin: given point in world space as a Vector
-    :param direction: given direction in world space as a Vector
-    :return: True if anything is in that direction from that point, False otherwise
-    """
-    offset_origin = origin + direction * EPSILON
-    is_hit, _, _, _idx, _, _ = scene.ray_cast(depsgraph, offset_origin, direction)
-    return is_hit
 
 
 def calc_rank(dot_product: float, count: int) -> float:

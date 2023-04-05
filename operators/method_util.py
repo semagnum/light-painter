@@ -3,6 +3,8 @@ from typing import Iterable
 import bpy
 from mathutils import Vector
 
+EPSILON = 0.01
+
 EMISSIVE_MAT_NAME = 'LightPaint_Emissive'
 FLAG_MAT_NAME = 'LightPaint_Shadow'
 
@@ -29,6 +31,21 @@ def has_strokes(context) -> bool:
     annot_layer = context.active_annotation_layer
     return hasattr(annot_layer, 'active_frame') and hasattr(annot_layer.active_frame,
                                                             'strokes') and annot_layer.active_frame.strokes
+
+
+def is_blocked(scene, depsgraph, origin: Vector, direction: Vector, max_distance=1.70141e+38) -> bool:
+    """Check if a given point is occluded in a given direction.
+
+    :param scene: scene
+    :param depsgraph: scene dependency graph
+    :param origin: given point in world space as a Vector
+    :param direction: given direction in world space as a Vector
+    :param max_distance: maximum distance for raycast to check
+    :return: True if anything is in that direction from that point, False otherwise
+    """
+    offset_origin = origin + direction * EPSILON
+    is_hit, _, _, _idx, _, _ = scene.ray_cast(depsgraph, offset_origin, direction, distance=max_distance)
+    return is_hit
 
 
 def generate_emissive_material(color, emit_value: float):
@@ -67,40 +84,3 @@ def assign_emissive_material(obj, color, emit_value: float):
     """
     mat = generate_emissive_material(color, emit_value)
     obj.data.materials.append(mat)  # Assign the new material.
-
-
-def generate_flag_material(color):
-    """Generates an object shadow flag material.
-
-    :param color: shader's surface color (1.0, 1.0, 1.0).
-    :return: material data
-    """
-    material = bpy.data.materials.new(name=FLAG_MAT_NAME)
-
-    material.use_nodes = True
-    tree = material.node_tree
-
-    # find PBR and set color
-    pbr_node = tree.nodes['Principled BSDF']
-    pbr_node.inputs[0].default_value = color
-
-    return material
-
-
-def assign_flag_material(obj, color):
-    """Assigns a shadow flag material to a given object.
-
-    :param obj: object to assign th material.
-    :param color: shader's surface color (1.0, 1.0, 1.0).
-    """
-    material = bpy.data.materials.new(name=FLAG_MAT_NAME)
-
-    material.use_nodes = True
-    tree = material.node_tree
-
-    # find PBR and set color
-    pbr_node = tree.nodes['Principled BSDF']
-    pbr_node.inputs[0].default_value = color
-
-    # Assign the new material.
-    obj.data.materials.append(material)
