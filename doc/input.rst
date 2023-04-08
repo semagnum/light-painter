@@ -1,21 +1,21 @@
-lightpaint.input package
-========================
+light_painter.input package
+===========================
 
 Submodules
 ----------
 
-lightpaint.input.axis module
-----------------------------
+light_painter.input.axis module
+-------------------------------
 
-.. automodule:: lightpaint.input.axis
+.. automodule:: light_painter.input.axis
    :members:
    :undoc-members:
    :show-inheritance:
 
-lightpaint.input.grease\_pencil module
---------------------------------------
+light_painter.input.grease\_pencil module
+-----------------------------------------
 
-.. automodule:: lightpaint.input.grease_pencil
+.. automodule:: light_painter.input.grease_pencil
    :members:
    :undoc-members:
    :show-inheritance:

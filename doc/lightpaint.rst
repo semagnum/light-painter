@@ -13,10 +13,10 @@ Subpackages
 Submodules
 ----------
 
-lightpaint.panel module
------------------------
+light_painter.panel module
+--------------------------
 
-.. automodule:: lightpaint.panel
+.. automodule:: light_painter.panel
    :members:
    :undoc-members:
    :show-inheritance:

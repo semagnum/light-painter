@@ -1,85 +1,85 @@
-lightpaint.operators package
-============================
+light_painter.operators package
+===============================
 
 Submodules
 ----------
 
-lightpaint.operators.AreaLight module
--------------------------------------
-
-.. automodule:: lightpaint.operators.AreaLight
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.ConvexLight module
----------------------------------------
-
-.. automodule:: lightpaint.operators.ConvexLight
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.PointLight module
---------------------------------------
-
-.. automodule:: lightpaint.operators.PointLight
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.ShadowCard module
---------------------------------------
-
-.. automodule:: lightpaint.operators.ShadowCard
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.Skin module
---------------------------------
-
-.. automodule:: lightpaint.operators.Skin
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.SpotLight module
--------------------------------------
-
-.. automodule:: lightpaint.operators.SpotLight
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.SkyTexture module
---------------------------------------
-
-.. automodule:: lightpaint.operators.SkyTexture
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.SunLight module
-------------------------------------
-
-.. automodule:: lightpaint.operators.SunLight
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.sun_utils module
--------------------------------------
-
-.. automodule:: lightpaint.operators.sun_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lightpaint.operators.method\_util module
+light_painter.operators.AreaLight module
 ----------------------------------------
 
-.. automodule:: lightpaint.operators.method_util
+.. automodule:: light_painter.operators.AreaLight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.ConvexLight module
+------------------------------------------
+
+.. automodule:: light_painter.operators.ConvexLight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.PointLight module
+-----------------------------------------
+
+.. automodule:: light_painter.operators.PointLight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.ShadowCard module
+-----------------------------------------
+
+.. automodule:: light_painter.operators.ShadowCard
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.Skin module
+-----------------------------------
+
+.. automodule:: light_painter.operators.Skin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.SpotLight module
+----------------------------------------
+
+.. automodule:: light_painter.operators.SpotLight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.SkyTexture module
+-----------------------------------------
+
+.. automodule:: light_painter.operators.SkyTexture
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.SunLight module
+---------------------------------------
+
+.. automodule:: light_painter.operators.SunLight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.sun_utils module
+----------------------------------------
+
+.. automodule:: light_painter.operators.sun_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+light_painter.operators.method\_util module
+-------------------------------------------
+
+.. automodule:: light_painter.operators.method_util
    :members:
    :undoc-members:
    :show-inheritance:

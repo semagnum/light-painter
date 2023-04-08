@@ -5,6 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Folder setup
+        run: |
+          mv /home/runner/work/light-painter/light-painter /home/runner/work/light-painter/light_painter
+          cd /home/runner/work/light-painter/light_painter
       - uses: actions/setup-python@v2
       - name: Install dependencies
         run: |

@@ -4,4 +4,4 @@ lightpaint
 .. toctree::
    :maxdepth: 4
 
-   lightpaint
+   light_painter
