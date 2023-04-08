@@ -172,11 +172,9 @@ class LP_OT_ConvexShadow(bpy.types.Operator):
             if factor == 1.0:
                 mesh_vertices = vertices
             else:
-                mesh_vertices = tuple((light_v + (v - light_v) * factor
-                                       for v in vertices
-                                       for light_v in get_light_points(light_obj)
-                                       if not is_blocked(scene, depsgraph, v, (light_v - v).normalized(),
-                                                         (v - light_v).length)))
+                mesh_vertices = tuple(light_v + (v - light_v) * factor
+                                      for v in vertices
+                                      for light_v in get_light_points(light_obj))
 
         mesh.from_pydata(mesh_vertices, [], [])
 
