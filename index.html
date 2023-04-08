@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <link href="_static/favicon.ico" rel="icon" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome! &mdash; Light Painter  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="#" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex/" />
+    <link rel="search" title="Search" href="search/" />
+    <link rel="next" title="Python package" href="lightpaint/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Light Painter
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="lightpaint/">Python package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Light Painter</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome!</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/semagnum/lightpaint/blob/main/doc/index.md" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome">
+<h1>Welcome!<a class="headerlink" href="#welcome" title="Permalink to this heading"></a></h1>
+<p>Welcome to the official Light Painter documentation!
+Here you can learn how to use the Blender add-on and dive into the Python package.</p>
+<p>View the repository at <a class="reference external" href="https://github.com/semagnum/light-painter">github.com/semagnum/light-painter</a>.</p>
+<section id="painting">
+<h2>Painting<a class="headerlink" href="#painting" title="Permalink to this heading"></a></h2>
+<p><img alt="pie menu for annotations" src="_images/pie_menu_paint.png" /></p>
+<p>The painting is done using Blender’s
+<a class="reference external" href="https://docs.blender.org/manual/en/latest/interface/annotate_tool.html">annotation tools</a>
+in the 3D view.
+You can find these in the toolshelf on the left-hand side of the 3D view.
+These tools are also provided as a pie menu
+(default shortcut is <code class="docutils literal notranslate"><span class="pre">Ctrl</span> <span class="pre">+</span> <span class="pre">Shift</span> <span class="pre">+</span> <span class="pre">P</span></code> in the 3D view)
+and in the Light Painter panel for convenience.</p>
+<p>Regarding the stroke placement setting,
+the two options I’d recommend is “3D Cursor” or “Surface”.
+You can find this setting in the Light Painter panel as well
+as in the tool settings of the 3D view header.</p>
+<p>Now just paint where you want the light to hit your objects’ surfaces!</p>
+<section id="what-s-the-best-way-to-paint">
+<h3>What’s the best way to paint?<a class="headerlink" href="#what-s-the-best-way-to-paint" title="Permalink to this heading"></a></h3>
+<p><img alt="Adding a light, step by step" src="_images/painting_steps.gif" /></p>
+<p>You do not need to fill <em>every</em> surface with the annotation tool.
+Draw some simple strokes over surfaces that you would like highlighted by your light.
+Keep in mind that the surface’s normal you are annotating
+will also influence where the light will be finally positioned.</p>
+<p>The tool also works best
+when your annotation matches the shape of the type of lamp that you want.</p>
+<p>Here are some general painting tips:</p>
+<ul class="simple">
+<li><p>Draw on multiple surfaces, preferably ones facing different directions.</p></li>
+<li><p>The operators can handle some cases where the surfaces you paint face different directions,
+but avoid complete opposite directions for better results.</p></li>
+<li><p>Spot lamps prefer circular strokes.
+But if you do not trust your drawing ability,
+a painted line representing the diameter is sufficient.</p></li>
+<li><p>Area lamps prefer rectangles, squares, circles or a single painted line.</p></li>
+<li><p>Point lamps are the most forgiving since a point lamp’s rotation is irrelevant.</p></li>
+</ul>
+</section>
+</section>
+<section id="adding-lights">
+<h2>Adding lights<a class="headerlink" href="#adding-lights" title="Permalink to this heading"></a></h2>
+<p><img alt="pie menu for adding lights" src="_images/pie_menu_light.png" /></p>
+<p>You can find the light operators as a pie menu
+(default shortcut is <code class="docutils literal notranslate"><span class="pre">Shift</span> <span class="pre">+</span> <span class="pre">P</span></code> in the 3D view)
+or in the Light Painter panel.</p>
+<p>There are several light types:</p>
+<ul class="simple">
+<li><p>point lamp</p></li>
+<li><p>sun lamp</p></li>
+<li><p>spot lamp</p></li>
+<li><p>area lamp</p></li>
+<li><p>world sky texture</p></li>
+</ul>
+<p>Also included are these (but since they use emissive materials,
+they will not work the same outside of Eevee):</p>
+<ul class="simple">
+<li><p>emissive mesh object as a convex hull</p></li>
+<li><p>emissive tube - each annotation stroke becomes a “tube” of light -
+great for neon lighting or custom-shaped lighting.</p></li>
+</ul>
+<p>You can press <code class="docutils literal notranslate"><span class="pre">F9</span></code> or click the collapsed Redo Panel in the bottom-left corner of the 3D view
+to tweak parameters such as light distance, power and color.</p>
+<p><strong>Remember that the operator will use all annotations on
+the current frame as part of the evaluation.</strong>
+The add-on cannot remove annotations post-operation for you,
+that would prevent the Redo Panel from working
+(since it could not redo the operation if the annotations are no longer there).
+There is a convenience button in the pie menu and panel
+to clear all strokes on the current frame.
+So you must create strokes, add a light, clear or erase strokes,
+and new strokes to add the next light.</p>
+<section id="sun-lamp-and-sky-texture-operators">
+<h3>Sun lamp and Sky texture operators<a class="headerlink" href="#sun-lamp-and-sky-texture-operators" title="Permalink to this heading"></a></h3>
+<p><img alt="Adding sky texture" src="_images/sky_texture.gif" /></p>
+<p>These two have some unique settings, so I will go over that.
+There are two options to determine direction: “average” -
+which just takes the mean normal of the annotations -
+and “occlusion”. The latter imitates a sun above the horizon.
+For the number of samples given, the operator will iterate over different sun positions
+and check how much of your annotation’s surface will be hit.
+After iterating over all the samples, the operator will choose the best position.</p>
+<p>However, this scoring of the best position may result in noonday lighting from above.
+To give the artist more control, there is a “Max Sun Elevation” parameter
+where you can specify the max elevation of the sun.
+This can force the operator to only sample the sun at lower elevations,
+giving more dynamic lighting.</p>
+</section>
+</section>
+<section id="adding-shadows">
+<h2>Adding shadows<a class="headerlink" href="#adding-shadows" title="Permalink to this heading"></a></h2>
+<p><img alt="Adding shadows" src="_images/shadow_card.gif" /></p>
+<p>Flags can be used to prevent surfaces from receiving light.
+It takes the surfaces drawn and generates makes a convex mesh hull to block the light.
+Parameters can be changed such as position, the flag’s color (for bounce lighting) and opacity.</p>
+<ol class="arabic simple">
+<li><p>First, add the lights.</p></li>
+<li><p>Paint the surfaces you want to be darkened.
+These annotations will be considered edges of a convex hull.</p></li>
+<li><p>Select all the lights you want to be considered for your flag(s).</p></li>
+<li><p>Run the Flag operator. This will add a flag for each light.
+Note that, for each light, an annotation will only be considered if its surface is visible by the light.
+Otherwise, it will not be used for calculating its black flag.</p></li>
+</ol>
+<p>Currently, black flags for skies are not supported.</p>
+</section>
+</section>
+<section id="python-package">
+<h1>Python Package<a class="headerlink" href="#python-package" title="Permalink to this heading"></a></h1>
+<p>If you are interested in contributing or simply browsing, check out the code!</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="lightpaint/">Python package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lightpaint/#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="input/">lightpaint.input package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/">lightpaint.operators package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lightpaint/#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lightpaint/#lightpaint-panel-module">lightpaint.panel module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lightpaint/#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="lightpaint/" class="btn btn-neutral float-right" title="Python package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Spencer Magnusson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
