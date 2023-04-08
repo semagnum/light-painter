@@ -32,8 +32,8 @@ bl_info = {
     'location': 'View 3D > Light Draw',
     'support': 'COMMUNITY',
     'category': '3D View',
-    'doc_url': '',
-    'tracker_url': '',
+    'doc_url': 'https://semagnum.github.io/light-painter/',
+    'tracker_url': 'https://github.com/semagnum/light-painter/issues',
 }
 
 classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow,
