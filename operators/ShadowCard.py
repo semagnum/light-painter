@@ -74,8 +74,14 @@ def get_light_points(light_obj) -> list[Vector]:
     light_type = light_obj.data.type
     # if area, add all four corners
     if light_type == 'AREA':
-        size_x = light_obj.data.size
-        size_y = light_obj.data.size_y
+        # rectangles and ellipses measure by length and width, the rest measure by area
+        if light_obj.data.shape in ('RECTANGLE', 'ELLIPSE'):
+            size_x = light_obj.data.size / 2
+            size_y = light_obj.data.size_y / 2
+        else:
+            side_len = light_obj.data.size ** 0.5
+            size_x, size_y = side_len, side_len
+
         corners = [Vector((x, y, 0))
                    for x in (size_x, size_x * -1)
                    for y in (size_y, size_y * -1)]
