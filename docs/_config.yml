@@ -2,7 +2,6 @@ title: Light Painter
 email: semagnum+lightpainter@gmail.com
 description: Official documentation
 github_username: semagnum
-logo: assets/logo.png
 
 # Build settings
 remote_theme: pages-themes/minimal@v0.2.0

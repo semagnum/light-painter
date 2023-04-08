@@ -3,9 +3,6 @@
 Welcome to the official Light Painter documentation!
 Here you can learn how to use the Blender add-on and dive into the Python package.
 
-View the repository at [github.com/semagnum/light-painter](https://github.com/semagnum/light-painter).
-
-
 ## Painting
 
 ![pie menu for annotations](/assets/pie_menu_paint.png)
@@ -119,12 +116,3 @@ Parameters can be changed such as position, the flag's color (for bounce lightin
    Otherwise, it will not be used for calculating its black flag.
 
 Currently, black flags for skies are not supported.
-
-# Python Package
-
-If you are interested in contributing or simply browsing, check out the code!
-
-```{toctree}
-:maxdepth: 3
-lightpaint.rst
-```
