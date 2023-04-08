@@ -17,11 +17,14 @@ html_context = {
     "conf_py_path": "/doc/",
 }
 
-extensions = ['sphinx.ext.autodoc',
-              'sphinx_autodoc_typehints',
-              'myst_parser',
+extensions = ['myst_parser',
               'sphinx_favicon',
               ]
+
+html_theme_options = {
+    # Disable showing the sidebar. Defaults to 'false'
+    'nosidebar': True,
+}
 
 source_suffix = ['.rst', '.md']
 
@@ -30,7 +33,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'doc']
 
 autodoc_mock_imports = ['bl_ui', 'bpy', 'bmesh', 'mathutils']
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'alabaster'
 html_static_path = ['_static']
 
 html_favicon = '_static/favicon.ico'
