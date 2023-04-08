@@ -1,8 +1,8 @@
-![Light Painter](/doc/assets/logo.png)
+![Light Painter](/docs/assets/logo.png)
 
 ## Painting
 
-![pie menu for annotations](/doc/assets/pie_menu_paint.png)
+![pie menu for annotations](/docs/assets/pie_menu_paint.png)
 
 The painting is done using Blender's
 [annotation tools](https://docs.blender.org/manual/en/latest/interface/annotate_tool.html)
@@ -21,7 +21,7 @@ Now just paint where you want the light to hit your objects' surfaces!
 
 ### What's the best way to paint?
 
-![Adding a light, step by step](/doc/assets/painting_steps.gif)
+![Adding a light, step by step](/docs/assets/painting_steps.gif)
 
 You do not need to fill _every_ surface with the annotation tool.
 Draw some simple strokes over surfaces that you would like highlighted by your light.
@@ -44,7 +44,7 @@ Here are some general painting tips:
 
 ## Adding lights
 
-![pie menu for adding lights](/doc/assets/pie_menu_light.png)
+![pie menu for adding lights](/docs/assets/pie_menu_light.png)
 
 You can find the light operators as a pie menu
 (default shortcut is `Shift + P` in the 3D view)
@@ -80,7 +80,7 @@ and new strokes to add the next light.
 
 ### Sun lamp and Sky texture operators
 
-![Adding sky texture](/doc/assets/sky_texture.gif)
+![Adding sky texture](/docs/assets/sky_texture.gif)
 
 These two have some unique settings, so I will go over that.
 There are two options to determine direction: "average" -
