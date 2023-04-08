@@ -5,14 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Folder setup
-        run: |
-          mv /home/runner/work/light-painter/light-painter /home/runner/work/light-painter/light_painter
-          cd /home/runner/work/light-painter/light_painter
       - uses: actions/setup-python@v2
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_rtd_theme sphinx_autodoc_typehints sphinx-favicon myst_parser sphinx_favicon
+      - name: Folder setup
+        run: |
+          mv /home/runner/work/light-painter/light-painter /home/runner/work/light-painter/light_painter
+          cd /home/runner/work/light-painter/light_painter
       - name: Sphinx build
         run: |
           sphinx-build -b dirhtml doc _build
