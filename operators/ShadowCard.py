@@ -26,6 +26,21 @@ MAT_NAME = 'LightPaint_Shadow'
 MESH_NAME = 'LightPaint_ShadowCard'
 
 
+# active object is counted twice
+def get_selected_lights(context) -> tuple:
+    """Retrieves all selected lights, including the active object.
+    Prevents duplicates if the active object is also selected.
+
+    :param context: Blender context
+    :return: a tuple of selected lights
+    """
+    light_objs_dict = {obj.name: obj for obj in context.selected_objects if obj.type == 'LIGHT'}
+    if context.active_object:
+        light_objs_dict.update({context.active_object.name: context.active_object})
+
+    return tuple(light_objs_dict.values())
+
+
 def assign_flag_material(obj, color, opacity):
     """Assigns a shadow flag material to a given object.
 
@@ -117,13 +132,13 @@ class LP_OT_ConvexShadow(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return has_strokes(context) and context.active_object and context.active_object.type == 'LIGHT'
+        return has_strokes(context) and len(get_selected_lights(context)) > 0
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
 
-        light_objs = tuple([obj for obj in context.selected_objects if obj.type == 'LIGHT'] + [context.active_object])
+        light_objs = get_selected_lights(context)
         has_sun = any(obj.data.type == 'SUN' for obj in light_objs)
         has_other_lamps = any(obj.data.type != 'SUN' for obj in light_objs)
         if has_sun:
@@ -176,7 +191,7 @@ class LP_OT_ConvexShadow(bpy.types.Operator):
         assign_flag_material(obj, self.shadow_color, self.opacity)
 
     def execute(self, context):
-        light_objs = tuple([obj for obj in context.selected_objects if obj.type == 'LIGHT'] + [context.active_object])
+        light_objs = get_selected_lights(context)
 
         try:
             strokes = get_strokes(context, 'X', 0.0)
