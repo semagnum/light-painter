@@ -112,7 +112,5 @@ Parameters can be changed such as position, the flag's color (for bounce lightin
    These annotations will be considered edges of a convex hull.
 3. Select all the lights you want to be considered for your flag(s).
 4. Run the Flag operator. This will add a flag for each light.
-   Note that, for each light, an annotation will only be considered if its surface is visible by the light.
-   Otherwise, it will not be used for calculating its black flag.
 
-Currently, black flags for skies are not supported.
+Currently, black flags for sky textures are not supported.
