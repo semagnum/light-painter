@@ -33,7 +33,7 @@ def axis_prop() -> bpy.props.EnumProperty:
     )
 
 
-def get_stroke_normals(context, vertices: tuple[Vector]) -> list[Vector]:
+def get_stroke_normals(context, vertices: list[Vector]) -> list[Vector]:
     """Get grease pencil stroke (approximated) normals
 
     :param context: Blender context
@@ -59,7 +59,7 @@ def get_stroke_normals(context, vertices: tuple[Vector]) -> list[Vector]:
     return normals
 
 
-def get_normals(context, vertices: list[Vector], axis_val: str) -> tuple[Vector, Vector]:
+def get_normals(context, vertices: list[Vector], axis_val: str) -> tuple[list[Vector], tuple[Vector]]:
     """Update normals of given vertices based on the axis value.
 
     :param context: Blender context
@@ -107,4 +107,4 @@ def get_normals(context, vertices: list[Vector], axis_val: str) -> tuple[Vector,
     else:
         normals = get_stroke_normals(context, vertices)
 
-    return vertices, normals
+    return vertices, tuple(normals)
