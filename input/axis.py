@@ -4,7 +4,7 @@ from mathutils import Vector
 
 VECTORS = {'X': Vector((1, 0, 0)), 'Y': Vector((0, 1, 0)), 'Z': Vector((0, 0, 1))}
 """List of arbitrary axes and their given vector."""
-RAY_OFFSET = 0.001
+RAY_OFFSET = 0.1
 """Epsilon offset for raycasts, to prevent self-collisions."""
 
 
