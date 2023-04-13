@@ -49,12 +49,11 @@ class LP_OT_SpotLight(bpy.types.Operator):
         unit='POWER'
     )
 
-    min_size: bpy.props.FloatVectorProperty(
-        name='Minimum size',
-        description='Lamp size will be clamped to these minimum values',
-        size=2,
+    radius: bpy.props.FloatProperty(
+        name='Radius',
+        description='Light size for ray shadow sampling',
         min=0.001,
-        default=(0.01, 0.01),
+        default=0.1,
         unit='LENGTH'
     )
 
@@ -82,7 +81,7 @@ class LP_OT_SpotLight(bpy.types.Operator):
         layout.label(text='Lamp')
         layout.prop(self, 'light_color')
         layout.prop(self, 'power')
-        layout.prop(self, 'min_size')
+        layout.prop(self, 'radius')
 
     def execute(self, context):
         try:
@@ -129,5 +128,6 @@ class LP_OT_SpotLight(bpy.types.Operator):
         context.object.data.color = self.light_color
         context.object.data.spot_size = spot_angle
         context.object.data.energy = self.power
+        context.object.data.shadow_soft_size = self.radius
 
         return {'FINISHED'}
