@@ -82,6 +82,7 @@ class SunProps:
         min=0.0, soft_min=0.0,
         max=PI_OVER_2, soft_max=PI_OVER_2,
         default=radians(60),
+        step=10,
         subtype='ANGLE'
     )
 

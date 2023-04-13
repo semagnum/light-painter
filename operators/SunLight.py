@@ -17,6 +17,7 @@
 
 
 import bpy
+import math
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes_and_normals
@@ -40,6 +41,16 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         default=10,
         subtype='POWER',
         unit='POWER'
+    )
+
+    angle: bpy.props.FloatProperty(
+        name='Angle',
+        description='Angular diameter of the Sun as seen from the Earth',
+        min=0.0,
+        max=math.pi,
+        default=0.00918043,
+        step=10,
+        subtype='ANGLE'
     )
 
     light_color: bpy.props.FloatVectorProperty(
@@ -66,6 +77,7 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         layout.separator()
         layout.prop(self, 'light_color')
         layout.prop(self, 'power')
+        layout.prop(self, 'angle')
 
     def execute(self, context):
         try:
@@ -107,5 +119,6 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         # set light data properties
         context.object.data.color = self.light_color
         context.object.data.energy = self.power
+        context.object.data.angle = self.angle
 
         return {'FINISHED'}
