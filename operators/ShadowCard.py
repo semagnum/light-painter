@@ -35,7 +35,7 @@ def get_selected_lights(context) -> tuple:
     :return: a tuple of selected lights
     """
     light_objs_dict = {obj.name: obj for obj in context.selected_objects if obj.type == 'LIGHT'}
-    if context.active_object:
+    if context.active_object and context.active_object.type == 'LIGHT':
         light_objs_dict.update({context.active_object.name: context.active_object})
 
     return tuple(light_objs_dict.values())
