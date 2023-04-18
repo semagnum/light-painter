@@ -161,7 +161,7 @@ class LP_OT_ConvexShadow(bpy.types.Operator):
 
         mesh = bpy.data.meshes.new(MESH_NAME)
         obj = bpy.data.objects.new(mesh.name, mesh)
-        col = context.collection
+        col = context.scene.collection
         col.objects.link(obj)
         context.view_layer.objects.active = obj
 
