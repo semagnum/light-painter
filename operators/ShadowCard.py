@@ -165,14 +165,11 @@ class LP_OT_ConvexShadow(bpy.types.Operator):
         col.objects.link(obj)
         context.view_layer.objects.active = obj
 
-        scene = context.scene
-        depsgraph = context.evaluated_depsgraph_get()
         if light_obj.data.type == 'SUN':
             direction = (light_obj.matrix_world.to_3x3() @ Vector((0, 0, -1))).normalized()
             direction.negate()
             mesh_vertices = tuple(v + direction * self.offset
-                                  for v in vertices
-                                  if not is_blocked(scene, depsgraph, v, direction))
+                                  for v in vertices)
         else:
             factor = self.factor
             if factor == 1.0:

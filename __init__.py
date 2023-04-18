@@ -26,7 +26,7 @@ from .panel import LP_PT_Paint, LP_PT_Light
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 4, 5),
+    'version': (0, 4, 6),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Draw',
