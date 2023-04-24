@@ -19,7 +19,7 @@
 import bpy
 
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
-from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow
+from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag
 from .pie import PIE_MT_Light, PIE_MT_Paint
 from .panel import LP_PT_Paint, LP_PT_Light
 
@@ -36,7 +36,7 @@ bl_info = {
     'tracker_url': 'https://github.com/semagnum/light-painter/issues',
 }
 
-classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ConvexShadow,
+classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag,
            LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky,
            LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint)
 

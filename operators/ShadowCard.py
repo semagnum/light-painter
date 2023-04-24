@@ -20,7 +20,7 @@ import bpy
 from mathutils import Vector
 
 from ..input import get_strokes
-from .method_util import has_strokes, is_blocked
+from .method_util import has_strokes
 
 MAT_NAME = 'LightPaint_Shadow'
 MESH_NAME = 'LightPaint_ShadowCard'
@@ -89,9 +89,9 @@ def get_light_points(light_obj) -> list[Vector]:
     return [light_obj.location]
 
 
-class LP_OT_ConvexShadow(bpy.types.Operator):
-    bl_idname = 'semagnum.lp_shadow_card'
-    bl_label = 'Paint Shadow Card'
+class LP_OT_ShadowFlag(bpy.types.Operator):
+    bl_idname = 'semagnum.lp_shadow_flag'
+    bl_label = 'Paint Shadow Flag'
     bl_description = 'Adds a shadow card positioned between a light and surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
