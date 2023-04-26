@@ -19,14 +19,14 @@ def reflect_vector(input_vector: Vector, normal: Vector) -> Vector:
 def axis_prop() -> bpy.props.EnumProperty:
     """Returns axis property to be used by multiple operators."""
     return bpy.props.EnumProperty(
-        name='Axis',
-        description='Determine axis of offset',
+        name='Offset Axis',
+        description='Determine direction of the new object\'s offset',
         items=(
-            ('X', 'X', ''),
-            ('Y', 'Y', ''),
-            ('Z', 'Z', ''),
+            ('X', 'X', 'Along global X axis'),
+            ('Y', 'Y', 'Along global Y axis'),
+            ('Z', 'Z', 'Along global Z axis'),
             ('NORMAL', 'Stroke Normal', 'Along annotation stroke\'s normal'),
-            ('NORMAL-RAY', 'Surface Normal', 'Casts rays to estimate normal of underlying surface'),
+            ('NORMAL-RAY', 'Surface Normal', 'The stroke will cast rays beneath itself to find the underlying surface\'s normal'),
             ('REFLECT', 'Rim lighting', 'Positions light to reflect onto the specified surface directly into the scene camera'),
         ),
         default='NORMAL-RAY'
