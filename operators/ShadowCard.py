@@ -79,7 +79,7 @@ def get_light_points(light_obj) -> list[Vector]:
             size_x = light_obj.data.size / 2
             size_y = light_obj.data.size_y / 2
         else:
-            side_len = light_obj.data.size ** 0.5
+            side_len = light_obj.data.size / 2
             size_x, size_y = side_len, side_len
 
         corners = [Vector((x, y, 0))

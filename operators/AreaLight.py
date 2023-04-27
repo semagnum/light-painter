@@ -164,9 +164,13 @@ class LP_OT_AreaLight(bpy.types.Operator):
 
         # set light data properties
         context.object.data.color = self.light_color
-        context.object.data.size = max(self.min_size[0], x_size)
-        context.object.data.size_y = max(self.min_size[1], y_size)
         context.object.data.energy = self.power
         context.object.data.shape = self.shape
+        if self.shape in {'RECTANGLE', 'ELLIPSE'}:
+            context.object.data.size = max(self.min_size[0], x_size)
+            context.object.data.size_y = max(self.min_size[1], y_size)
+        else:
+            max_size = max(x_size, y_size, self.min_size[0], self.min_size[1])
+            context.object.data.size = max_size
 
         return {'FINISHED'}
