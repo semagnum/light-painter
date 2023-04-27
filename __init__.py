@@ -20,16 +20,16 @@ import bpy
 
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
 from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag
-from .pie import PIE_MT_Light, PIE_MT_Paint
+from .pie import PIE_MT_Light, PIE_MT_Paint, PIE_MT_StrokePlacement
 from .panel import LP_PT_Paint, LP_PT_Light
 
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 5, 0),
+    'version': (0, 5, 1),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
-    'location': 'View 3D > Light Draw',
+    'location': 'View 3D > Light Paint',
     'support': 'COMMUNITY',
     'category': '3D View',
     'doc_url': 'https://semagnum.github.io/light-painter/',
@@ -38,7 +38,7 @@ bl_info = {
 
 classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag,
            LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky,
-           LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint)
+           LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint, PIE_MT_StrokePlacement)
 
 addon_pie_keymap = []
 
@@ -48,14 +48,20 @@ def register():
 
     wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
+        pie_menu_op = 'wm.call_menu_pie'
+
         kc = wm.keyconfigs.addon
         km = kc.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'P', 'PRESS', shift=True)
+        kmi = km.keymap_items.new(pie_menu_op, 'P', 'PRESS', shift=True)
         kmi.properties.name = "PIE_MT_Light"
         addon_pie_keymap.append((km, kmi))
 
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'P', 'PRESS', ctrl=True, shift=True)
+        kmi = km.keymap_items.new(pie_menu_op, 'P', 'PRESS', ctrl=True, shift=True)
         kmi.properties.name = "PIE_MT_Paint"
+        addon_pie_keymap.append((km, kmi))
+
+        kmi = km.keymap_items.new(pie_menu_op, 'P', 'PRESS', ctrl=True, shift=True, alt=True)
+        kmi.properties.name = "PIE_MT_StrokePlacement"
         addon_pie_keymap.append((km, kmi))
 
 

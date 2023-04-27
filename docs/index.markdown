@@ -11,9 +11,10 @@ The painting is done using Blender's
 [annotation tools](https://docs.blender.org/manual/en/latest/interface/annotate_tool.html)
 in the 3D view.
 You can find these in the toolshelf on the left-hand side of the 3D view.
-These tools are also provided as a pie menu
-(default shortcut is `Ctrl + Shift + P` in the 3D view)
-and in the Light Painter panel for convenience.
+These tools are provided in the Light Painter panel for convenience.
+They are also defined as pie menus in the 3D view:
+the default shortcut for the stroke types is `Ctrl + Shift + P`,
+and the stroke placement types is `Ctrl + Shift + Alt + P`.
 
 Regarding the stroke placement setting,
 the two options I'd recommend is "3D Cursor" or "Surface".

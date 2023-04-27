@@ -15,6 +15,13 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""Pie menu order: 4, 6, 2, 8, 7, 9, 1, 3"""
+"""
+7 8 9
+4 - 6
+1 2 3
+"""
+
 import bpy
 from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
@@ -23,15 +30,10 @@ from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag
 
 
 class PIE_MT_Paint(bpy.types.Menu):
-    bl_label = "Light Paint"
-    bl_idname = "PIE_MT_Paint"
+    bl_label = 'Annotation Type'
+    bl_idname = 'PIE_MT_Paint'
+
     def draw(self, context):
-        """Pie menu order: 4, 6, 2, 8, 7, 9, 1, 3"""
-        """
-        7 8 9
-        4 - 6
-        1 2 3
-        """
         """
         3 = clear all
         4, 6, 2, 8 = poly, draw, line, eraser
@@ -59,17 +61,21 @@ class PIE_MT_Paint(bpy.types.Menu):
         layout.operator('gpencil.annotation_active_frame_delete', text='Clear all')
 
 
-class PIE_MT_Light(bpy.types.Menu):
-    bl_label = "Light Paint"
-    bl_idname = "PIE_MT_Light"
+class PIE_MT_StrokePlacement(bpy.types.Menu):
+    bl_label = 'Annotation Placement'
+    bl_idname = 'PIE_MT_StrokePlacement'
 
     def draw(self, context):
-        """Pie menu order: 4, 6, 2, 8, 7, 9, 1, 3"""
-        """
-        7 8 9
-        4 - 6
-        1 2 3
-        """
+        layout = self.layout.menu_pie()
+        layout.prop(context.scene.tool_settings, 'annotation_stroke_placement_view3d',
+                    text='Stroke placement', expand=True)
+
+
+class PIE_MT_Light(bpy.types.Menu):
+    bl_label = 'Light Paint'
+    bl_idname = 'PIE_MT_Light'
+
+    def draw(self, context):
         """
         1, 2, 4 = mesh hull, light tubes, shadow card
         7, 8, 9, 6, 3 = sky texture, sun, point, spot, area
