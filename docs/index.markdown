@@ -70,6 +70,10 @@ they will not work the same outside of Eevee):
 
 You can press `F9` or click the collapsed Redo Panel in the bottom-left corner of the 3D view
 to tweak parameters such as light distance, power and color.
+There are also ray visibility settings to tweak light or object visibility
+for diffuse, specular, or volumetric rays or shaders.
+Note that these ray visibility settings will be dependent on your render engine's implementation,
+as Eevee and Cycles handle visibility differently or may ignore it.
 
 **Remember that the operator will use all annotations on
 the current frame as part of the evaluation.**

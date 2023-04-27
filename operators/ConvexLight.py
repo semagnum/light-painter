@@ -19,10 +19,11 @@
 import bpy
 
 from ..input import axis_prop, get_strokes, get_strokes_and_normals
-from .method_util import assign_emissive_material, get_average_normal, has_strokes
+from .method_util import assign_emissive_material, get_average_normal, has_strokes, layout_group
+from .VisibilitySettings import VisibilitySettings
 
 
-class LP_OT_ConvexLight(bpy.types.Operator):
+class LP_OT_ConvexLight(bpy.types.Operator, VisibilitySettings):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_hull'
     bl_label = 'Paint Light Hull'
@@ -46,13 +47,6 @@ class LP_OT_ConvexLight(bpy.types.Operator):
         default=True
     )
 
-    visible_to_camera: bpy.props.BoolProperty(
-        name='Visible to Camera',
-        description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
-        options=set(),
-        default=True
-    )
-
     light_color: bpy.props.FloatVectorProperty(
         name='Light Color',
         size=4,
@@ -72,6 +66,18 @@ class LP_OT_ConvexLight(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return has_strokes(context)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'axis')
+        layout.prop(self, 'offset')
+        layout.prop(self, 'flatten')
+
+        box = layout_group(layout, text='Lamp')
+        box.prop(self, 'light_color', text='Lamp color')
+        box.prop(self, 'emit_value')
+
+        self.draw_visibility_props(layout)
 
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
@@ -123,7 +129,6 @@ class LP_OT_ConvexLight(bpy.types.Operator):
 
         # assign emissive material to it
         assign_emissive_material(obj, self.light_color, self.emit_value)
-
-        obj.visible_camera = self.visible_to_camera
+        self.set_visibility(obj)
 
         return {'FINISHED'}

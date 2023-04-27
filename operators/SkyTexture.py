@@ -22,9 +22,10 @@ from math import atan, atan2, pi, sqrt
 from ..input import axis_prop, get_strokes_and_normals
 from .method_util import get_average_normal, has_strokes
 from .sun_utils import SunProps
+from .VisibilitySettings import VisibilitySettings
 
 
-class LP_OT_Sky(bpy.types.Operator, SunProps):
+class LP_OT_Sky(bpy.types.Operator, SunProps, VisibilitySettings):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_sky'
     bl_label = 'Paint Sky texture'
@@ -41,6 +42,14 @@ class LP_OT_Sky(bpy.types.Operator, SunProps):
         layout = self.layout
         layout.prop(self, 'axis')
         self.draw_sun_props(layout)
+        self.draw_visibility_props(layout)
+
+    def set_visibility(self, context):
+        world_data = context.scene.world.cycles_visibility
+        world_data.camera = self.visible_camera
+        world_data.diffuse = self.visible_diffuse
+        world_data.glossy = self.visible_specular
+        world_data.scatter = self.visible_volume
 
     def execute(self, context):
         try:
@@ -93,6 +102,6 @@ class LP_OT_Sky(bpy.types.Operator, SunProps):
             sky_node.sky_type = 'PREETHAM'
             sky_node.sun_direction = sun_normal  # vector pointing towards sun
 
-        # connect both nodes
+        self.set_visibility(context)
 
         return {'FINISHED'}

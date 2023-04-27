@@ -20,10 +20,11 @@ import bpy
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes, get_strokes_and_normals
-from .method_util import get_average_normal, has_strokes
+from .method_util import get_average_normal, has_strokes, layout_group
+from .VisibilitySettings import VisibilitySettings
 
 
-class LP_OT_SpotLight(bpy.types.Operator):
+class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_spot'
     bl_label = 'Paint Spot Lamp'
@@ -72,16 +73,15 @@ class LP_OT_SpotLight(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
-
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
 
-        layout.separator()
-        layout.label(text='Lamp')
-        layout.prop(self, 'light_color')
-        layout.prop(self, 'power')
-        layout.prop(self, 'radius')
+        box = layout_group(layout, text='Lamp')
+        box.prop(self, 'light_color')
+        box.prop(self, 'power')
+        box.prop(self, 'radius')
+
+        self.draw_visibility_props(layout)
 
     def execute(self, context):
         try:
@@ -129,5 +129,6 @@ class LP_OT_SpotLight(bpy.types.Operator):
         context.object.data.spot_size = spot_angle
         context.object.data.energy = self.power
         context.object.data.shadow_soft_size = self.radius
+        self.set_visibility(context.object)
 
         return {'FINISHED'}

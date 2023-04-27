@@ -22,7 +22,7 @@ from mathutils import Vector
 import numpy as np
 from typing import Iterable
 
-from .method_util import is_blocked
+from .method_util import layout_group, is_blocked
 
 EPSILON = 0.01
 PI_OVER_2 = pi / 2
@@ -69,7 +69,7 @@ class SunProps:
 
     latitude_samples: bpy.props.IntProperty(
         name='Elevation Samples',
-        description='Samples of normals from the horizon to straight up on the Z-axis. '
+        description='Samples of normals from the horizon to the maximum elevation. '
                     'Increasing samples improves precision at the cost of processing time',
         min=3,
         default=6,
@@ -88,13 +88,15 @@ class SunProps:
 
     def draw_sun_props(self, layout):
         """Draw sun properties in a UI layout."""
-        layout.prop(self, 'normal_method', expand=True)
+        box = layout_group(layout, text='Sun Position Method')
+        row = box.row()
+        row.prop(self, 'normal_method', expand=True)
 
         if self.normal_method == 'OCCLUSION':
-            col = layout.column(align=True)
+            col = box.column(align=True)
             col.prop(self, 'longitude_samples')
             col.prop(self, 'latitude_samples')
-            layout.prop(self, 'sun_elevation_clamp', slider=True)
+            box.prop(self, 'sun_elevation_clamp', slider=True)
 
     def get_occlusion_based_normal(self, context, vertices: Iterable, avg_normal: Vector) -> Vector:
         """Find a normal that best points toward a given normal that's visible by the most points.

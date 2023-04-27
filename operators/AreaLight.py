@@ -22,7 +22,8 @@ from mathutils import Matrix, Vector
 from mathutils.geometry import box_fit_2d
 
 from ..input import axis_prop, get_strokes_and_normals
-from .method_util import get_average_normal, has_strokes
+from .method_util import get_average_normal, has_strokes, layout_group
+from .VisibilitySettings import VisibilitySettings
 
 
 def get_box(vertices, normal):
@@ -59,7 +60,7 @@ def get_box(vertices, normal):
     return center, align_to_z.inverted_safe() @ box_mat.inverted_safe(), length, width
 
 
-class LP_OT_AreaLight(bpy.types.Operator):
+class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_area'
     bl_label = 'Paint Area Lamp'
@@ -121,17 +122,16 @@ class LP_OT_AreaLight(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
-
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
 
-        layout.separator()
-        layout.label(text='Lamp')
-        layout.prop(self, 'shape')
-        layout.prop(self, 'light_color')
-        layout.prop(self, 'power')
-        layout.prop(self, 'min_size')
+        box = layout_group(layout, text='Lamp')
+        box.prop(self, 'shape')
+        box.prop(self, 'light_color')
+        box.prop(self, 'power')
+        box.prop(self, 'min_size')
+
+        self.draw_visibility_props(layout)
 
     def execute(self, context):
         try:
@@ -172,5 +172,7 @@ class LP_OT_AreaLight(bpy.types.Operator):
         else:
             max_size = max(x_size, y_size, self.min_size[0], self.min_size[1])
             context.object.data.size = max_size
+
+        self.set_visibility(context.object)
 
         return {'FINISHED'}

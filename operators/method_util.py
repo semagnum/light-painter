@@ -12,6 +12,14 @@ NORMAL_ERROR = ('Mean of normals resulted in zero vector - '
                 'avoid drawing equally on surfaces facing opposite directions!')
 
 
+def layout_group(layout, text=None):
+    layout.separator()
+    box = layout.box()
+    if text is not None:
+        box.label(text=text)
+    return box
+
+
 def get_average_normal(normals: Iterable[Vector]) -> Vector:
     """Calculates average normal. Handles zero vector edge case as an error.
 

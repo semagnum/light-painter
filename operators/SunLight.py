@@ -21,11 +21,12 @@ import math
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes_and_normals
-from .method_util import get_average_normal, has_strokes
+from .method_util import get_average_normal, has_strokes, layout_group
 from .sun_utils import SunProps
+from .VisibilitySettings import VisibilitySettings
 
 
-class LP_OT_SunLight(bpy.types.Operator, SunProps):
+class LP_OT_SunLight(bpy.types.Operator, SunProps, VisibilitySettings):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_sun'
     bl_label = 'Paint Sun Lamp'
@@ -68,16 +69,16 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
 
     def draw(self, _context):
         layout = self.layout
-        layout.use_property_split = True
-
         layout.prop(self, 'axis')
 
         self.draw_sun_props(layout)
 
-        layout.separator()
-        layout.prop(self, 'light_color')
-        layout.prop(self, 'power')
-        layout.prop(self, 'angle')
+        box = layout_group(layout, text='Lamp')
+        box.prop(self, 'light_color')
+        box.prop(self, 'power')
+        box.prop(self, 'angle')
+
+        self.draw_visibility_props(layout)
 
     def execute(self, context):
         try:
@@ -120,5 +121,6 @@ class LP_OT_SunLight(bpy.types.Operator, SunProps):
         context.object.data.color = self.light_color
         context.object.data.energy = self.power
         context.object.data.angle = self.angle
+        self.set_visibility(context.object)
 
         return {'FINISHED'}

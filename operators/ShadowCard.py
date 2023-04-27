@@ -20,10 +20,11 @@ import bpy
 from mathutils import Vector
 
 from ..input import get_strokes
-from .method_util import has_strokes
+from .method_util import has_strokes, layout_group
+from .VisibilitySettings import VisibilitySettings
 
-MAT_NAME = 'LightPaint_Shadow'
-MESH_NAME = 'LightPaint_ShadowCard'
+MAT_NAME = 'LightPaint_Flag'
+MESH_NAME = 'LightPaint_Flag'
 
 
 # active object is counted twice
@@ -89,10 +90,10 @@ def get_light_points(light_obj) -> list[Vector]:
     return [light_obj.location]
 
 
-class LP_OT_ShadowFlag(bpy.types.Operator):
+class LP_OT_ShadowFlag(bpy.types.Operator, VisibilitySettings):
     bl_idname = 'semagnum.lp_shadow_flag'
-    bl_label = 'Paint Shadow Flag'
-    bl_description = 'Adds a shadow card positioned between a light and surfaces specified by annotations'
+    bl_label = 'Paint Flag'
+    bl_description = 'Adds a flag positioned between a lamp and surfaces specified by annotations'
     bl_options = {'REGISTER', 'UNDO'}
 
     factor: bpy.props.FloatProperty(
@@ -112,15 +113,9 @@ class LP_OT_ShadowFlag(bpy.types.Operator):
         unit='LENGTH'
     )
 
-    visible_to_camera: bpy.props.BoolProperty(
-        name='Visible to Camera',
-        description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
-        default=True
-    )
-
     shadow_color: bpy.props.FloatVectorProperty(
-        name='Shadow Card Color',
-        description='Material color of the shadow card',
+        name='Color',
+        description='Material color of the flag',
         size=4,
         default=[0.5, 0.5, 0.5, 1.0],
         min=0.0,
@@ -129,8 +124,8 @@ class LP_OT_ShadowFlag(bpy.types.Operator):
     )
 
     opacity: bpy.props.FloatProperty(
-        name='Shadow Card Opacity',
-        description='Material transparency of the shadow card',
+        name='Opacity',
+        description='Material transparency of the flag',
         default=1.0,
         min=0.0,
         max=1.0
@@ -142,7 +137,6 @@ class LP_OT_ShadowFlag(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
 
         light_objs = get_selected_lights(context)
         has_sun = any(obj.data.type == 'SUN' for obj in light_objs)
@@ -152,9 +146,11 @@ class LP_OT_ShadowFlag(bpy.types.Operator):
         if has_other_lamps:
             layout.prop(self, 'factor')
 
-        layout.prop(self, 'visible_to_camera')
-        layout.prop(self, 'shadow_color')
-        layout.prop(self, 'opacity')
+        box = layout_group(layout, text='Flag')
+        box.prop(self, 'shadow_color')
+        box.prop(self, 'opacity', slider=True)
+
+        self.draw_visibility_props(layout)
 
     def add_card_for_lamp(self, context, light_obj, vertices):
         bpy.ops.object.select_all(action='DESELECT')
@@ -188,7 +184,7 @@ class LP_OT_ShadowFlag(bpy.types.Operator):
 
         bpy.ops.object.editmode_toggle()
 
-        obj.visible_camera = self.visible_to_camera
+        self.set_visibility(obj)
         assign_flag_material(obj, self.shadow_color, self.opacity)
 
     def execute(self, context):

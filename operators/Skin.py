@@ -19,10 +19,11 @@
 import bpy
 
 from ..input import axis_prop, get_strokes
-from .method_util import assign_emissive_material, has_strokes
+from .method_util import assign_emissive_material, has_strokes, layout_group
+from .VisibilitySettings import VisibilitySettings
 
 
-class LP_OT_Skin(bpy.types.Operator):
+class LP_OT_Skin(bpy.types.Operator, VisibilitySettings):
     """Modal object selection with a ray cast"""
     bl_idname = 'semagnum.lp_light_tube'
     bl_label = 'Paint Light Tubes'
@@ -77,13 +78,6 @@ class LP_OT_Skin(bpy.types.Operator):
         soft_max=4,
     )
 
-    visible_to_camera: bpy.props.BoolProperty(
-        name='Visible to Camera',
-        description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
-        options=set(),
-        default=True
-    )
-
     light_color: bpy.props.FloatVectorProperty(
         name='Light Color',
         size=4,
@@ -106,24 +100,21 @@ class LP_OT_Skin(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
-
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
 
-        layout.separator()
-        layout.label(text='Wire')
-        layout.prop(self, 'merge_distance')
-        layout.prop(self, 'skin_radius')
-        layout.prop(self, 'is_smooth')
-        layout.prop(self, 'pre_subdiv', text='Path subdivision')
-        layout.prop(self, 'post_subdiv', text='Surface subdivision')
+        box = layout_group(layout, text='Tubes')
+        box.prop(self, 'merge_distance')
+        box.prop(self, 'skin_radius')
+        box.prop(self, 'is_smooth')
+        box.prop(self, 'pre_subdiv', text='Path subdivision')
+        box.prop(self, 'post_subdiv', text='Surface subdivision')
 
-        layout.separator()
-        layout.label(text='Shading')
-        layout.prop(self, 'visible_to_camera')
-        layout.prop(self, 'light_color')
-        layout.prop(self, 'emit_value')
+        box = layout_group(layout, text='Emission')
+        box.prop(self, 'light_color', text='Color')
+        box.prop(self, 'emit_value')
+
+        self.draw_visibility_props(layout)
 
     def execute(self, context):
         bpy.ops.object.select_all(action='DESELECT')
@@ -180,7 +171,6 @@ class LP_OT_Skin(bpy.types.Operator):
 
             # assign emissive material to it
             assign_emissive_material(wire_obj, self.light_color, self.emit_value)
-
-            wire_obj.visible_camera = self.visible_to_camera
+            self.set_visibility(wire_obj)
 
         return {'FINISHED'}
