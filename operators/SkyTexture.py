@@ -34,6 +34,16 @@ class LP_OT_Sky(bpy.types.Operator, SunProps, VisibilitySettings):
 
     axis: axis_prop()
 
+    texture_type: bpy.props.EnumProperty(
+        name='Sky Model',
+        description='Model used by sky texture node',
+        items=(
+            ('NISHITA', 'Nishita', ''),
+            ('PREETHAM', 'Preetham', ''),
+        ),
+        default='NISHITA'
+    )
+
     @classmethod
     def poll(cls, context):
         return has_strokes(context)
@@ -41,6 +51,11 @@ class LP_OT_Sky(bpy.types.Operator, SunProps, VisibilitySettings):
     def draw(self, _context):
         layout = self.layout
         layout.prop(self, 'axis')
+
+        layout.separator()
+        row = layout.row()
+        row.prop(self, 'texture_type', expand=True)
+
         self.draw_sun_props(layout)
         self.draw_visibility_props(layout)
 
@@ -91,15 +106,15 @@ class LP_OT_Sky(bpy.types.Operator, SunProps, VisibilitySettings):
 
         # add data for sky texture
         # set sky type based on render engine
-        if context.scene.render.engine == 'CYCLES':
-            sky_node.sky_type = 'NISHITA'
+        texture_type = self.texture_type
+        sky_node.sky_type = texture_type
+        if texture_type == 'NISHITA':
             x, y, z = sun_normal
             if z == 0:  # prevent division by zero
                 z = 0.0001
             sky_node.sun_elevation = atan((sqrt(x*x + y*y)) / z) + (pi * 0.5)
             sky_node.sun_rotation = atan2(x, y) + pi
-        else:
-            sky_node.sky_type = 'PREETHAM'
+        elif texture_type == 'PREETHAM':
             sky_node.sun_direction = sun_normal  # vector pointing towards sun
 
         self.set_visibility(context)
