@@ -19,7 +19,7 @@
 import bpy
 from mathutils import Vector
 
-from ..input import axis_prop, get_strokes_and_normals
+from ..input import axis_prop, get_strokes_and_normals, stroke_prop
 from .method_util import get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -32,6 +32,8 @@ class LP_OT_PointLight(bpy.types.Operator, VisibilitySettings):
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()
+
+    stroke: stroke_prop('point lamp')
 
     offset: bpy.props.FloatProperty(
         name='Offset',
@@ -74,6 +76,7 @@ class LP_OT_PointLight(bpy.types.Operator, VisibilitySettings):
     def draw(self, context):
         layout = self.layout
 
+        layout.prop(self, 'stroke')
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
 
@@ -84,23 +87,21 @@ class LP_OT_PointLight(bpy.types.Operator, VisibilitySettings):
 
         self.draw_visibility_props(layout)
 
-    def execute(self, context):
-        try:
-            strokes = get_strokes_and_normals(context, self.axis, self.offset)
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
+    def add_lamp(self, context, stroke):
+        """Adds a point lamp.
 
-        vertices = tuple(v for stroke in strokes for v in stroke[0])
-        normals = (n for stroke in strokes for n in stroke[1])
+        :param context: Blender context
+        :param stroke: tuple of vertices and strokes
 
-        # get average, negated normal
-        try:
-            avg_normal = get_average_normal(normals)
-            avg_normal.negate()
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
+        :exception ValueError: if calculating the normal average fails
+
+        :return: Blender lamp object
+        """
+        vertices, normals = stroke
+
+        # get average, negated normal, THROWS ValueError if average is zero vector
+        avg_normal = get_average_normal(normals)
+        avg_normal.negate()
 
         farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
 
@@ -117,5 +118,35 @@ class LP_OT_PointLight(bpy.types.Operator, VisibilitySettings):
         context.object.data.shadow_soft_size = self.radius
         context.object.data.energy = self.power
         self.set_visibility(context.object)
+
+        return context.object
+
+    def execute(self, context):
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
+        if self.stroke == 'ONE':
+            vertices = tuple(v for stroke in strokes for v in stroke[0])
+            normals = (n for stroke in strokes for n in stroke[1])
+            try:
+                self.add_lamp(context, (vertices, normals))
+            except ValueError as e:
+                self.report({'ERROR'}, str(e) + ' Changing mesh hull count to per stroke.')
+                self.stroke = 'PER_STROKE'
+
+        if self.stroke == 'PER_STROKE':
+            new_lamps = []
+            for stroke in strokes:
+                try:
+                    new_lamp = self.add_lamp(context, stroke)
+                    new_lamps.append(new_lamp)
+                except ValueError as e:
+                    self.report({'ERROR'}, str(e))
+
+            for lamp_obj in new_lamps:
+                lamp_obj.select_set(True)
 
         return {'FINISHED'}

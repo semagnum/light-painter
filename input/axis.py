@@ -17,7 +17,7 @@ def reflect_vector(input_vector: Vector, normal: Vector) -> Vector:
 
 
 def axis_prop() -> bpy.props.EnumProperty:
-    """Returns axis property to be used by multiple operators."""
+    """Returns axis property to determine direction of offset."""
     return bpy.props.EnumProperty(
         name='Offset Axis',
         description='Determine direction of the new object\'s offset',
@@ -32,6 +32,23 @@ def axis_prop() -> bpy.props.EnumProperty:
              'Positions light to reflect onto the specified surface directly into the scene camera'),
         ),
         default='NORMAL-RAY'
+    )
+
+
+def stroke_prop(obj_name: str) -> bpy.props.EnumProperty:
+    """Returns enumerator property to determine usage of grease pencil strokes.
+
+    :param obj_name: type of the generated object for description, e.g. "lamp" or "flag"
+    :return: bpy enumerator property for operators
+    """
+    return bpy.props.EnumProperty(
+        name='Count',
+        description=f'How many {obj_name}s are created per stroke',
+        items=(
+            ('ONE', 'One', f'All strokes will create a single {obj_name}'),
+            ('PER_STROKE', 'Per stroke', f'Each stroke will create its own {obj_name}'),
+        ),
+        default='ONE'
     )
 
 

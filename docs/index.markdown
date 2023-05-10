@@ -37,9 +37,9 @@ when your annotation matches the shape of the type of lamp that you want.
 
 Here are some general painting tips:
 
-- Draw on multiple surfaces, preferably ones facing different directions.
-- The operators can handle some cases where the surfaces you paint face different directions,
-  but avoid complete opposite directions for better results.
+- Draw on multiple surfaces. The operators can handle most cases
+  where surfaces face different directions. If the average of the surface direction is zero,
+  Light Painter will automatically set the lamp count to per stroke to attempt to resolve successfully.
 - Spot lamps prefer circular strokes.
   But if you do not trust your drawing ability,
   a painted line representing the diameter is sufficient.
@@ -62,22 +62,25 @@ There are several light types:
 - area lamp
 - world sky texture
 
-Also included are these (but since they use emissive materials,
-they will not work the same outside of Eevee):
+Also included are these mesh lights (note that they use emissive materials,
+which may not behave the same in all render engines):
 
 - emissive mesh object as a convex hull
 - emissive tube - each annotation stroke becomes a "tube" of light -
-  great for neon lighting or custom-shaped lighting.
+  great for neon lighting.
 
 You can press `F9` or click the collapsed Redo Panel in the bottom-left corner of the 3D view
-to tweak parameters such as light distance, power and color.
-There are also ray visibility settings to tweak light or object visibility
-for diffuse, specular, or volumetric rays or shaders.
-Note that these ray visibility settings will be dependent on your render engine's implementation,
-as Eevee and Cycles handle visibility differently or may ignore it.
+to tweak parameters, such as:
+- Light distance, power and color.
+- Number of lights. Light Painter can either evaluate *all* annotation strokes in the current frame
+  to create a single light, or have each annotation stroke generate its own lamp.
+- Ray visibility settings, to tweak light or object visibility 
+  for diffuse, specular, or volumetric rays or shaders.
+  Note that these ray visibility settings will be dependent on your render engine's implementation,
+  as Eevee and Cycles handle visibility differently or may ignore it.
 
-**Remember that the operator will use all annotations on
-the current frame as part of the evaluation.**
+**Remember that the operator will evaluate all annotation strokes on
+the current frame.**
 The add-on cannot remove annotations post-operation for you, 
 that would prevent the Redo Panel from working
 (since it could not redo the operation if the annotations are no longer there).

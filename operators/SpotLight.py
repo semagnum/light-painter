@@ -19,7 +19,7 @@
 import bpy
 from mathutils import Vector
 
-from ..input import axis_prop, get_strokes, get_strokes_and_normals
+from ..input import axis_prop, get_strokes, get_strokes_and_normals, stroke_prop
 from .method_util import get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -32,6 +32,8 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()
+
+    stroke: stroke_prop('spot lamp')
 
     offset: bpy.props.FloatProperty(
         name='Offset',
@@ -73,6 +75,7 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, 'stroke')
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
 
@@ -83,23 +86,22 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
 
         self.draw_visibility_props(layout)
 
-    def execute(self, context):
-        try:
-            strokes = get_strokes_and_normals(context, self.axis, self.offset)
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
+    def add_lamp(self, context, orig_vertices, stroke):
+        """Adds a spot lamp.
 
-        vertices = tuple(v for stroke in strokes for v in stroke[0])
-        normals = (n for stroke in strokes for n in stroke[1])
+        :param context: Blender context
+        :param orig_vertices: stroke vertices without offset from their surface
+        :param stroke: tuple of vertices and normals, potentially offsetted from their surface
 
-        # get average, negated normal
-        try:
-            avg_normal = get_average_normal(normals)
-            avg_normal.negate()
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
+        :exception ValueError: if calculating the normal average fails
+
+        :return: Blender lamp object
+        """
+        vertices, normals = stroke
+
+        # THROWS ValueError if average is zero vector
+        avg_normal = get_average_normal(normals)
+        avg_normal.negate()
 
         farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
 
@@ -108,13 +110,6 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
         center = sum(projected_vertices, start=Vector()) / len(projected_vertices)
         rotation = Vector((0.0, 0.0, -1.0)).rotation_difference(avg_normal).to_euler()
 
-        try:
-            orig_strokes = get_strokes(context, self.axis, 0.0)
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
-
-        orig_vertices = tuple(v for stroke in orig_strokes for v in stroke)
         orig_center = sum(orig_vertices, start=Vector()) / len(orig_vertices)
         centers_dir = (orig_center - center).normalized()
         spot_angle = 2 * max((v - center).normalized().angle(centers_dir)
@@ -130,5 +125,38 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
         context.object.data.energy = self.power
         context.object.data.shadow_soft_size = self.radius
         self.set_visibility(context.object)
+
+        return context.object
+
+    def execute(self, context):
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+            orig_strokes = get_strokes(context, self.axis, 0.0)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
+        if self.stroke == 'ONE':
+            vertices = tuple(v for stroke in strokes for v in stroke[0])
+            normals = (n for stroke in strokes for n in stroke[1])
+
+            orig_vertices = tuple(v for stroke in orig_strokes for v in stroke)
+            try:
+                self.add_lamp(context, orig_vertices, (vertices, normals))
+            except ValueError as e:
+                self.report({'ERROR'}, str(e) + ' Changing mesh hull count to per stroke.')
+                self.stroke = 'PER_STROKE'
+
+        if self.stroke == 'PER_STROKE':
+            new_lamps = []
+            for i in range(len(strokes)):
+                try:
+                    lamp_obj = self.add_lamp(context, orig_strokes[i], strokes[i])
+                    new_lamps.append(lamp_obj)
+                except ValueError as e:
+                    self.report({'ERROR'}, str(e))
+
+            for lamp_obj in new_lamps:
+                lamp_obj.select_set(True)
 
         return {'FINISHED'}

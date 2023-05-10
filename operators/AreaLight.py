@@ -21,7 +21,7 @@ import math
 from mathutils import Matrix, Vector
 from mathutils.geometry import box_fit_2d
 
-from ..input import axis_prop, get_strokes_and_normals
+from ..input import axis_prop, get_strokes_and_normals, stroke_prop
 from .method_util import get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -77,6 +77,8 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
         unit='LENGTH'
     )
 
+    stroke: stroke_prop('area lamp')
+
     shape: bpy.props.EnumProperty(
         name='Shape',
         description='Determine axis of offset',
@@ -122,6 +124,7 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, 'stroke')
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
 
@@ -133,22 +136,21 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
 
         self.draw_visibility_props(layout)
 
-    def execute(self, context):
-        try:
-            strokes = get_strokes_and_normals(context, self.axis, self.offset)
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
-        vertices = tuple(v for stroke in strokes for v in stroke[0])
-        normals = (n for stroke in strokes for n in stroke[1])
+    def add_lamp(self, context, stroke):
+        """Adds an area lamp.
 
-        # get average, negated normal
-        try:
-            avg_normal = get_average_normal(normals)
-            avg_normal.negate()
-        except ValueError as e:
-            self.report({'ERROR'}, str(e))
-            return {'CANCELLED'}
+        :param context: Blender context
+        :param stroke: tuple of vertices and normals
+
+        :exception ValueError: if calculating the normal average fails
+
+        :return: Blender lamp object
+        """
+
+        vertices, normals = stroke
+        # get average, negated normal, THROWS ValueError if average is zero vector
+        avg_normal = get_average_normal(normals)
+        avg_normal.negate()
 
         farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
 
@@ -174,5 +176,35 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
             context.object.data.size = max_size
 
         self.set_visibility(context.object)
+
+        return context.object
+
+    def execute(self, context):
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
+        if self.stroke == 'ONE':
+            vertices = tuple(v for stroke in strokes for v in stroke[0])
+            normals = (n for stroke in strokes for n in stroke[1])
+            try:
+                self.add_lamp(context, (vertices, normals))
+            except ValueError as e:
+                self.report({'ERROR'}, str(e) + ' Changing lamp count to per stroke.')
+                self.stroke = 'PER_STROKE'
+
+        if self.stroke == 'PER_STROKE':
+            new_lamps = []
+            for stroke in strokes:
+                try:
+                    new_lamp = self.add_lamp(context, stroke)
+                    new_lamps.append(new_lamp)
+                except ValueError as e:
+                    self.report({'ERROR'}, str(e))
+
+            for lamp_obj in new_lamps:
+                lamp_obj.select_set(True)
 
         return {'FINISHED'}

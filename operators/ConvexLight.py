@@ -18,7 +18,7 @@
 
 import bpy
 
-from ..input import axis_prop, get_strokes, get_strokes_and_normals
+from ..input import axis_prop, get_strokes_and_normals, stroke_prop
 from .method_util import assign_emissive_material, get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -31,6 +31,8 @@ class LP_OT_ConvexLight(bpy.types.Operator, VisibilitySettings):
     bl_options = {'REGISTER', 'UNDO'}
 
     axis: axis_prop()
+
+    stroke: stroke_prop('convex hull')
 
     offset: bpy.props.FloatProperty(
         name='Offset',
@@ -69,6 +71,8 @@ class LP_OT_ConvexLight(bpy.types.Operator, VisibilitySettings):
 
     def draw(self, context):
         layout = self.layout
+
+        layout.prop(self, 'stroke')
         layout.prop(self, 'axis')
         layout.prop(self, 'offset')
         layout.prop(self, 'flatten')
@@ -79,56 +83,88 @@ class LP_OT_ConvexLight(bpy.types.Operator, VisibilitySettings):
 
         self.draw_visibility_props(layout)
 
-    def execute(self, context):
-        bpy.ops.object.select_all(action='DESELECT')
+    def generate_mesh(self, vertices, normals, flatten: bool):
+        """Generates a mesh point cloud.
+
+        :param vertices: list of points in world space
+        :param normals: list of normals corresponding to the vertices
+        :param flatten: if True, flattens the mesh into a plane
+
+        :exception ValueError: if calculating the normal average fails
+
+        :return: Blender mesh data
+        """
+
+        if not flatten:
+            mesh_vertices = vertices
+        else:
+            # get average, negated normal (throws ValueError if average is zero vector)
+            avg_normal = get_average_normal(normals)
+
+            farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
+
+            mesh_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
 
         mesh = bpy.data.meshes.new('LightPaint_Convex')
+        mesh.from_pydata(mesh_vertices, [], [])
+
+        return mesh
+
+    def add_mesh_light(self, context, vertices, normals):
+        """Adds an emissive convex hull mesh.
+
+        :param context: Blender context
+        :param vertices: a list of points in world space
+        :param normals: a corresponding list of normals
+
+        :return: Blender mesh object
+        """
+        bpy.ops.object.select_all(action='DESELECT')
+
+        mesh = self.generate_mesh(vertices, normals, self.flatten)
         obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
         col.objects.link(obj)
         context.view_layer.objects.active = obj
-        if not self.flatten:
-            try:
-                strokes = get_strokes(context, self.axis, self.offset)
-            except ValueError as e:
-                self.report({'ERROR'}, str(e))
-                return {'CANCELLED'}
-
-            vertices = tuple(v for stroke in strokes for v in stroke)
-
-            mesh.from_pydata(vertices, [], [])
-        else:
-            try:
-                strokes = get_strokes_and_normals(context, self.axis, self.offset)
-            except ValueError as e:
-                self.report({'ERROR'}, str(e))
-                return {'CANCELLED'}
-
-            vertices = tuple(v for stroke in strokes for v in stroke[0])
-            normals = tuple(v for stroke in strokes for v in stroke[1])
-
-            # get average, negated normal
-            try:
-                avg_normal = get_average_normal(normals)
-            except ValueError as e:
-                self.report({'ERROR'}, str(e))
-                return {'CANCELLED'}
-
-            farthest_point = max((v.project(avg_normal).length_squared, v) for v in vertices)[1]
-
-            projected_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
-
-            mesh.from_pydata(projected_vertices, [], [])
 
         # go into edit mode, convex hull, cleanup, then get out
         bpy.ops.object.editmode_toggle()
-
         bpy.ops.mesh.convex_hull()
-
         bpy.ops.object.editmode_toggle()
 
         # assign emissive material to it
         assign_emissive_material(obj, self.light_color, self.emit_value)
         self.set_visibility(obj)
+
+        return obj
+
+    def execute(self, context):
+        try:
+            strokes = get_strokes_and_normals(context, self.axis, self.offset)
+        except ValueError as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+
+        if self.stroke == 'ONE':
+            vertices = tuple(v for stroke in strokes for v in stroke[0])
+            normals = (n for stroke in strokes for n in stroke[1])
+            try:
+                self.add_mesh_light(context, vertices, normals)
+            except ValueError as e:
+                self.report({'ERROR'}, str(e) + ' Changing mesh hull count to per stroke.')
+                self.stroke = 'PER_STROKE'
+
+        if self.stroke == 'PER_STROKE':
+            new_lamps = []
+            for stroke in strokes:
+                vertices, normals = stroke
+                try:
+                    new_obj = self.add_mesh_light(context, vertices, normals)
+                    new_lamps.append(new_obj)
+                except ValueError as e:
+                    self.report({'ERROR'}, str(e))
+
+            for lamp_obj in new_lamps:
+                lamp_obj.select_set(True)
 
         return {'FINISHED'}
