@@ -8,8 +8,7 @@ EPSILON = 0.01
 EMISSIVE_MAT_NAME = 'LightPaint_Emissive'
 FLAG_MAT_NAME = 'LightPaint_Shadow'
 
-NORMAL_ERROR = ('Mean of normals resulted in zero vector - '
-                'avoid drawing equally on surfaces facing opposite directions!')
+NORMAL_ERROR = 'Average of normals results in a zero vector - unable to calculate average direction!'
 
 
 def layout_group(layout, text=None):
