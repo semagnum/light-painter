@@ -18,7 +18,7 @@
 
 import bpy
 
-from ..input import axis_prop, get_strokes_and_normals, stroke_prop
+from ..input import axis_prop, get_strokes_and_normals, offset_prop, stroke_prop
 from .method_util import assign_emissive_material, get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -34,13 +34,7 @@ class LP_OT_ConvexLight(bpy.types.Operator, VisibilitySettings):
 
     stroke: stroke_prop('convex hull')
 
-    offset: bpy.props.FloatProperty(
-        name='Offset',
-        description='Hull\'s offset from annotation along specified axis',
-        min=0.0,
-        default=1.0,
-        unit='LENGTH'
-    )
+    offset: offset_prop(obj_descriptor='Hull')
 
     flatten: bpy.props.BoolProperty(
         name='Flatten',

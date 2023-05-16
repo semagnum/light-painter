@@ -26,7 +26,7 @@ from .panel import LP_PT_Paint, LP_PT_Light
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 6, 1),
+    'version': (0, 6, 2),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -41,6 +41,7 @@ classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag,
            LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint, PIE_MT_StrokePlacement)
 
 addon_pie_keymap = []
+
 
 def register():
     for cls in classes:

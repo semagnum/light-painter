@@ -19,7 +19,7 @@
 import bpy
 from mathutils import Vector
 
-from ..input import axis_prop, get_strokes_and_normals, stroke_prop
+from ..input import axis_prop, get_strokes_and_normals, offset_prop, stroke_prop
 from .method_util import get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -35,13 +35,7 @@ class LP_OT_PointLight(bpy.types.Operator, VisibilitySettings):
 
     stroke: stroke_prop('point lamp')
 
-    offset: bpy.props.FloatProperty(
-        name='Offset',
-        description='Light\'s offset from annotation along specified axis',
-        min=0.0,
-        default=1.0,
-        unit='LENGTH'
-    )
+    offset: offset_prop()
 
     power: bpy.props.FloatProperty(
         name='Power',

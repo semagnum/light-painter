@@ -21,7 +21,7 @@ import math
 from mathutils import Matrix, Vector
 from mathutils.geometry import box_fit_2d
 
-from ..input import axis_prop, get_strokes_and_normals, stroke_prop
+from ..input import axis_prop, get_strokes_and_normals, offset_prop, stroke_prop
 from .method_util import get_average_normal, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -69,13 +69,7 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
 
     axis: axis_prop()
 
-    offset: bpy.props.FloatProperty(
-        name='Offset',
-        description='Light\'s offset from annotation along specified axis',
-        min=0.0,
-        default=1.0,
-        unit='LENGTH'
-    )
+    offset: offset_prop()
 
     stroke: stroke_prop('area lamp')
 

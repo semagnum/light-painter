@@ -35,6 +35,16 @@ def axis_prop() -> bpy.props.EnumProperty:
     )
 
 
+def offset_prop(obj_descriptor='Lamp', default_val: float = 1.0) -> bpy.props.FloatProperty:
+    """Returns offset property to determine amount of offset."""
+    return bpy.props.FloatProperty(
+        name='Offset',
+        description=f'{obj_descriptor}\'s offset from annotation(s) along specified axis',
+        default=default_val,
+        unit='LENGTH'
+    )
+
+
 def stroke_prop(obj_name: str) -> bpy.props.EnumProperty:
     """Returns enumerator property to determine usage of grease pencil strokes.
 

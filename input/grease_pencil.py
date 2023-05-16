@@ -34,6 +34,9 @@ def get_stroke_vertices(context, stroke, axis: str, offset_amount: float) -> tup
         stroke_vertices = tuple(v + n * offset_amount
                                 for v, n in zip(stroke_vertices, stroke_normals))
 
+    if offset_amount < 0.0:
+        stroke_normals = [normal * -1 for normal in stroke_normals]
+
     return stroke_vertices, stroke_normals
 
 

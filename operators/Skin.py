@@ -18,7 +18,7 @@
 
 import bpy
 
-from ..input import axis_prop, get_strokes
+from ..input import axis_prop, get_strokes, offset_prop
 from .method_util import assign_emissive_material, has_strokes, layout_group
 from .VisibilitySettings import VisibilitySettings
 
@@ -32,13 +32,7 @@ class LP_OT_Skin(bpy.types.Operator, VisibilitySettings):
 
     axis: axis_prop()
 
-    offset: bpy.props.FloatProperty(
-        name='Offset',
-        description='Wire\'s offset from annotation along specified axis',
-        min=0.0,
-        default=0.0,
-        unit='LENGTH'
-    )
+    offset: offset_prop(obj_descriptor='Wire', default_val=0.0)
 
     merge_distance: bpy.props.FloatProperty(
         name='Merge by distance',
