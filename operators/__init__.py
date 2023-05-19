@@ -1,3 +1,22 @@
+if 'ConvexLight' in locals():
+    import importlib
+    reloadable_modules = [
+        'ConvexLight',
+        'Skin',
+        'AreaLight',
+        'PointLight',
+        'ShadowCard',
+        'SunLight',
+        'AreaLight',
+        'SpotLight',
+        'SkyTexture',
+    ]
+    for module_name in reloadable_modules:
+        if module_name in locals():
+            importlib.reload(locals()[module_name])
+
+from . import ConvexLight, Skin, AreaLight, PointLight, ShadowCard, SunLight, SpotLight, SkyTexture
+
 from .ConvexLight import LP_OT_ConvexLight
 from .Skin import LP_OT_Skin
 from .AreaLight import LP_OT_AreaLight

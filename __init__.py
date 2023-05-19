@@ -16,7 +16,21 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+if "bpy" in locals():
+    import importlib
+    reloadable_modules = [
+        'input',
+        'operators',
+        'pie',
+        'panel',
+    ]
+    for module_name in reloadable_modules:
+        if module_name in locals():
+            importlib.reload(locals()[module_name])
+
 import bpy
+
+from . import input, operators, pie, panel
 
 from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
 from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag
