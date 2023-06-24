@@ -20,7 +20,7 @@ import bpy
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes, get_strokes_and_normals, offset_prop, stroke_prop
-from .method_util import get_average_normal, has_strokes, layout_group
+from .method_util import get_average_normal, has_strokes, layout_group, calc_power, relative_power_prop
 from .VisibilitySettings import VisibilitySettings
 
 
@@ -45,6 +45,8 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
         subtype='POWER',
         unit='POWER'
     )
+
+    is_power_relative: relative_power_prop()
 
     radius: bpy.props.FloatProperty(
         name='Radius',
@@ -75,7 +77,9 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
 
         box = layout_group(layout, text='Lamp')
         box.prop(self, 'light_color')
-        box.prop(self, 'power')
+        row = box.row()
+        row.prop(self, 'power')
+        row.prop(self, 'is_power_relative', toggle=True)
         box.prop(self, 'radius')
 
         self.draw_visibility_props(layout)
@@ -116,7 +120,7 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
         # set light data properties
         context.object.data.color = self.light_color
         context.object.data.spot_size = spot_angle
-        context.object.data.energy = self.power
+        context.object.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         context.object.data.shadow_soft_size = self.radius
         self.set_visibility(context.object)
 

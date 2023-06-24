@@ -91,3 +91,23 @@ def assign_emissive_material(obj, color, emit_value: float):
     """
     mat = generate_emissive_material(color, emit_value)
     obj.data.materials.append(mat)  # Assign the new material.
+
+
+def relative_power_prop():
+    """Returns bool property to toggle relative lamp power."""
+    return bpy.props.BoolProperty(
+        name='Relative',
+        description='Lamp power scales based on distance, relative to 1m',
+        default=False
+    )
+
+
+def calc_power(power: float, distance: float) -> float:
+    """Calculates relative light power based on inverse square law.
+    relative power = initial power * squared distance
+
+    :param power: light value at 1m.
+    :param distance: distance from the light to the target object.
+    :return: light power relative to distance
+    """
+    return power * (distance * distance)

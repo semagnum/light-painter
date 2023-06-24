@@ -22,7 +22,7 @@ from mathutils import Matrix, Vector
 from mathutils.geometry import box_fit_2d
 
 from ..input import axis_prop, get_strokes_and_normals, offset_prop, stroke_prop
-from .method_util import get_average_normal, has_strokes, layout_group
+from .method_util import get_average_normal, has_strokes, layout_group, relative_power_prop, calc_power
 from .VisibilitySettings import VisibilitySettings
 
 
@@ -94,6 +94,8 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
         unit='POWER'
     )
 
+    is_power_relative: relative_power_prop()
+
     min_size: bpy.props.FloatVectorProperty(
         name='Minimum size',
         description='Lamp size will be clamped to these minimum values',
@@ -125,7 +127,10 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
         box = layout_group(layout, text='Lamp')
         box.prop(self, 'shape')
         box.prop(self, 'light_color')
-        box.prop(self, 'power')
+
+        row = box.row()
+        row.prop(self, 'power')
+        row.prop(self, 'is_power_relative', toggle=True)
         box.prop(self, 'min_size')
 
         self.draw_visibility_props(layout)
@@ -160,7 +165,7 @@ class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
 
         # set light data properties
         context.object.data.color = self.light_color
-        context.object.data.energy = self.power
+        context.object.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         context.object.data.shape = self.shape
         if self.shape in {'RECTANGLE', 'ELLIPSE'}:
             context.object.data.size = max(self.min_size[0], x_size)

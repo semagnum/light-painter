@@ -71,7 +71,10 @@ which may not behave the same in all render engines):
 
 You can press `F9` or click the collapsed Redo Panel in the bottom-left corner of the 3D view
 to tweak parameters, such as:
-- Light distance, power and color.
+- Light color.
+- Light distance and power. For lamp objects, a "Relative" toggle is available.
+  When enabled, this allows you to adjust light coverage and falloff by adjust the lamp distance,
+  without affecting apparent brightness.
 - Number of lights. Light Painter can either evaluate *all* annotation strokes in the current frame
   to create a single light, or have each annotation stroke generate its own lamp.
 - Ray visibility settings, to tweak light or object visibility 
@@ -109,7 +112,7 @@ giving more dynamic lighting.
 
 ## Adding shadows
 
-![Adding shadows](/assets/shadow_card.gif)
+![Adding shadows](/assets/shadows.gif)
 
 Flags can be used to prevent surfaces from receiving light.
 It takes the surfaces drawn and generates makes a convex mesh hull to block the light.

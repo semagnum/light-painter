@@ -35,7 +35,7 @@ from . import input, operators, pie, panel
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
-    'version': (0, 6, 2),
+    'version': (0, 6, 3),
     'blender': (3, 3, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
