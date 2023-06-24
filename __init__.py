@@ -32,11 +32,6 @@ import bpy
 
 from . import input, operators, pie, panel
 
-from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
-from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag
-from .pie import PIE_MT_Light, PIE_MT_Paint, PIE_MT_StrokePlacement
-from .panel import LP_PT_Paint, LP_PT_Light
-
 bl_info = {
     'name': 'Light Paint',
     'author': 'Spencer Magnusson',
@@ -50,9 +45,11 @@ bl_info = {
     'tracker_url': 'https://github.com/semagnum/light-painter/issues',
 }
 
-classes = (LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag,
-           LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky,
-           LP_PT_Paint, LP_PT_Light, PIE_MT_Light, PIE_MT_Paint, PIE_MT_StrokePlacement)
+classes = (operators.LP_OT_ConvexLight, operators.LP_OT_Skin, operators.LP_OT_ShadowFlag,
+           operators.LP_OT_AreaLight, operators.LP_OT_PointLight, operators.LP_OT_SpotLight,
+           operators.LP_OT_SunLight, operators.LP_OT_Sky,
+           panel.LP_PT_Paint, panel.LP_PT_Light,
+           pie.PIE_MT_Light, pie.PIE_MT_Paint, pie.PIE_MT_StrokePlacement)
 
 addon_pie_keymap = []
 
