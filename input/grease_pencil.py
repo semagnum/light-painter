@@ -1,4 +1,4 @@
-#     Light Paint, Blender add-on that creates lights based on where the user paints.
+#     Light Painter, Blender add-on that creates lights based on where the user paints.
 #     Copyright (C) 2023 Spencer Magnusson
 #     semagnum@gmail.com
 #

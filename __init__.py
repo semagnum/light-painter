@@ -1,4 +1,4 @@
-#     Light Paint, Blender add-on that creates lights based on where the user paints.
+#     Light Painter, Blender add-on that creates lights based on where the user paints.
 #     Copyright (C) 2023 Spencer Magnusson
 #     semagnum@gmail.com
 #
@@ -33,7 +33,7 @@ import bpy
 from . import input, operators, pie, panel
 
 bl_info = {
-    'name': 'Light Paint',
+    'name': 'Light Painter',
     'author': 'Spencer Magnusson',
     'version': (0, 6, 4),
     'blender': (3, 5, 0),
