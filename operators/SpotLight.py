@@ -17,11 +17,10 @@
 
 
 import bpy
-import math
 from mathutils import Vector
 
 from ..input import axis_prop, get_strokes, get_strokes_and_normals, offset_prop, stroke_prop
-from .method_util import get_average_normal, get_box, has_strokes, layout_group, calc_power, relative_power_prop
+from .method_util import get_average_normal, has_strokes, layout_group, calc_power, relative_power_prop
 from .VisibilitySettings import VisibilitySettings
 
 
@@ -97,7 +96,8 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
         :return: Blender lamp object
         """
         vertices, normals = stroke
-        # get average, negated normal, THROWS ValueError if average is zero vector
+
+        # THROWS ValueError if average is zero vector
         avg_normal = get_average_normal(normals)
         avg_normal.negate()
 
@@ -105,9 +105,8 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
 
         projected_vertices = tuple(v + (farthest_point - v).project(avg_normal) for v in vertices)
 
-        center, mat, x_size, y_size = get_box(projected_vertices, avg_normal)
-        rotation = mat.to_euler()
-        rotation.rotate_axis('X', math.radians(180.0))
+        center = sum(projected_vertices, start=Vector()) / len(projected_vertices)
+        rotation = Vector((0.0, 0.0, -1.0)).rotation_difference(avg_normal).to_euler()
 
         orig_center = sum(orig_vertices, start=Vector()) / len(orig_vertices)
         centers_dir = (orig_center - center).normalized()
@@ -123,9 +122,7 @@ class LP_OT_SpotLight(bpy.types.Operator, VisibilitySettings):
         context.object.data.spot_size = spot_angle
         context.object.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         context.object.data.shadow_soft_size = self.radius
-
-        context.object.scale[0] = x_size
-        context.object.scale[1] = y_size
+        self.set_visibility(context.object)
 
         return context.object
 
