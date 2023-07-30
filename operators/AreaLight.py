@@ -18,46 +18,10 @@
 
 import bpy
 import math
-from mathutils import Matrix, Vector
-from mathutils.geometry import box_fit_2d
 
 from ..input import axis_prop, get_strokes_and_normals, offset_prop, stroke_prop
-from .method_util import get_average_normal, has_strokes, layout_group, relative_power_prop, calc_power
+from .method_util import get_average_normal, get_box, has_strokes, layout_group, relative_power_prop, calc_power
 from .VisibilitySettings import VisibilitySettings
-
-
-def get_box(vertices, normal):
-    """Given a set of vertices flattened along a plane and their normal, return an aligned rectangle.
-
-    :param vertices: list of vertex coordinates in world space
-    :param normal: normal of vertices for rectangle to be projected to
-    :return: tuple of (coordinate of rect center, matrix for rotation, rect length, and rect width
-    """
-    # rotate hull so normal is pointed up, so we can ignore Z
-    # find angle of fitted box
-    align_to_z = normal.rotation_difference(Vector((0.0, 0.0, 1.0))).to_matrix()
-    flattened_2d = [align_to_z @ v for v in vertices]
-
-    # rotate hull by angle
-    # get length and width
-    angle = box_fit_2d([(v[0], v[1]) for v in flattened_2d])
-    box_mat = Matrix.Rotation(angle, 3, 'Z')
-    aligned_2d = [(box_mat @ Vector((co[0], co[1], 0))) for co in flattened_2d]
-    xs = tuple(co[0] for co in aligned_2d)
-    ys = tuple(co[1] for co in aligned_2d)
-
-    x_min, x_max = min(xs), max(xs)
-    y_min, y_max = min(ys), max(ys)
-
-    length = x_max - x_min
-    width = y_max - y_min
-
-    center = align_to_z.inverted_safe() @ box_mat.inverted_safe() @ Vector((x_min + (length / 2),
-                                                                            y_min + (width / 2),
-                                                                            flattened_2d[0][2]))
-
-    # return matrix, length and width of box
-    return center, align_to_z.inverted_safe() @ box_mat.inverted_safe(), length, width
 
 
 class LP_OT_AreaLight(bpy.types.Operator, VisibilitySettings):
