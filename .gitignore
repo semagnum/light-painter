@@ -4,3 +4,5 @@ _build/
 venv/
 
 *.zip
+*.blend
+*.blend1

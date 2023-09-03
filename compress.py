@@ -51,4 +51,4 @@ def zip_main(addon_name: str):
 
 
 if __name__ == '__main__':
-    zip_main('light-painter')
+    zip_main('lightpainter')

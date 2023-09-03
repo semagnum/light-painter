@@ -5,21 +5,16 @@ Here you can learn how to use the Blender add-on and dive into the Python packag
 
 ## Painting
 
-![pie menu for annotations](/assets/pie_menu_paint.png)
+![List of tools: Light Paint, Mesh Light Paint, Tube Light Paint, Sky Paint, Shadow Paint](/assets/tools.png)
 
-The painting is done using Blender's
-[annotation tools](https://docs.blender.org/manual/en/latest/interface/annotate_tool.html)
-in the 3D view.
-You can find these in the toolshelf on the left-hand side of the 3D view.
-These tools are provided in the Light Painter panel for convenience.
-They are also defined as pie menus in the 3D view:
-the default shortcut for the stroke types is `Ctrl + Shift + P`,
-and the stroke placement types is `Ctrl + Shift + Alt + P`.
+The painting is done within each tool.
+Once installed, you can find these tools on the left-hand side of the 3D view
+in the toolshelf (`T` it the default shortcut to hide/reveal this shelf).
+When the tool is selected, left-click the mouse to start the tool.
 
-Regarding the stroke placement setting,
-the two options I'd recommend is "3D Cursor" or "Surface".
-You can find this setting in the Light Painter panel as well
-as in the tool settings of the 3D view header.
+From there, you can use the mouse left-click and right-click
+to draw and erase marks on surfaces respectively.
+Press `Escape` key to cancel, and the `Return/Enter` key to add light.
 
 Now just paint where you want the light to hit your objects' surfaces!
 
@@ -27,101 +22,94 @@ Now just paint where you want the light to hit your objects' surfaces!
 
 ![Adding a light, step by step](/assets/painting_steps.gif)
 
-You do not need to fill _every_ surface with the annotation tool.
+You do not need to fill in every surface.
 Draw some simple strokes over surfaces that you would like highlighted by your light.
-Keep in mind that the surface's normal you are annotating
-will also influence where the light will be finally positioned.
+Keep in mind that the surface's normal you are drawing over
+can influence where the light will be finally positioned.
 
 The tool also works best
-when your annotation matches the shape of the type of lamp that you want.
+when your strokes matches the shape of the type of lamp that you want.
 
 Here are some general painting tips:
 
 - Draw on multiple surfaces. The operators can handle most cases
-  where surfaces face different directions. If the average of the surface direction is zero,
-  Light Painter will automatically set the lamp count to per stroke to attempt to resolve successfully.
+  where surfaces face different directions,
+  but it will fail if the average of the surface direction is zero.
 - Spot lamps prefer circular strokes.
   But if you do not trust your drawing ability,
   a painted line representing the diameter is sufficient.
 - Area lamps prefer rectangles, squares, circles or a single painted line.
-- Point lamps are the most forgiving since a point lamp's rotation is irrelevant.
+- Point lamps are the most forgiving since a point lamp's rotation
+  is irrelevant to its ability to light.
 
-## Adding lights
+## Light Paint
 
-![pie menu for adding lights](/assets/pie_menu_light.png)
-
-You can find the light operators as a pie menu
-(default shortcut is `Shift + P` in the 3D view)
-or in the Light Painter panel.
-
-There are several light types:
+You can choose between the main light types (for the sun lamp, see "Sky Paint"):
 
 - point lamp
-- sun lamp
 - spot lamp
 - area lamp
-- world sky texture
 
-Also included are these mesh lights (note that they use emissive materials,
-which may not behave the same in all render engines):
-
-- emissive mesh object as a convex hull
-- emissive tube - each annotation stroke becomes a "tube" of light -
-  great for neon lighting.
-
-You can press `F9` or click the collapsed Redo Panel in the bottom-left corner of the 3D view
-to tweak parameters, such as:
+Like with any of the tools, you can press `F9` or click the collapsed Redo Panel
+in the bottom-left corner of the 3D view to tweak parameters, such as:
 - Light color.
 - Light distance and power. For lamp objects, a "Relative" toggle is available.
   When enabled, this allows you to adjust light coverage and falloff by adjust the lamp distance,
   without affecting apparent brightness.
-- Number of lights. Light Painter can either evaluate *all* annotation strokes in the current frame
-  to create a single light, or have each annotation stroke generate its own lamp.
 - Ray visibility settings, to tweak light or object visibility 
   for diffuse, specular, or volumetric rays or shaders.
   Note that these ray visibility settings will be dependent on your render engine's implementation,
   as Eevee and Cycles handle visibility differently or may ignore it.
 
-**Remember that the operator will evaluate all annotation strokes on
-the current frame.**
-The add-on cannot remove annotations post-operation for you, 
-that would prevent the Redo Panel from working
-(since it could not redo the operation if the annotations are no longer there).
-There is a convenience button in the pie menu and panel
-to clear all strokes on the current frame.
-So you must create strokes, add a light, clear or erase strokes,
-and new strokes to add the next light.
+## Mesh and Tube Light Paint
 
-### Sun lamp and Sky texture operators
+You can also create mesh lights. Note that they use emissive materials,
+which may not behave the same in all render engines.
+They have similar parameters as the lamp tool, along with a few extra.
 
-![Adding sky texture](/assets/sky_texture.gif)
+**Mesh lights** create a convex shape from the strokes you drew.
+This tool has an extra parameter to flatten the hull into a plane.
 
-These two have some unique settings, so I will go over that.
+**Tube lights** turn each stroke into a "tube" of light -
+great for neon lighting.
+This tool has extra parameters to merge tube vertices by distance (for a smoother tube shape),
+and subdivisions for the tube path or its resulting surface.
+
+### Sky Paint
+
+![Drawing onto an environment and painting direction of sky texture](assets/sky_paint.gif)
+
+You can add either a sun lamp or a sky texture.
+
 There are two options to determine direction: "average" -
-which just takes the mean normal of the annotations -
+which just takes the mean normal of the annotations, like all the other Light Painter tools -
 and "occlusion". The latter imitates a sun above the horizon.
 For the number of samples given, the operator will iterate over different sun positions
-and check how much of your annotation's surface will be hit.
-After iterating over all the samples, the operator will choose the best position.
+and check how much of your strokes will be lit from that angle.
+After iterating over all the samples, the operator will choose the best position
+based on how closely it matches the average normal
+and the percentage of your strokes hit.
 
-However, this scoring of the best position may result in noonday lighting from above.
-To give the artist more control, there is a "Max Sun Elevation" parameter
+However, this scoring may result in noonday lighting from above.
+To give you more control, there is a "Max Sun Elevation" parameter
 where you can specify the max elevation of the sun.
 This can force the operator to only sample the sun at lower elevations,
 giving more dynamic lighting.
 
-## Adding shadows
+## Shadow Paint
 
-![Adding shadows](/assets/shadows.gif)
+![Painting on an environment and creating "cloud" shadows](assets/shadow_paint.gif)
 
-Flags can be used to prevent surfaces from receiving light.
+Flags can be painted to cast shadows on surfaces.
+**Note**: you must select lamps to flag before running the tool.
 It takes the surfaces drawn and generates makes a convex mesh hull to block the light.
-Parameters can be changed such as position, the flag's color (for bounce lighting) and opacity.
+Parameters can be changed such as position,
+the flag's color (for bounce lighting) and opacity.
 
 1. First, add the lights.
-2. Paint the surfaces you want to be darkened.
+2. Select the lights you want to flag.
+3. Run the Flag Paint tool. Paint surfaces you want darkened.
    These annotations will be considered edges of a convex hull.
-3. Select all the lights you want to be considered for your flag(s).
-4. Run the Flag operator. This will add a flag for each light.
+4. Finish the tool by pressing Enter. This will add a flag for each light.
 
-Currently, black flags for sky textures are not supported.
+Currently, flags for sky textures are not supported.

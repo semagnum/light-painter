@@ -17,66 +17,76 @@
 
 
 import bpy
-from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+from pathlib import Path
 
-from .operators import has_strokes
-from .operators import LP_OT_AreaLight, LP_OT_PointLight, LP_OT_SunLight, LP_OT_SpotLight, LP_OT_Sky
-from .operators import LP_OT_ConvexLight, LP_OT_Skin, LP_OT_ShadowFlag
+from .operators import (
+    LIGHTPAINTER_OT_Lamp,
+    LIGHTPAINTER_OT_Mesh,
+    LIGHTPAINTER_OT_Tube_Light,
+    LIGHTPAINTER_OT_Sky,
+    LIGHTPAINTER_OT_Flag
+)
 
 
-ADDON_NAME = 'Light Paint'
+def icon_path(name: str):
+    return (Path(__file__).parent / ('light_painter.' + name)).as_posix()
 
 
-class LP_PT_Paint(bpy.types.Panel):
+class VIEW3D_T_light_paint(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_lamp'
     bl_space_type = 'VIEW_3D'
-    bl_label = 'Paint'
-    bl_category = ADDON_NAME
-    bl_region_type = 'UI'
-    bl_context = 'objectmode'
-
-    def draw(self, context):
-        layout = self.layout
-        layout.prop(context.scene.tool_settings, 'annotation_stroke_placement_view3d', text='')
-
-        tool_names_label_icon = (
-            ('builtin.annotate', 'Freehand', 'ops.gpencil.draw'),
-            ('builtin.annotate_line', 'Lines', 'ops.gpencil.draw.line'),
-            ('builtin.annotate_polygon', 'Polygons', 'ops.gpencil.draw.poly'),
-            ('builtin.annotate_eraser', 'Eraser', 'ops.gpencil.draw.eraser'),
-        )
-
-        op_name = 'wm.tool_set_by_id'
-        col = layout.column(align=True)
-        for name, label, icon in tool_names_label_icon:
-            icon_val = ToolSelectPanelHelper._icon_value_from_icon_handle(icon)
-            col.operator(op_name, text=label, icon_value=icon_val).name = name
-
-        layout.operator('gpencil.annotation_active_frame_delete', text='Clear all')
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Light Paint'
+    bl_operator = LIGHTPAINTER_OT_Lamp.bl_idname
+    bl_icon = icon_path('light_paint')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Lamp.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
 
 
-class LP_PT_Light(bpy.types.Panel):
+class VIEW3D_T_mesh_light_paint(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_mesh'
     bl_space_type = 'VIEW_3D'
-    bl_label = 'Add Light'
-    bl_category = ADDON_NAME
-    bl_region_type = 'UI'
-    bl_context = 'objectmode'
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Mesh Light Paint'
+    bl_operator = LIGHTPAINTER_OT_Mesh.bl_idname
+    bl_icon = icon_path('mesh_light_paint')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Mesh.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
 
-    def draw(self, context):
-        layout = self.layout
 
-        if not has_strokes(context):
-            layout.label(text='No annotation strokes found. Use the "Paint" panel to add strokes.', icon='ERROR')
+class VIEW3D_T_tube_light_paint(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_tube_light'
+    bl_space_type = 'VIEW_3D'
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Tube Light Paint'
+    bl_operator = LIGHTPAINTER_OT_Tube_Light.bl_idname
+    bl_icon = icon_path('tube_light_paint')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Tube_Light.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
 
-        layout.operator(LP_OT_PointLight.bl_idname, icon='LIGHT_POINT', text='Point')
-        layout.operator(LP_OT_SunLight.bl_idname, icon='LIGHT_SUN', text='Sun')
-        layout.operator(LP_OT_SpotLight.bl_idname, icon='LIGHT_SPOT', text='Spot')
-        layout.operator(LP_OT_AreaLight.bl_idname, icon='LIGHT_AREA', text='Area')
-        layout.operator(LP_OT_Sky.bl_idname, icon='WORLD', text='Sky Texture')
 
-        layout.separator()
+class VIEW3D_T_sky_paint(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_sky'
+    bl_space_type = 'VIEW_3D'
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Sky Paint'
+    bl_operator = LIGHTPAINTER_OT_Sky.bl_idname
+    bl_icon = icon_path('sky_paint')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Sky.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
 
-        layout.operator(LP_OT_ConvexLight.bl_idname, icon='MESH_ICOSPHERE', text='Mesh Hull')
-        layout.operator(LP_OT_Skin.bl_idname, icon='MOD_SKIN', text='Light Tubes')
 
-        layout.separator()
-        layout.operator(LP_OT_ShadowFlag.bl_idname, icon='MESH_ICOSPHERE', text='Lamp Flag')
+class VIEW3D_T_flag_paint(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_flag'
+    bl_space_type = 'VIEW_3D'
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Shadow Paint'
+    bl_operator = LIGHTPAINTER_OT_Flag.bl_idname
+    bl_icon = icon_path('mesh_light_paint')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Flag.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
