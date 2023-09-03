@@ -19,9 +19,8 @@
 if "bpy" in locals():
     import importlib
     reloadable_modules = [
-        'input',
+        'axis',
         'operators',
-        'pie',
         'panel',
     ]
     for module_name in reloadable_modules:
@@ -30,13 +29,13 @@ if "bpy" in locals():
 
 import bpy
 
-from . import input, operators, pie, panel
+from . import axis, operators, panel
 
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (0, 6, 3),
-    'blender': (3, 3, 0),
+    'version': (1, 0, 0),
+    'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
     'support': 'COMMUNITY',
@@ -45,48 +44,41 @@ bl_info = {
     'tracker_url': 'https://github.com/semagnum/light-painter/issues',
 }
 
-classes = (operators.LP_OT_ConvexLight, operators.LP_OT_Skin, operators.LP_OT_ShadowFlag,
-           operators.LP_OT_AreaLight, operators.LP_OT_PointLight, operators.LP_OT_SpotLight,
-           operators.LP_OT_SunLight, operators.LP_OT_Sky,
-           panel.LP_PT_Paint, panel.LP_PT_Light,
-           pie.PIE_MT_Light, pie.PIE_MT_Paint, pie.PIE_MT_StrokePlacement)
+classes = (
+    operators.LIGHTPAINTER_OT_Lamp,
+    operators.LIGHTPAINTER_OT_Mesh,
+    operators.LIGHTPAINTER_OT_Tube_Light,
+    operators.LIGHTPAINTER_OT_Sky,
+    operators.LIGHTPAINTER_OT_Flag
+)
 
-addon_pie_keymap = []
+tools = (
+    panel.VIEW3D_T_light_paint,
+    panel.VIEW3D_T_mesh_light_paint,
+    panel.VIEW3D_T_tube_light_paint,
+    panel.VIEW3D_T_sky_paint,
+    panel.VIEW3D_T_flag_paint,
+)
 
 
 def register():
+    """Registers Light Painter operators and tools."""
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    wm = bpy.context.window_manager
-    if wm.keyconfigs.addon:
-        pie_menu_op = 'wm.call_menu_pie'
-
-        kc = wm.keyconfigs.addon
-        km = kc.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
-        kmi = km.keymap_items.new(pie_menu_op, 'P', 'PRESS', shift=True)
-        kmi.properties.name = "PIE_MT_Light"
-        addon_pie_keymap.append((km, kmi))
-
-        kmi = km.keymap_items.new(pie_menu_op, 'P', 'PRESS', ctrl=True, shift=True)
-        kmi.properties.name = "PIE_MT_Paint"
-        addon_pie_keymap.append((km, kmi))
-
-        kmi = km.keymap_items.new(pie_menu_op, 'P', 'PRESS', ctrl=True, shift=True, alt=True)
-        kmi.properties.name = "PIE_MT_StrokePlacement"
-        addon_pie_keymap.append((km, kmi))
+    first_idname = tools[0].bl_idname
+    bpy.utils.register_tool(tools[0], separator=True,  group=True)
+    for tool in tools[1:]:
+        bpy.utils.register_tool(tool, after=first_idname)
 
 
 def unregister():
+    """Unregisters Light Painter operators and tools."""
+    for tool in tools[::-1]:
+        bpy.utils.unregister_tool(tool)
+
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
-
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        for km, kmi in addon_pie_keymap:
-            km.keymap_items.remove(kmi)
-    addon_pie_keymap.clear()
 
 
 if __name__ == '__main__':
