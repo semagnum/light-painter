@@ -49,12 +49,15 @@ def prep_stroke(context, vertices: list[Vector], normals: list[Vector], axis: st
                 raise ValueError('Set a camera for your scene to use rim lighting!')
 
             camera_origin = camera.matrix_world.translation
-
+            scene = context.scene
+            depsgraph = context.evaluated_depsgraph_get()
             for idx, v, n in zip(range(len(vertices)), vertices, normals):
                 direction = v - camera_origin
                 direction.normalize()
-
-                normals[idx] = reflect_vector(direction, n)
+                is_hit, hit_loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, camera_origin, direction)
+                if is_hit:
+                    normals[idx] = reflect_vector(direction, hit_normal)
+                    vertices[idx] = hit_loc
 
     orig_vertices = vertices[:]
 
