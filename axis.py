@@ -34,30 +34,37 @@ def reflect_vector(input_vector: Vector, normal: Vector) -> Vector:
 
 
 def get_world_axis_normals(axis_val: str, count: int):
-    return tuple(VECTORS[axis_val] for _ in range(count))
+    """Returns list of vectors facing the world axis."""
+    val = VECTORS[axis_val]
+    return tuple(val for _ in range(count))
 
 
 def prep_stroke(context, vertices: list[Vector], normals: list[Vector], axis: str, offset: float):
-    if axis != 'NORMAL':
-        if axis in VECTORS:
-            normals = tuple(VECTORS[axis] for _ in range(len(vertices)))
-        elif axis == 'REFLECT':
-            scene = context.scene
-            camera = scene.camera
+    """Updates vertices and normals to match the artist's chosen axis."""
+    if axis in VECTORS:
+        normals = tuple(VECTORS[axis] for _ in range(len(vertices)))
+    elif axis == 'REFLECT':
+        scene = context.scene
+        camera = scene.camera
 
-            if camera is None:
-                raise ValueError('Set a camera for your scene to use rim lighting!')
+        if camera is None:
+            raise ValueError('Set a camera for your scene to use rim lighting!')
 
-            camera_origin = camera.matrix_world.translation
-            scene = context.scene
-            depsgraph = context.evaluated_depsgraph_get()
-            for idx, v, n in zip(range(len(vertices)), vertices, normals):
-                direction = v - camera_origin
-                direction.normalize()
-                is_hit, hit_loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(depsgraph, camera_origin, direction)
-                if is_hit:
-                    normals[idx] = reflect_vector(direction, hit_normal)
-                    vertices[idx] = hit_loc
+        camera_origin = camera.matrix_world.translation
+        scene = context.scene
+        depsgraph = context.evaluated_depsgraph_get()
+        for idx, v, n in zip(range(len(vertices)), vertices, normals):
+            direction = v - camera_origin
+            max_distance = direction.length + RAY_OFFSET
+            direction.normalize()
+            is_hit, hit_loc, hit_normal, _idx, _obj, _matrix = scene.ray_cast(
+                depsgraph,
+                camera_origin,
+                direction,
+                distance=max_distance)  # clamp distance to prevent farther surfaces from being hit
+            if is_hit:
+                normals[idx] = reflect_vector(direction, hit_normal)
+                vertices[idx] = hit_loc
 
     orig_vertices = vertices[:]
 
