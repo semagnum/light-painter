@@ -26,7 +26,7 @@ from .lamp_util import LampUtils
 class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
     bl_idname = 'lightpainter.lamp'
     bl_label = 'Paint Lamp'
-    bl_description = 'Adds or repositions lamp to light surfaces specified by annotations'
+    bl_description = 'Adds lamp to light surfaces specified by annotations'
 
     tool_id = 'view3d.lightpaint_lamp'
 

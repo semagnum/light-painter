@@ -21,6 +21,7 @@ from pathlib import Path
 
 from .operators import (
     LIGHTPAINTER_OT_Lamp,
+    LIGHTPAINTER_OT_Lamp_Adjust,
     LIGHTPAINTER_OT_Mesh,
     LIGHTPAINTER_OT_Tube_Light,
     LIGHTPAINTER_OT_Sky,
@@ -41,6 +42,18 @@ class VIEW3D_T_light_paint(bpy.types.WorkSpaceTool):
     bl_icon = icon_path('light_paint')
     bl_keymap = (
         (LIGHTPAINTER_OT_Lamp.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
+
+
+class VIEW3D_T_light_paint_adjust(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_lamp_adjust'
+    bl_space_type = 'VIEW_3D'
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Adjust Light'
+    bl_operator = LIGHTPAINTER_OT_Lamp_Adjust.bl_idname
+    bl_icon = icon_path('light_paint_adjust')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Lamp_Adjust.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
 
 

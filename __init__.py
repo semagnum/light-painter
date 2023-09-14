@@ -34,7 +34,7 @@ from . import axis, operators, panel
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 0, 2),
+    'version': (1, 0, 3),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -46,6 +46,7 @@ bl_info = {
 
 classes = (
     operators.LIGHTPAINTER_OT_Lamp,
+    operators.LIGHTPAINTER_OT_Lamp_Adjust,
     operators.LIGHTPAINTER_OT_Mesh,
     operators.LIGHTPAINTER_OT_Tube_Light,
     operators.LIGHTPAINTER_OT_Sky,
@@ -67,9 +68,11 @@ def register():
         bpy.utils.register_class(cls)
 
     first_idname = tools[0].bl_idname
-    bpy.utils.register_tool(tools[0], separator=True,  group=True)
+    bpy.utils.register_tool(tools[0], separator=True, group=True)
     for tool in tools[1:]:
         bpy.utils.register_tool(tool, after=first_idname)
+
+    bpy.utils.register_tool(panel.VIEW3D_T_light_paint_adjust)
 
 
 def unregister():

@@ -14,6 +14,7 @@ if 'ConvexLight' in locals():
         if module_name in locals():
             importlib.reload(locals()[module_name])
 
+from .lamp_adjust_tool import LIGHTPAINTER_OT_Lamp_Adjust
 from .lamp_tool import LIGHTPAINTER_OT_Lamp
 from .mesh_tool import LIGHTPAINTER_OT_Mesh, LIGHTPAINTER_OT_Tube_Light
 from .sky_tool import LIGHTPAINTER_OT_Sky

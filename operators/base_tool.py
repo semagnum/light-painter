@@ -84,6 +84,9 @@ class BaseLightPaintTool:
     def execute(self, context):
         """Callback right before the tool is finished (user presses RET or ESC)."""
 
+    def mouse_update(self, context):
+        """Callback right after a left or right mouse click release."""
+
     def paint_controls(self, context, event):
         region = context.region
         rv3d = context.region_data
@@ -91,15 +94,19 @@ class BaseLightPaintTool:
         region_x, region_y = event.mouse_region_x, event.mouse_region_y
         coord = region_x, region_y
 
+        mouse_release = False
+
         if event.type == 'LEFTMOUSE':
             new_is_leftmouse_down = event.value == 'PRESS'
             just_pressed = new_is_leftmouse_down and not self.is_leftmouse_down
+            mouse_release = not new_is_leftmouse_down and self.is_leftmouse_down
             self.is_leftmouse_down = new_is_leftmouse_down
             if just_pressed:
                 self.mouse_path.append(list())
         elif event.type == 'RIGHTMOUSE':
             context.window.cursor_set('ERASER')
             new_is_rightmouse_down = event.value == 'PRESS'
+            mouse_release = not new_is_rightmouse_down and self.is_rightmouse_down
             self.is_rightmouse_down = new_is_rightmouse_down
 
         if event.type == 'LEFT_BRACKET':
@@ -125,6 +132,9 @@ class BaseLightPaintTool:
 
             if is_hit:
                 self.mouse_path[-1].append((hit_location, hit_normal))
+
+        elif mouse_release:
+            self.mouse_update(context)
 
     def erase_from_mouse_path(self, region, region_x, region_y, rv3d):
         # break paths into potentially new chunks and remove edges erased

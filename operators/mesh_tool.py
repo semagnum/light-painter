@@ -44,7 +44,7 @@ def assign_emissive_material(obj, color, emit_value: float):
 class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySettings):
     bl_idname = 'lightpainter.mesh'
     bl_label = 'Paint Mesh Light'
-    bl_description = 'Adds or repositions mesh light to light surfaces specified by annotations'
+    bl_description = 'Adds mesh light to light surfaces specified by annotations'
 
     tool_id = 'view3d.lightpaint_mesh'
 

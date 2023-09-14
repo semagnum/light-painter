@@ -61,6 +61,12 @@ in the bottom-left corner of the 3D view to tweak parameters, such as:
   Note that these ray visibility settings will be dependent on your render engine's implementation,
   as Eevee and Cycles handle visibility differently or may ignore it.
 
+### Adjust Lamp
+
+This is a separate tool where the modal adjusts the currently active lamp
+instead of adding a new one.
+You can find this tool, with a purple lamp icon, right below the add light tool group.
+
 ## Mesh and Tube Light Paint
 
 You can also create mesh lights. Note that they use emissive materials,

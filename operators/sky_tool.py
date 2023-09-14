@@ -89,7 +89,7 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, LampUtils):
 
     power: bpy.props.FloatProperty(
         name='Power',
-        description='Area light\'s emit value',
+        description='Sun light\'s emit value',
         min=0.001,
         default=5,
     )
