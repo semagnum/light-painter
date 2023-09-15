@@ -184,8 +184,9 @@ class BaseLightPaintTool:
             modal_status = {'FINISHED'}
 
         context.area.header_text_set('LMB: paint surface, '
-                                     'RMB: eraser, '
+                                     'RMB: erase strokes, '
                                      'Left/Right bracket: decrease/increase eraser size, '
+                                     'Alt: enable straight line strokes, '
                                      'ENTER: finish and light surfaces, '
                                      'ESC: cancel'
                                      )
