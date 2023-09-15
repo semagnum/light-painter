@@ -95,13 +95,17 @@ class BaseLightPaintTool:
         coord = region_x, region_y
 
         mouse_release = False
+        self.curr_mouse_pos = coord
+
+        if event.type.endswith('ALT'):
+            self.is_alt_down = event.value == 'PRESS'
 
         if event.type == 'LEFTMOUSE':
             new_is_leftmouse_down = event.value == 'PRESS'
             just_pressed = new_is_leftmouse_down and not self.is_leftmouse_down
             mouse_release = not new_is_leftmouse_down and self.is_leftmouse_down
             self.is_leftmouse_down = new_is_leftmouse_down
-            if just_pressed:
+            if just_pressed and (len(self.mouse_path) == 0 or not self.is_alt_down):
                 self.mouse_path.append(list())
         elif event.type == 'RIGHTMOUSE':
             context.window.cursor_set('ERASER')
@@ -115,7 +119,6 @@ class BaseLightPaintTool:
             self.eraser_size += ERASER_SIZE_RATE
 
         if self.is_rightmouse_down:
-            self.curr_mouse_pos = coord
             self.mouse_path = self.erase_from_mouse_path(region, region_x, region_y, rv3d)
 
         elif self.is_leftmouse_down:
@@ -205,8 +208,9 @@ class BaseLightPaintTool:
             self.mouse_path = []
             self.is_leftmouse_down = False
             self.is_rightmouse_down = False
-            self.cur_mouse_pos = None
+            self.curr_mouse_pos = None
             self.eraser_size = 50
+            self.is_alt_down = False
 
             # force set current tool
             bpy.ops.wm.tool_set_by_id(name=self.tool_id)

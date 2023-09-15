@@ -29,6 +29,9 @@ can influence where the light will be finally positioned.
 
 The tool also works best
 when your strokes matches the shape of the type of lamp that you want.
+If you hold down either `Alt` key, it allows artists to draw straight lines.
+It will remember the last point drawn and show a faint line where the straight line will go.
+With this, you can draw geometric shapes.
 
 Here are some general painting tips:
 

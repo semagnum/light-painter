@@ -8,6 +8,7 @@ DRAW_LINE_SIZE = 5.0
 ERASE_CIRCLE_OUTLINE_SIZE = 2.0
 
 PAINT_COLOR = (0.9, 0.9, 0.0, 0.5)
+SEMI_PAINT_COLOR = (0.9, 0.9, 0.0, 0.25)
 ERASE_COLOR = (1.0, 1.0, 1.0, 1.0)
 
 CULLING_DOT_PRODUCT_FACTOR = 0.1
@@ -29,6 +30,12 @@ def draw_callback_px(self, context):
         path_2d = [view3d_utils.location_3d_to_region_2d(region, rv3d, coord) for coord in path]
         batch = batch_for_shader(shader, 'LINE_STRIP', {'pos': path_2d})
         shader.uniform_float('color', PAINT_COLOR)
+        batch.draw(shader)
+
+    if self.is_alt_down and len(paths_3d) > 0 and len(paths_3d[-1]) > 0:
+        last_point = view3d_utils.location_3d_to_region_2d(region, rv3d, paths_3d[-1][-1])
+        batch = batch_for_shader(shader, 'LINE_STRIP', {'pos': [last_point, self.curr_mouse_pos]})
+        shader.uniform_float('color', SEMI_PAINT_COLOR)
         batch.draw(shader)
 
     if self.is_rightmouse_down:
