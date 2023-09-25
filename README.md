@@ -1,4 +1,4 @@
-![Light Painter](/assets/logo.png)
+![Light Painter](/docs/assets/logo.png)
 
 Welcome to the official Light Painter documentation!
 Here you can learn how to use the Blender add-on and dive into the Python package.
