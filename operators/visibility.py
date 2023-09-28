@@ -2,11 +2,6 @@ import bpy
 
 
 class VisibilitySettings:
-    hide_visibility_props: bpy.props.BoolProperty(
-        name='Ray Visibility',
-        default=True
-    )
-
     visible_camera: bpy.props.BoolProperty(
         name='Camera',
         description='If unchecked, object will not be directly visible by camera (although it will still emit light)',
