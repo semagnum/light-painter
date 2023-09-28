@@ -61,24 +61,37 @@ tools = (
     panel.VIEW3D_T_flag_paint,
 )
 
+REGISTERED_WITH_UI = False
+
 
 def register():
     """Registers Light Painter operators and tools."""
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    first_idname = tools[0].bl_idname
-    bpy.utils.register_tool(tools[0], separator=True, group=True)
-    for tool in tools[1:]:
-        bpy.utils.register_tool(tool, after=first_idname)
+    # In background mode (no GUI), we don't need to register the tools or panel.
+    # stored to prevent unregistering tools that were never registered
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
 
-    bpy.utils.register_tool(panel.VIEW3D_T_light_paint_adjust)
+    if kc:
+        global REGISTERED_WITH_UI
+        REGISTERED_WITH_UI = True
+        first_idname = tools[0].bl_idname
+        bpy.utils.register_tool(tools[0], separator=True, group=True)
+        for tool in tools[1:]:
+            bpy.utils.register_tool(tool, after=first_idname)
+
+        bpy.utils.register_tool(panel.VIEW3D_T_light_paint_adjust)
 
 
 def unregister():
     """Unregisters Light Painter operators and tools."""
-    for tool in tools[::-1]:
-        bpy.utils.unregister_tool(tool)
+
+    global REGISTERED_WITH_UI
+    if REGISTERED_WITH_UI:
+        for tool in tools[::-1]:
+            bpy.utils.unregister_tool(tool)
 
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
