@@ -10,7 +10,7 @@ def axis_prop(obj_descriptor: str) -> bpy.props.EnumProperty:
             ('X', 'X axis', 'Along the global X axis', 'AXIS_SIDE', 0),
             ('Y', 'Y axis', 'Along the global Y axis', 'AXIS_FRONT', 1),
             ('Z', 'Z axis', 'Along the global Z axis', 'AXIS_TOP', 2),
-            ('NORMAL', 'Stroke Normal', 'Along annotation stroke\'s normal', 'ORIENTATION_NORMAL', 3),
+            ('NORMAL', 'Normal', 'Along surface normals', 'ORIENTATION_NORMAL', 3),
             ('REFLECT', 'Rim lighting',
              'Positions light to reflect onto the specified surface directly into the scene camera',
              'INDIRECT_ONLY_OFF',
