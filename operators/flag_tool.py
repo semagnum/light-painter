@@ -182,6 +182,8 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         assign_flag_material(obj, self.shadow_color, self.opacity)
 
     def execute(self, context):
+        super().execute(context)
+
         light_objs = get_selected_lights(context)
         if len(light_objs) == 0:
             self.report({'ERROR_INVALID_INPUT'}, 'Light objects must be selected to be flagged for shadows!')

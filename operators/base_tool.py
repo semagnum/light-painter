@@ -74,6 +74,19 @@ class BaseLightPaintTool:
 
     tool_id = ''
 
+    str_mouse_path: bpy.props.StringProperty(options={'HIDDEN'}, default='')
+
+    def __init__(self):
+        """Initialize variables to play nicely with pytest usage."""
+        self._handle = None
+
+        self.mouse_path = []
+        self.is_leftmouse_down = False
+        self.is_rightmouse_down = False
+        self.curr_mouse_pos = None
+        self.eraser_size = 50
+        self.is_alt_down = False
+
     def cancel(self, context):
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
         context.window.cursor_set('DEFAULT')
@@ -82,6 +95,19 @@ class BaseLightPaintTool:
 
     def execute(self, _context):
         """Callback right before the tool is finished (user presses RET or ESC)."""
+
+        # for headless testing and debugging purposes
+        # str_mouse_path can be used to override the path
+        # using ast.literal_eval to be safer
+        if len(self.str_mouse_path):
+            import ast
+            from mathutils import Vector
+            stroke_list = ast.literal_eval(self.str_mouse_path)
+            self.mouse_path = [
+                [(Vector(coord), Vector(normal)) for coord, normal in stroke]
+                for stroke in stroke_list
+            ]
+
 
     def mouse_update(self, context):
         """Callback right after a left or right mouse click release."""

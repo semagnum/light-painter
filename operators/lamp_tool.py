@@ -71,6 +71,8 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
         self.draw_visibility_props(layout)
 
     def execute(self, context):
+        super().execute(context)
+
         stroke_vertices = [coord for stroke in self.mouse_path for coord, normal in stroke]
         stroke_normals = [normal for stroke in self.mouse_path for coord, normal in stroke]
         vertices, normals, orig_vertices = prep_stroke(

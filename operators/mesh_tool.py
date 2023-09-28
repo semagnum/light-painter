@@ -145,8 +145,9 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         return obj
 
     def execute(self, context):
-        # skip if no strokes are currently drawn
+        super().execute(context)
 
+        # skip if no strokes are currently drawn
         if len(self.mouse_path) == 0:
             return
 
@@ -254,6 +255,8 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         self.draw_visibility_props(layout)
 
     def execute(self, context):
+        super().execute(context)
+
         if len(self.mouse_path) == 0:
             return {'CANCELLED'}
 

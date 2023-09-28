@@ -177,6 +177,8 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, LampUtils):
         world_data.scatter = self.visible_volume
 
     def execute(self, context):
+        super().execute(context)
+
         stroke_vertices = [coord for stroke in self.mouse_path for coord, normal in stroke]
         stroke_normals = [normal for stroke in self.mouse_path for coord, normal in stroke]
         vertices, normals, _ = prep_stroke(

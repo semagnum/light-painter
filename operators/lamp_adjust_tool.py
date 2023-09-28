@@ -177,6 +177,8 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
         self.set_visibility(lamp)
 
     def execute(self, context):
+        super().execute(context)
+
         stroke_vertices = [coord for stroke in self.mouse_path for coord, normal in stroke]
         stroke_normals = [normal for stroke in self.mouse_path for coord, normal in stroke]
         vertices, normals, orig_vertices = prep_stroke(

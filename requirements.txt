@@ -1,0 +1,4 @@
+decorator
+pytest
+pytest-xdist
+numpy
