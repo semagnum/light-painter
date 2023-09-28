@@ -17,7 +17,6 @@
 
 import bpy
 from bpy_extras import view3d_utils
-import traceback
 
 from .draw import draw_callback_px
 
@@ -81,7 +80,7 @@ class BaseLightPaintTool:
         context.area.header_text_set(None)
         return {'CANCELLED'}
 
-    def execute(self, context):
+    def execute(self, _context):
         """Callback right before the tool is finished (user presses RET or ESC)."""
 
     def mouse_update(self, context):
