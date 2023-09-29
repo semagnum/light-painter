@@ -3,7 +3,7 @@ import zipfile
 import ast
 
 allowed_file_extensions = ('.py', 'LICENSE', '.md', '.dat')
-ignore_folders = ('doc', 'venv')
+ignore_folders = ('doc', 'venv', 'tests')
 
 
 def zipdir(path, ziph: zipfile.ZipFile, zip_subdir_name):

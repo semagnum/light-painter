@@ -34,7 +34,7 @@ from . import axis, operators, panel
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 0, 4),
+    'version': (1, 0, 5),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -50,7 +50,9 @@ classes = (
     operators.LIGHTPAINTER_OT_Mesh,
     operators.LIGHTPAINTER_OT_Tube_Light,
     operators.LIGHTPAINTER_OT_Sky,
-    operators.LIGHTPAINTER_OT_Flag
+    operators.LIGHTPAINTER_OT_Flag,
+    operators.LIGHTPAINTER_OT_Lamp_Texture,
+    operators.LIGHTPAINTER_OT_Lamp_Texture_Remove,
 )
 
 tools = (
@@ -69,6 +71,18 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.WindowManager.lightpainter_texture_type = bpy.props.EnumProperty(
+        name='Texture Type',
+        items=[
+            ('NOISE', 'Noise', ''),
+            ('MAGIC', 'Magic', ''),
+            ('MUSGRAVE', 'Musgrave', ''),
+            ('VORONOI', 'Voronoi', ''),
+            ('WAVE', 'Wave', ''),
+        ],
+        default='NOISE',
+    )
+
     # In background mode (no GUI), we don't need to register the tools or panel.
     # stored to prevent unregistering tools that were never registered
     wm = bpy.context.window_manager
@@ -83,6 +97,7 @@ def register():
             bpy.utils.register_tool(tool, after=first_idname)
 
         bpy.utils.register_tool(panel.VIEW3D_T_light_paint_adjust)
+        bpy.utils.register_class(panel.LIGHTPAINTER_PT_Texture)
 
 
 def unregister():
