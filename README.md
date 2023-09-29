@@ -29,6 +29,9 @@ can influence where the light will be finally positioned.
 
 The tool also works best
 when your strokes matches the shape of the type of lamp that you want.
+If you hold down either `Alt` key, it allows artists to draw straight lines.
+It will remember the last point drawn and show a faint line where the straight line will go.
+With this, you can draw geometric shapes.
 
 Here are some general painting tips:
 
@@ -119,3 +122,12 @@ the flag's color (for bounce lighting) and opacity.
 4. Finish the tool by pressing Enter. This will add a flag for each light.
 
 Currently, flags for sky textures are not supported.
+
+## Procedural Light Gobos
+
+![Adding procedural noise to a point lamp to create gobos or shadows](/docs/assets/gobos.png)
+
+Quickly add procedural textures to point and spot lamps.
+Since this uses Cycles nodes, it is only supported in Cycles.
+You can find this panel in your active lamp's properties.
+You can choose between the different procedural texture types available within Blender.

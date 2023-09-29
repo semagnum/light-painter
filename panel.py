@@ -25,7 +25,9 @@ from .operators import (
     LIGHTPAINTER_OT_Mesh,
     LIGHTPAINTER_OT_Tube_Light,
     LIGHTPAINTER_OT_Sky,
-    LIGHTPAINTER_OT_Flag
+    LIGHTPAINTER_OT_Flag,
+    LIGHTPAINTER_OT_Lamp_Texture,
+    LIGHTPAINTER_OT_Lamp_Texture_Remove,
 )
 
 
@@ -103,3 +105,28 @@ class VIEW3D_T_flag_paint(bpy.types.WorkSpaceTool):
     bl_keymap = (
         (LIGHTPAINTER_OT_Flag.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
+
+
+class LIGHTPAINTER_PT_Texture(bpy.types.Panel):
+    bl_label = 'Light Painter Gobos'
+    bl_idname = 'LIGHTPAINTER_PT_Texture'
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        active_obj = context.active_object
+        return active_obj is not None and active_obj.type == 'LIGHT' and context.engine == 'CYCLES'
+
+    def draw(self, context):
+        layout = self.layout
+
+        if context.active_object.data.type not in {'POINT', 'SPOT'}:
+            layout.label(text='Gobos are best with point or spot lamps.', icon='ERROR')
+            layout.label(text='Results may not be as expected.')
+
+        layout.prop(context.window_manager, 'lightpainter_texture_type')
+
+        layout.operator(LIGHTPAINTER_OT_Lamp_Texture.bl_idname, icon='MATERIAL')
+        layout.operator(LIGHTPAINTER_OT_Lamp_Texture_Remove.bl_idname, icon='MATERIAL')
