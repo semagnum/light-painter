@@ -5,13 +5,17 @@ Here you can learn how to use the Blender add-on and dive into the Python packag
 
 ## Painting
 
-![List of tools: Light Paint, Mesh Light Paint, Tube Light Paint, Sky Paint, Shadow Paint](/assets/tools.png)
+![List of tools: Light Paint, Shadow Paint, Adjust Light](/assets/tools.png)
 
 The painting is done within each tool.
 Once installed, you can find these tools on the left-hand side of the 3D view
 in the toolshelf (`T` it the default shortcut to hide/reveal this shelf).
-When the tool is selected, left-click the mouse to start the tool.
+Buttons with a small triangle in their bottom right corner are tool groups,
+which can be opened by holding `LMB` on them for a moment (or dragging `LMB` to open the group instantly).
 
+![List of tools: Light Paint, Mesh Light Paint, Tube Light Paint, Sky Paint](/assets/tool_group.png)
+
+When the tool is selected, left-click the mouse to start the tool.
 From there, you can use the mouse left-click and right-click
 to draw and erase marks on surfaces respectively.
 Press `Escape` key to cancel, and the `Return/Enter` key to add light.
