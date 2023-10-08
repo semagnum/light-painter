@@ -120,7 +120,7 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, LampUtils):
         col.active = self.normal_method == 'OCCLUSION'
         col.prop(self, 'longitude_samples')
         col.prop(self, 'latitude_samples')
-        layout.prop(self, 'elevation_clamp', slider=True)
+        col.prop(self, 'elevation_clamp', slider=True)
 
         layout.separator()
 
