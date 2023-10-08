@@ -101,7 +101,7 @@ class VIEW3D_T_flag_paint(bpy.types.WorkSpaceTool):
     bl_context_mode = 'OBJECT'
     bl_label = 'Shadow Paint'
     bl_operator = LIGHTPAINTER_OT_Flag.bl_idname
-    bl_icon = icon_path('mesh_light_paint')
+    bl_icon = icon_path('shadow_paint')
     bl_keymap = (
         (LIGHTPAINTER_OT_Flag.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
