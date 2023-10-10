@@ -1,4 +1,3 @@
-decorator
+bpy
 pytest
-pytest-xdist
 numpy

@@ -1,15 +1,63 @@
-from blender_pretest import blender_fixture, run_blender, SINGLE_POINT
+from config import SINGLE_POINT
 
 
-@blender_fixture
+import os
+from pathlib import Path
+import pytest
+
+import bpy
+import addon_utils
+
+
+def get_zip_file_in_parent_dir():
+    """Gets first zip file it can find.
+
+    Since this will be in the tests/ folder,
+    we need to go up a folder to find the zip file that compress.py builds.
+    """
+    parent_dir = Path(os.getcwd()).parent
+    for root, dirs, files in os.walk(parent_dir):
+        for file in files:
+            if file.endswith(".zip"):
+                return os.path.join(root, file)
+
+    raise FileNotFoundError('No zip file to install into Blender!')
+
+
+@pytest.fixture(scope="session", autouse=True)
+def install_addon(request):
+    """Installs the addon for testing. After the session is finished, it optionally uninstalls the add-on."""
+    bpy.ops.preferences.addon_install(filepath=get_zip_file_in_parent_dir())
+
+    addon_utils.modules_refresh()
+    bpy.ops.script.reload()
+
+    bpy.ops.preferences.addon_enable(module='lightpainter')
+
+    yield
+
+    # In my case (using symlinks), since this add-on is already enabled,
+    # this installs the add-on twice.
+    # So I need to delete the newly installed add-on folder afterward.
+
+    import os
+    import shutil
+    if os.getenv('ADDON_INSTALL_PATH_TO_REMOVE') is not None:
+        shutil.rmtree(os.getenv('ADDON_INSTALL_PATH_TO_REMOVE'))
+
+
+@pytest.fixture
 def context():
     import bpy
     return bpy.context
 
 
-@blender_fixture
+@pytest.fixture
 def ops():
     import bpy
+    # bpy module doesn't refresh the scene per test,
+    # so I need to reload the file each time
+    bpy.ops.wm.read_homefile()
     return bpy.ops
 
 
@@ -18,7 +66,6 @@ def test_sanity():
     assert 1 + 1 == 2
 
 
-@run_blender
 def test_relative_power(context, ops):
     """Relative power should follow: relative_power = apparent power * distance * distance
     """
@@ -44,7 +91,6 @@ def test_relative_power(context, ops):
         assert light_obj.data.energy == answer
 
 
-@run_blender
 def test_area_lamp_rotation():
     """Area lamps must be oriented appropriately."""
     from lightpainter.operators.lamp_util import get_box
@@ -62,7 +108,6 @@ def test_area_lamp_rotation():
     assert (2 - width) <= 0.0001
 
 
-@run_blender
 def test_gobos(context, ops):
     light_obj = context.scene.objects['Light']
 

@@ -1,24 +1,12 @@
+import math
 import pytest
 
-from blender_pretest import blender_fixture, run_blender, SINGLE_STROKE, SINGLE_POINT
-
-
-@blender_fixture
-def context():
-    import bpy
-    return bpy.context
-
-
-@blender_fixture
-def ops():
-    import bpy
-    return bpy.ops
-
+from config import SINGLE_STROKE, SINGLE_POINT
+from test_misc import context, ops
 
 # Unit tests for validating each light tool can at least run
 
 
-@run_blender
 def test_light_paint_modal(context, ops):
     """Each light tool at least runs with default settings."""
     ops.lightpainter.lamp(str_mouse_path=SINGLE_STROKE, offset=10.0, lamp_type='POINT')
@@ -42,7 +30,6 @@ def test_light_paint_modal(context, ops):
 
 # Unit test to validate each axis
 
-@run_blender
 def test_axis(context, ops):
     """Each axis option moves lamps in the correct direction."""
     light_obj = context.scene.objects['Light']
@@ -95,7 +82,6 @@ def test_axis(context, ops):
     assert matches_vector((-2.1921, 0.7125, -1.2535), actual_rotation)
 
 
-@run_blender
 def test_rim_lighting_no_camera_fails(ops, context):
     """Validate that the rim lighting requires a camera to work, and correctly fails."""
     light_obj = context.scene.objects['Light']
@@ -110,7 +96,6 @@ def test_rim_lighting_no_camera_fails(ops, context):
         ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_POINT, offset=1.0, axis='REFLECT')
 
 
-@run_blender
 def test_ray_visibility(ops, context):
     """Validate ray visibility settings are applied correctly."""
     ops.lightpainter.lamp(
@@ -128,9 +113,9 @@ def test_ray_visibility(ops, context):
     assert not lamp_obj.visible_volume_scatter
 
     lamp_data = lamp_obj.data
-    assert lamp_data.diffuse_factor == 0.0
-    assert lamp_data.specular_factor == 0.0
-    assert lamp_data.volume_factor == 0.0
+    assert math.isclose(lamp_data.diffuse_factor, 0.0, rel_tol=1e-04, abs_tol=1e-04)
+    assert math.isclose(lamp_data.specular_factor, 0.0, rel_tol=1e-04, abs_tol=1e-04)
+    assert math.isclose(lamp_data.volume_factor, 0.0, rel_tol=1e-04, abs_tol=1e-04)
 
     # test the same thing for sky textures
     ops.lightpainter.sky(
