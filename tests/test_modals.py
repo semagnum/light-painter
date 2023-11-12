@@ -1,7 +1,7 @@
 import math
 import pytest
 
-from config import SINGLE_STROKE, SINGLE_POINT
+from config import SINGLE_STROKE, SINGLE_POINT, SINGLE_UP_POINT
 from test_misc import context, ops
 
 # Unit tests for validating each light tool can at least run
@@ -65,7 +65,7 @@ def test_axis(context, ops):
     assert all(expected == actual for expected, actual in zip((0.0, 0.0, 1.0), actual_location))
     assert matches_vector((-HALF_PI, 0.0, 0.0), actual_rotation)
 
-    # test negative offset while we're at it
+    # test negative offset while we're at itq
     ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_POINT, offset=-1.0, axis='Z')
     print(actual_location, actual_rotation)
     assert matches_vector((0.0, 0.0, -1.0), actual_location)
@@ -76,10 +76,10 @@ def test_axis(context, ops):
     assert matches_vector((1.0, 1.0, 1.0), actual_location)
     assert matches_vector((-0.7854, 0.6155, -0.2618), actual_rotation)
 
-    ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_POINT, offset=1.0, axis='REFLECT')
+    ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_UP_POINT, offset=1.0, axis='REFLECT')
     print(actual_location, actual_rotation)
-    assert matches_vector((1.6538, -0.3259, 0.2333), actual_location)
-    assert matches_vector((-2.1921, 0.7125, -1.2535), actual_rotation)
+    assert matches_vector((-0.6538, 0.6153, 0.4405), actual_location)
+    assert matches_vector((-0.9495, -0.7125, 0.3780), actual_rotation)
 
 
 def test_rim_lighting_no_camera_fails(ops, context):
