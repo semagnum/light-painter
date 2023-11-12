@@ -15,6 +15,8 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import math
+
 import bpy
 from mathutils import Vector
 
@@ -162,7 +164,7 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
                                   for v in vertices)
         else:
             factor = self.factor
-            if factor == 1.0:
+            if math.isclose(factor, 1.0):
                 mesh_vertices = vertices
             else:
                 mesh_vertices = tuple(light_v + (v - light_v) * factor

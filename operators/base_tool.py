@@ -108,7 +108,6 @@ class BaseLightPaintTool:
                 for stroke in stroke_list
             ]
 
-
     def mouse_update(self, context):
         """Callback right after a left or right mouse click release."""
 
