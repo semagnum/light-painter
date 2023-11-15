@@ -24,6 +24,8 @@ from .base_tool import BaseLightPaintTool
 from .visibility import VisibilitySettings
 
 
+IS_BPY_V3 = bpy.app.version < (4, 0, 0)
+
 FLAG_DATA_NAME = 'LightPaint_Flag'
 
 
@@ -57,7 +59,10 @@ def assign_flag_material(obj, color, opacity):
     # find PBR and set color
     pbr_node = tree.nodes['Principled BSDF']
     pbr_node.inputs[0].default_value = color
-    pbr_node.inputs[21].default_value = opacity
+    if IS_BPY_V3:
+        pbr_node.inputs[21].default_value = opacity
+    else:
+        pbr_node.inputs[4].default_value = opacity
 
     material.blend_method = 'BLEND'
     material.shadow_method = 'HASHED'
