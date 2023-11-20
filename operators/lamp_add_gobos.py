@@ -9,6 +9,7 @@ TEXTURE_TYPE_TO_NODE = {
 }
 
 
+IS_BPY_V3 = bpy.app.version < (4, 0, 0)
 OFFSET_AMOUNT = 180
 
 
@@ -56,10 +57,16 @@ class LIGHTPAINTER_OT_Lamp_Texture(bpy.types.Operator):
         texture_node = get_or_add_node(tree, TEXTURE_TYPE_TO_NODE[texture_type], map_range_node)
 
         mapping_node = get_or_add_node(tree, 'ShaderNodeMapping', texture_node)
-        texture_coord_node = get_or_add_node(tree, 'ShaderNodeTexCoord', mapping_node)
+        if IS_BPY_V3:
+            texture_coord_node = get_or_add_node(tree, 'ShaderNodeTexCoord', mapping_node)
+        else:  # in Blender 4.0, it needs the geometry's Incoming socket instead
+            texture_coord_node = get_or_add_node(tree, 'ShaderNodeNewGeometry', mapping_node)
 
         # link them all together
-        tree.links.new(texture_coord_node.outputs['Normal'], mapping_node.inputs['Vector'])
+        if IS_BPY_V3:
+            tree.links.new(texture_coord_node.outputs['Normal'], mapping_node.inputs['Vector'])
+        else:
+            tree.links.new(texture_coord_node.outputs['Incoming'], mapping_node.inputs['Vector'])
         tree.links.new(mapping_node.outputs[0], texture_node.inputs['Vector'])
         if texture_type == 'VORONOI':
             tree.links.new(texture_node.outputs['Distance'], map_range_node.inputs[0])
