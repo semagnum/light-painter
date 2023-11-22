@@ -7,6 +7,13 @@ from test_misc import context, ops
 # Unit tests for validating each light tool can at least run
 
 
+def matches_vector(expected: tuple[float, float, float], actual) -> bool:
+    return all(
+        math.isclose(expected, actual, abs_tol=0.0001)
+        for expected, actual in zip(expected, actual)
+    )
+
+
 def test_light_paint_modal(context, ops):
     """Each light tool at least runs with default settings."""
     ops.lightpainter.lamp(str_mouse_path=SINGLE_STROKE, offset=10.0, lamp_type='POINT')
@@ -39,16 +46,9 @@ def test_axis(context, ops):
 
     HALF_PI = 1.5708
     PI = HALF_PI * 2
-    EPSILON = 0.0001
 
     ops.object.select_all(action='DESELECT')
     context.view_layer.objects.active = light_obj
-
-    def matches_vector(expected: tuple[float, float, float], actual) -> bool:
-        return all(
-            expected - actual <= EPSILON
-            for expected, actual in zip(expected, actual)
-        )
 
     ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_POINT, offset=1.0, axis='X')
     print(actual_location, actual_rotation)
@@ -62,8 +62,8 @@ def test_axis(context, ops):
 
     ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_POINT, offset=1.0, axis='Z')
     print(actual_location, actual_rotation)
-    assert all(expected == actual for expected, actual in zip((0.0, 0.0, 1.0), actual_location))
-    assert matches_vector((-HALF_PI, 0.0, 0.0), actual_rotation)
+    assert matches_vector((0.0, 0.0, 1.0), actual_location)
+    assert matches_vector((0.0, 0.0, 0.0), actual_rotation)
 
     # test negative offset while we're at itq
     ops.lightpainter.lamp_adjust(str_mouse_path=SINGLE_POINT, offset=-1.0, axis='Z')
