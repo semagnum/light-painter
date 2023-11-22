@@ -210,3 +210,23 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
             return {'CANCELLED'}
 
         return {'FINISHED'}
+
+    def invoke(self, context, event):
+        """Use lamp's current parameters as a starting point.
+
+        Sets light color and power, sun's power and angle, area's shape, and radius."""
+        lamp_data = context.active_object.data
+        lamp_type = lamp_data.type
+
+        self.light_color = lamp_data.color
+        self.power = lamp_data.energy
+
+        if lamp_type == 'SUN':
+            self.sun_power = lamp_data.energy
+            self.angle = lamp_data.angle
+        elif lamp_type == 'AREA':
+            self.shape = lamp_data.shape
+        else:
+            self.radius = lamp_data.shadow_soft_size
+
+        return super().invoke(context, event)
