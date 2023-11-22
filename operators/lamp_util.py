@@ -169,8 +169,10 @@ class LampUtils(VisibilitySettings):
         description='Area light\'s emit value',
         min=0.001,
         default=10,
-        subtype='POWER',
-        unit='POWER',
+        # FIXME add power units back when fixed:
+        # https://projects.blender.org/blender/blender/issues/77791#issuecomment-1069560
+        # subtype='POWER',
+        # unit='POWER',
     )
 
     radius: bpy.props.FloatProperty(
