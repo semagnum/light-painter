@@ -15,14 +15,16 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import bpy
 from math import pi, radians
+
+import bpy
 from mathutils import Vector
 
-from .prop_util import axis_prop
-from ..axis import prep_stroke
 from .base_tool import BaseLightPaintTool
+from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR as UCS
 from .lamp_util import get_average_normal, get_occlusion_based_normal, LampUtils, PI_OVER_2
+from .prop_util import axis_prop, convert_val_to_unit_str, get_drag_mode_header
+from ..axis import prep_stroke
 
 
 class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUtils):
@@ -138,10 +140,6 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
 
         self.draw_visibility_props(layout)
 
-    def mouse_update(self, context):
-        """Callback right after a left or right mouse click release."""
-        self.execute(context)
-
     def adjust_sun_lamp(self, context, lamp, stroke):
         vertices, normals = stroke
 
@@ -171,14 +169,72 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
         lamp.rotation_euler = rotation
 
         # set light data properties
-        lamp.data.color = self.light_color
         lamp.data.energy = self.sun_power
         lamp.data.angle = self.angle
         self.set_visibility(lamp)
 
-    def execute(self, context):
-        super().execute(context)
+    def get_header_text(self):
+        if self.drag_attr == 'offset':
+            return 'Offset: {}'.format(
+                convert_val_to_unit_str(self.offset, 'LENGTH')
+            ) + get_drag_mode_header()
+        elif self.drag_attr == 'radius':
+            return 'Lamp radius: {}'.format(
+                convert_val_to_unit_str(self.radius, 'LENGTH')
+            ) + get_drag_mode_header()
+        elif self.drag_attr == 'power':
+            return 'Power: {}{}'.format(
+                convert_val_to_unit_str(self.power, 'POWER'),
+                ' (relative)' if self.is_power_relative else ''
+            ) + get_drag_mode_header()
 
+        return super().get_header_text() + (
+            '{}: offset mode, '
+            '{}: radius mode, '
+            '{}: power mode, '
+            '{}: relative power ({}), '
+            '{}{}{}{}: axis ({}), '
+            '{}: Camera ({}), '
+            '{}: Diffuse ({}), '
+            '{}: Specular ({}), '
+            '{}: Volume ({})'
+        ).format(
+            UCS['OFFSET_MODE'],
+            UCS['SIZE_MODE'],
+            UCS['POWER_MODE'],
+            UCS['RELATIVE_POWER_TOGGLE'], 'ON' if self.is_power_relative else 'OFF',
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
+            UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
+            UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
+            UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
+            UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+        )
+
+    def extra_paint_controls(self, context, event):
+        mouse_x = event.mouse_x
+
+        if is_event_command(event, 'OFFSET_MODE'):
+            self.set_drag_attr('offset', mouse_x)
+
+        elif is_event_command(event, 'SIZE_MODE'):
+            self.set_drag_attr('radius', mouse_x, drag_increment=0.01, drag_precise_increment=0.001)
+
+        elif is_event_command(event, 'POWER_MODE'):
+            self.set_drag_attr('power', mouse_x, drag_increment=10, drag_precise_increment=1)
+        elif is_event_command(event, 'RELATIVE_POWER_TOGGLE'):
+            self.is_power_relative = not self.is_power_relative
+
+        elif self.check_axis_event(event):
+            pass  # if True, event is handled
+        elif self.check_visibility_event(event):
+            pass  # if True, event is handled
+
+        else:
+            return False
+
+        return True
+
+    def update_light(self, context):
         stroke_vertices = [coord for stroke in self.mouse_path for coord, normal in stroke]
         stroke_normals = [normal for stroke in self.mouse_path for coord, normal in stroke]
         vertices, normals, orig_vertices = prep_stroke(
@@ -214,11 +270,10 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
     def invoke(self, context, event):
         """Use lamp's current parameters as a starting point.
 
-        Sets light color and power, sun's power and angle, area's shape, and radius."""
+        Sets light power, sun's power and angle, area's shape, and radius."""
         lamp_data = context.active_object.data
         lamp_type = lamp_data.type
 
-        self.light_color = lamp_data.color
         self.power = lamp_data.energy
 
         if lamp_type == 'SUN':

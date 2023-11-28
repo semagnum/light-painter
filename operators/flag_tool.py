@@ -21,8 +21,9 @@ import bpy
 from mathutils import Vector
 
 from .base_tool import BaseLightPaintTool
+from .prop_util import convert_val_to_unit_str, get_drag_mode_header
 from .visibility import VisibilitySettings
-
+from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR
 
 IS_BPY_V3 = bpy.app.version < (4, 0, 0)
 
@@ -30,15 +31,16 @@ FLAG_DATA_NAME = 'LightPaint_Flag'
 
 
 # active object is counted twice
-def get_selected_lights(context) -> tuple:
+def get_selected_by_type(context, obj_type: str) -> tuple:
     """Retrieves all selected lights, including the active object.
     Prevents duplicates if the active object is also selected.
 
     :param context: Blender context
-    :return: a tuple of selected lights
+    :param obj_type: Blender object type
+    :return: a generator of selected objects
     """
-    light_objs_dict = {obj.name: obj for obj in context.selected_objects if obj.type == 'LIGHT'}
-    if context.active_object and context.active_object.type == 'LIGHT':
+    light_objs_dict = {obj.name: obj for obj in context.selected_objects if obj.type == obj_type}
+    if context.active_object and context.active_object.type == obj_type:
         light_objs_dict.update({context.active_object.name: context.active_object})
 
     return tuple(light_objs_dict.values())
@@ -137,10 +139,14 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         max=1.0,
     )
 
+    @classmethod
+    def poll(cls, context):
+        return len(get_selected_by_type(context, 'LIGHT'))
+
     def draw(self, context):
         layout = self.layout
 
-        light_objs = get_selected_lights(context)
+        light_objs = get_selected_by_type(context, 'LIGHT')
         has_sun = any(obj.data.type == 'SUN' for obj in light_objs)
         has_other_lamps = any(obj.data.type != 'SUN' for obj in light_objs)
         if has_sun:
@@ -153,14 +159,58 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
         self.draw_visibility_props(layout)
 
-    def add_card_for_lamp(self, context, light_obj, vertices):
-        bpy.ops.object.select_all(action='DESELECT')
+    def extra_paint_controls(self, context, event):
+        mouse_x = event.mouse_x
 
-        mesh = bpy.data.meshes.new(FLAG_DATA_NAME)
-        obj = bpy.data.objects.new(mesh.name, mesh)
-        col = context.scene.collection
-        col.objects.link(obj)
-        context.view_layer.objects.active = obj
+        # offset is for sun lamps, size is factor for the rest.
+        if is_event_command(event, 'OFFSET_MODE'):
+            self.set_drag_attr('offset', mouse_x)
+
+        elif is_event_command(event, 'SIZE_MODE'):
+            self.set_drag_attr('factor', mouse_x, drag_increment=0.05, drag_precise_increment=0.01)
+
+        elif is_event_command(event, 'POWER_MODE'):
+            self.set_drag_attr('opacity', mouse_x, drag_increment=0.05, drag_precise_increment=0.01)
+       
+        elif self.check_visibility_event(event):
+            pass  # if True, event is handled
+
+        else:
+            return False
+
+        return True
+
+    def get_header_text(self):
+        if self.drag_attr == 'factor':
+            return 'Factor: {}'.format(self.factor) + get_drag_mode_header()
+        elif self.drag_attr == 'offset':
+            return 'Offset (for sun lamps): {}'.format(
+                convert_val_to_unit_str(self.offset, 'LENGTH')
+            ) + get_drag_mode_header()
+        elif self.drag_attr == 'opacity':
+            return 'Opacity: {}'.format(self.opacity) + get_drag_mode_header()
+
+        return super().get_header_text() + (
+            '{}: lamp factor mode, '
+            '{}: sun lamp offset mode, '
+            '{}: opacity mode, '
+            '{}: Camera ({}), '
+            '{}: Diffuse ({}), '
+            '{}: Specular ({}), '
+            '{}: Volume ({})'
+        ).format(
+            UNIVERSAL_COMMAND_STR['SIZE_MODE'],
+            UNIVERSAL_COMMAND_STR['OFFSET_MODE'],
+            UNIVERSAL_COMMAND_STR['POWER_MODE'],
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+        )
+
+    def add_card_for_lamp(self, context, mesh_obj, light_obj, vertices):
+        mesh = mesh_obj.data
+        mesh.clear_geometry()
 
         if light_obj.data.type == 'SUN':
             direction = (light_obj.matrix_world.to_3x3() @ Vector((0, 0, -1))).normalized()
@@ -178,22 +228,29 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
         mesh.from_pydata(mesh_vertices, [], [])
 
-        # go into edit mode, convex hull, cleanup, then get out
+        # go into edit mode, convex hull, then get out
+        context.view_layer.objects.active = mesh_obj
         bpy.ops.object.editmode_toggle()
-
         bpy.ops.mesh.convex_hull()
-
         bpy.ops.object.editmode_toggle()
 
-        self.set_visibility(obj)
-        assign_flag_material(obj, self.shadow_color, self.opacity)
+        self.set_visibility(mesh_obj)
 
-    def execute(self, context):
-        super().execute(context)
+        material = mesh_obj.data.materials[0]
+        tree = material.node_tree
 
-        light_objs = get_selected_lights(context)
+        # find PBR and set color
+        pbr_node = tree.nodes['Principled BSDF']
+        if IS_BPY_V3:
+            pbr_node.inputs[21].default_value = self.opacity
+        else:
+            pbr_node.inputs[4].default_value = self.opacity
+
+    def update_light(self, context):
+        light_objs = get_selected_by_type(context, 'LIGHT')
+        mesh_objs = get_selected_by_type(context, 'MESH')
         if len(light_objs) == 0:
-            self.report({'ERROR_INVALID_INPUT'}, 'Light objects must be selected to be flagged for shadows!')
+            self.report({'ERROR_INVALID_INPUT'}, 'Select lamp objects to be flagged for shadows!')
             return {'CANCELLED'}
 
         vertices = [coord for stroke in self.mouse_path for coord, normal in stroke]
@@ -203,11 +260,36 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
             return {'CANCELLED'}
 
         # add new mesh
-        for light_obj in light_objs:
-            self.add_card_for_lamp(context, light_obj, vertices)
+        for mesh_obj, light_obj in zip(mesh_objs, light_objs):
+            self.add_card_for_lamp(context, mesh_obj, light_obj, vertices)
 
         # select them so the panel can detect them correctly
         for light_obj in light_objs:
             light_obj.select_set(True)
 
         return {'FINISHED'}
+
+    def startup_callback(self, context):
+        # unselect any currently selected meshes,
+        # to prevent them accidentally being deleted if modal cancels
+        for mesh_obj in get_selected_by_type(context, 'MESH'):
+            mesh_obj.select_set(False)
+
+        for _ in get_selected_by_type(context, 'LIGHT'):
+            mesh = bpy.data.meshes.new(FLAG_DATA_NAME)
+            obj = bpy.data.objects.new(mesh.name, mesh)
+            col = context.scene.collection
+            col.objects.link(obj)
+            obj.select_set(True)
+
+            # To prevent an originally selected mesh from being still active,
+            # make the others active (could just pick a light too)
+            context.view_layer.objects.active = obj
+
+            assign_flag_material(obj, self.shadow_color, self.opacity)
+
+    def cancel_callback(self, context):
+        """Deletes active object (our new lamp)."""
+        if self.initialized:
+            with context.temp_override(selected_objects=get_selected_by_type(context, 'MESH')):
+                bpy.ops.object.delete(use_global=False)

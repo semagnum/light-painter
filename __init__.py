@@ -34,7 +34,7 @@ from . import axis, operators, panel
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 1, 4),
+    'version': (1, 2, 0),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -50,23 +50,27 @@ operators = (
     operators.LIGHTPAINTER_OT_Mesh,
     operators.LIGHTPAINTER_OT_Tube_Light,
     operators.LIGHTPAINTER_OT_Sky,
+    operators.LIGHTPAINTER_OT_Sun,
     operators.LIGHTPAINTER_OT_Flag,
     operators.LIGHTPAINTER_OT_Lamp_Texture,
     operators.LIGHTPAINTER_OT_Lamp_Texture_Remove,
 )
 
-grouped_tools = (
+tools = (
     panel.VIEW3D_T_light_paint,
+    panel.VIEW3D_T_sun_paint,
+    panel.VIEW3D_T_sky_paint,
     panel.VIEW3D_T_mesh_light_paint,
     panel.VIEW3D_T_tube_light_paint,
-    panel.VIEW3D_T_sky_paint,
+    panel.VIEW3D_T_flag_paint,
+    panel.VIEW3D_T_light_paint_adjust,
 )
 
 REGISTERED_WITH_UI = False
 
 
 def register():
-    """Registers Light Painter operators and grouped_tools."""
+    """Registers Light Painter operators and tools."""
     for cls in operators:
         bpy.utils.register_class(cls)
 
@@ -90,26 +94,27 @@ def register():
     if kc:
         global REGISTERED_WITH_UI
         REGISTERED_WITH_UI = True
-        first_idname = grouped_tools[0].bl_idname
-        bpy.utils.register_tool(grouped_tools[0], separator=True, group=True)
-        for tool in grouped_tools[1:]:
-            bpy.utils.register_tool(tool, after=first_idname)
+        bpy.utils.register_tool(panel.VIEW3D_T_light_paint, separator=True)
 
+        bpy.utils.register_tool(panel.VIEW3D_T_sky_paint, group=True)
+        bpy.utils.register_tool(panel.VIEW3D_T_sun_paint, after=panel.VIEW3D_T_sky_paint.bl_idname)
+
+        bpy.utils.register_tool(panel.VIEW3D_T_mesh_light_paint)
+        bpy.utils.register_tool(panel.VIEW3D_T_tube_light_paint)
         bpy.utils.register_tool(panel.VIEW3D_T_flag_paint)
         bpy.utils.register_tool(panel.VIEW3D_T_light_paint_adjust)
+
         bpy.utils.register_class(panel.LIGHTPAINTER_PT_Texture)
 
 
 def unregister():
-    """Unregisters Light Painter operators and grouped_tools."""
+    """Unregisters Light Painter operators and lamp_tool_group."""
 
     global REGISTERED_WITH_UI
     if REGISTERED_WITH_UI:
-        for tool in grouped_tools[::-1]:
+        for tool in tools[::-1]:
             bpy.utils.unregister_tool(tool)
 
-        bpy.utils.unregister_tool(panel.VIEW3D_T_flag_paint)
-        bpy.utils.unregister_tool(panel.VIEW3D_T_light_paint_adjust)
         bpy.utils.unregister_class(panel.LIGHTPAINTER_PT_Texture)
 
     for cls in operators[::-1]:

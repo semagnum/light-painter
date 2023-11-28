@@ -1,5 +1,7 @@
 import bpy
 
+from ..keymap import UNIVERSAL_COMMAND_STR
+
 
 def axis_prop(obj_descriptor: str) -> bpy.props.EnumProperty:
     """Returns axis property to determine direction of offset."""
@@ -28,3 +30,22 @@ def offset_prop(obj_descriptor, default_val: float = 1.0) -> bpy.props.FloatProp
         default=default_val,
         unit='LENGTH'
     )
+
+
+def convert_val_to_unit_str(val, unit_category, precision=5):
+    context = bpy.context
+    scene = context.scene
+    unit_system = scene.unit_settings.system
+
+    return bpy.utils.units.to_string(
+        unit_system,
+        unit_category,
+        val,
+        precision=precision,
+        split_unit=False,
+        compatible_unit=False,
+    )
+
+
+def get_drag_mode_header():
+    return ', {}: cancel, any other tool key: confirm'.format(UNIVERSAL_COMMAND_STR['CANCEL'])
