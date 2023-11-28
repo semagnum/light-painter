@@ -32,13 +32,14 @@ def draw_callback_px(self, context):
         shader.uniform_float('color', PAINT_COLOR)
         batch.draw(shader)
 
-    if self.is_alt_down and len(paths_3d) > 0 and len(paths_3d[-1]) > 0:
+    # print(paths_3d)
+    if len(paths_3d) > 0 and len(paths_3d[-1]) > 0:
         last_point = view3d_utils.location_3d_to_region_2d(region, rv3d, paths_3d[-1][-1])
         batch = batch_for_shader(shader, 'LINE_STRIP', {'pos': [last_point, self.curr_mouse_pos]})
         shader.uniform_float('color', SEMI_PAINT_COLOR)
         batch.draw(shader)
 
-    if self.is_rightmouse_down:
+    if self.show_eraser:
         gpu.state.line_width_set(ERASE_CIRCLE_OUTLINE_SIZE)
         draw_circle_2d(Vector(self.curr_mouse_pos), ERASE_COLOR, self.eraser_size)
 

@@ -5,20 +5,21 @@ Here you can learn how to use the Blender add-on and dive into the Python packag
 
 ## Painting
 
-![List of tools: Light Paint, Shadow Paint, Adjust Light](/assets/tools.png)
+![List of tools: Light Paint, Sky Paint group, Mesh Light Paint, Tube Light, Shadow Paint, Adjust Light](/assets/tools.png)
 
 The painting is done within each tool.
 Once installed, you can find these tools on the left-hand side of the 3D view
-in the toolshelf (`T` it the default shortcut to hide/reveal this shelf).
+in the toolshelf (`T` it the default Blender shortcut to hide/reveal this shelf).
 Buttons with a small triangle in their bottom right corner are tool groups,
-which can be opened by holding `LMB` on them for a moment (or dragging `LMB` to open the group instantly).
+which can be opened by clicking and holding the mouse on them for a moment
+(or click-and-dragging to open the group instantly).
 
-![List of tools: Light Paint, Mesh Light Paint, Tube Light Paint, Sky Paint](/assets/tool_group.png)
+![List of tools: Sky Paint, Sun Paint](/assets/tool_group.png)
 
 When the tool is selected, left-click the mouse to start the tool.
 From there, you can use the mouse left-click and right-click
 to draw and erase marks on surfaces respectively.
-Press `Escape` key to cancel, and the `Return/Enter` key to add light.
+Press `Escape` key to cancel, and the `Return/Enter` or `Space` keys to finish using the tool.
 
 Now just paint where you want the light to hit your objects' surfaces!
 
@@ -26,37 +27,32 @@ Now just paint where you want the light to hit your objects' surfaces!
 
 ![Adding a light, step by step](/assets/painting_steps.gif)
 
-You do not need to fill in every surface.
-Draw some simple strokes over surfaces that you would like highlighted by your light.
-Keep in mind that the surface's normal you are drawing over
-can influence where the light will be finally positioned.
+Some general painting tips:
 
-The tool also works best
-when your strokes matches the shape of the type of lamp that you want.
-If you hold down either `Alt` key, it allows artists to draw straight lines.
-It will remember the last point drawn and show a faint line where the straight line will go.
-With this, you can draw geometric shapes.
-
-Here are some general painting tips:
-
-- Draw on multiple surfaces. The operators can handle most cases
+- You do not need to paint the entire surface. Draw a few simple strokes over surfaces that you'd like highlighted by your light.
+- For tube lights, use the right click button to end the current stroke and start a new one - this is to make a separate tube light.
+  - Ending strokes is available in other tools for visual clarity, but doesn't affect the final result.
+- Single clicks draw straight lines (useful for geometric shapes), while holding down the mouse button draws all the squiggles.
+- Draw on multiple surfaces. The tools can handle most cases
   where surfaces face different directions,
-  but it will fail if the average of the surface direction is zero.
+  but it will fail if the average direction cancels itself out.
 - Spot lamps prefer circular strokes.
-  But if you do not trust your drawing ability,
+  But if you don't trust your ability in drawing circles,
   a painted line representing the diameter is sufficient.
-- Area lamps prefer rectangles, squares, circles or a single painted line.
-- Point lamps are the most forgiving since a point lamp's rotation
-  is irrelevant to its ability to light.
+- Area lamps prefer rectangles, squares, circles or a single painted line. You can change the area lamp's shape in the redo panel.
+- Point lamps are the most forgiving, since its rotation is irrelevant.
+
+Now there are keyboard shortcuts to adjust common parameters! 
+Once you start using a tool, see the 3D view's header for the keys and their respective commands.
+Some keys, like for the light's offset/distance or power, go into an adjustment mode.
+Simply drag the mouse left and right to adjust the amount.
+You can use the `Shift` and `Ctrl` keys while dragging to add precision or snapping. 
+
+![Using keyboard shortcuts and drag-adjust modes to change parameters](/assets/keyboard_shortcuts.gif)
 
 ## Light Paint
 
-You can choose between the main light types (for the sun lamp, see "Sky Paint"):
-
-- point lamp
-- spot lamp
-- area lamp
-
+You can choose between the main light types (for the sun lamp, see "Sun and Sky Paint"): point, spot, and area lamps.
 Like with any of the tools, you can press `F9` or click the collapsed Redo Panel
 in the bottom-left corner of the 3D view to tweak parameters, such as:
 - Light color.
@@ -71,8 +67,8 @@ in the bottom-left corner of the 3D view to tweak parameters, such as:
 ### Adjust Lamp
 
 This is a separate tool where the modal adjusts the currently active lamp
-instead of adding a new one.
-You can find this tool, with a purple lamp icon, right below the add light tool group.
+instead of adding a new one. Its parameters are similar to the Light Paint tool.
+You can find it with its purple lamp icon.
 
 ## Mesh and Tube Light Paint
 
@@ -85,14 +81,17 @@ This tool has an extra parameter to flatten the hull into a plane.
 
 **Tube lights** turn each stroke into a "tube" of light -
 great for neon lighting.
-This tool has extra parameters to merge tube vertices by distance (for a smoother tube shape),
+Remember to use the right click button to end the current stroke and start a new one.
+This tool has extra parameters to merge tube vertices by distance (for a smoother tube path),
 and subdivisions for the tube path or its resulting surface.
 
-### Sky Paint
+### Sun and Sky Paint
+
+![List of tools: Sky Paint, Sun Paint](/assets/tool_group.png)
+
+The Sun Paint and Sky Paint tools both enable straightforward environment lighting.
 
 ![Drawing onto an environment and painting direction of sky texture](assets/sky_paint.gif)
-
-You can add either a sun lamp or a sky texture.
 
 There are two options to determine direction: "average" -
 which just takes the mean normal of the annotations, like all the other Light Painter tools -
@@ -104,8 +103,8 @@ based on how closely it matches the average normal
 and the percentage of your strokes hit.
 
 However, this scoring may result in noonday lighting from above.
-To give you more control, there is a "Max Sun Elevation" parameter
-where you can specify the max elevation of the sun.
+To give you more control, the "Max Sun Elevation" parameter
+lets you specify the max elevation of the sun.
 This can force the operator to only sample the sun at lower elevations,
 giving more dynamic lighting.
 
@@ -135,3 +134,8 @@ Quickly add procedural textures to point and spot lamps.
 Since this uses Cycles nodes, it is only supported in Cycles.
 You can find this panel in your active lamp's properties.
 You can choose between the different procedural texture types available within Blender.
+
+## Questions or Issues?
+
+Report them through the GitHub issue tracker.
+Please provide steps to reproduce, and errors from the Blender terminal if applicable.

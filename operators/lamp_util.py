@@ -241,7 +241,6 @@ class LampUtils(VisibilitySettings):
         # set light data properties
         lamp.location = center
         lamp.rotation_euler = rotation
-        lamp.data.color = self.light_color
         lamp.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         lamp.data.shape = self.shape
         if self.shape in {'RECTANGLE', 'ELLIPSE'}:
@@ -277,7 +276,6 @@ class LampUtils(VisibilitySettings):
 
         # set light data properties
         lamp.location = center
-        lamp.data.color = self.light_color
         lamp.data.shadow_soft_size = self.radius
         lamp.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         self.set_visibility(lamp)
@@ -314,7 +312,6 @@ class LampUtils(VisibilitySettings):
         # set light data properties
         lamp.location = center
         lamp.rotation_euler = rotation
-        lamp.data.color = self.light_color
         lamp.data.spot_size = spot_angle
         lamp.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         lamp.data.shadow_soft_size = self.radius

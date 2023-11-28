@@ -25,6 +25,7 @@ from .operators import (
     LIGHTPAINTER_OT_Mesh,
     LIGHTPAINTER_OT_Tube_Light,
     LIGHTPAINTER_OT_Sky,
+    LIGHTPAINTER_OT_Sun,
     LIGHTPAINTER_OT_Flag,
     LIGHTPAINTER_OT_Lamp_Texture,
     LIGHTPAINTER_OT_Lamp_Texture_Remove,
@@ -45,6 +46,11 @@ class VIEW3D_T_light_paint(bpy.types.WorkSpaceTool):
     bl_keymap = (
         (LIGHTPAINTER_OT_Lamp.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
+
+    def draw_settings(context, layout, tool):
+        props = tool.operator_properties(LIGHTPAINTER_OT_Lamp.bl_idname)
+        layout.prop(props, 'lamp_type')
+        layout.prop(props, 'light_color')
 
 
 class VIEW3D_T_light_paint_adjust(bpy.types.WorkSpaceTool):
@@ -70,6 +76,11 @@ class VIEW3D_T_mesh_light_paint(bpy.types.WorkSpaceTool):
         (LIGHTPAINTER_OT_Mesh.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
 
+    def draw_settings(context, layout, tool):
+        props = tool.operator_properties(LIGHTPAINTER_OT_Mesh.bl_idname)
+        layout.prop(props, 'light_color')
+        layout.prop(props, 'flatten')
+
 
 class VIEW3D_T_tube_light_paint(bpy.types.WorkSpaceTool):
     bl_idname = 'view3d.lightpaint_tube_light'
@@ -81,6 +92,23 @@ class VIEW3D_T_tube_light_paint(bpy.types.WorkSpaceTool):
     bl_keymap = (
         (LIGHTPAINTER_OT_Tube_Light.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
+
+    def draw_settings(context, layout, tool, extra=False):
+        props = tool.operator_properties(LIGHTPAINTER_OT_Tube_Light.bl_idname)
+        if not extra:
+            layout.prop(props, 'light_color')
+
+            layout.prop(props, 'merge_distance')
+            layout.prop(props, 'skin_radius')
+            layout.prop(props, 'is_smooth')
+
+            if context.region.type == 'TOOL_HEADER':
+                layout.popover('TOPBAR_PT_tool_settings_extra', text='...')
+        if extra or context.region.type != 'TOOL_HEADER':
+            layout.label(text='Subdivision')
+            col = layout.column()
+            col.prop(props, 'pre_subdiv', text='Path')
+            col.prop(props, 'post_subdiv', text='Surface')
 
 
 class VIEW3D_T_sky_paint(bpy.types.WorkSpaceTool):
@@ -94,6 +122,56 @@ class VIEW3D_T_sky_paint(bpy.types.WorkSpaceTool):
         (LIGHTPAINTER_OT_Sky.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
 
+    def draw_settings(context, layout, tool, extra=False):
+        props = tool.operator_properties(LIGHTPAINTER_OT_Sky.bl_idname)
+        if not extra:
+            layout.prop(props, 'texture_type')
+            layout.prop(props, 'power')
+            layout.prop(props, 'size')
+
+            if context.region.type == 'TOOL_HEADER':
+                layout.popover('TOPBAR_PT_tool_settings_extra', text='...')
+
+        if extra or context.region.type != 'TOOL_HEADER':
+            layout.label(text='Method:')
+            row = layout.row()
+            row.prop(props, 'normal_method', expand=True)
+
+            col = layout.column()
+            col.active = props.normal_method == 'OCCLUSION'
+            col.prop(props, 'longitude_samples')
+            col.prop(props, 'latitude_samples')
+            col.prop(props, 'elevation_clamp', slider=True)
+
+
+class VIEW3D_T_sun_paint(bpy.types.WorkSpaceTool):
+    bl_idname = 'view3d.lightpaint_sun'
+    bl_space_type = 'VIEW_3D'
+    bl_context_mode = 'OBJECT'
+    bl_label = 'Sun Paint'
+    bl_operator = LIGHTPAINTER_OT_Sun.bl_idname
+    bl_icon = icon_path('light_paint')
+    bl_keymap = (
+        (LIGHTPAINTER_OT_Sun.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
+    )
+
+    def draw_settings(context, layout, tool, extra=False):
+        props = tool.operator_properties(LIGHTPAINTER_OT_Sun.bl_idname)
+        if not extra and context.region.type == 'TOOL_HEADER':
+            layout.prop(props, 'light_color')
+
+            layout.popover('TOPBAR_PT_tool_settings_extra', text='...')
+        else:
+            layout.label(text='Method:')
+            row = layout.row()
+            row.prop(props, 'normal_method', expand=True)
+
+            col = layout.column()
+            col.active = props.normal_method == 'OCCLUSION'
+            col.prop(props, 'longitude_samples')
+            col.prop(props, 'latitude_samples')
+            col.prop(props, 'elevation_clamp', slider=True)
+
 
 class VIEW3D_T_flag_paint(bpy.types.WorkSpaceTool):
     bl_idname = 'view3d.lightpaint_flag'
@@ -106,13 +184,19 @@ class VIEW3D_T_flag_paint(bpy.types.WorkSpaceTool):
         (LIGHTPAINTER_OT_Flag.bl_idname, {'type': 'LEFTMOUSE', 'value': 'PRESS'}, None),
     )
 
+    def draw_settings(context, layout, tool):
+        props = tool.operator_properties(LIGHTPAINTER_OT_Flag.bl_idname)
+        layout.prop(props, 'shadow_color')
+        layout.prop(props, 'factor')
+        layout.prop(props, 'offset')
+
 
 class LIGHTPAINTER_PT_Texture(bpy.types.Panel):
     bl_label = 'Light Painter Gobos'
     bl_idname = 'LIGHTPAINTER_PT_Texture'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "data"
+    bl_context = 'data'
 
     @classmethod
     def poll(cls, context):
