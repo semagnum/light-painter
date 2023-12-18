@@ -250,11 +250,12 @@ class BaseLightPaintTool:
 
         context.area.tag_redraw()
 
-        if not is_in_area(context, event.mouse_x, event.mouse_y):
+        if is_in_area(context, event.mouse_x, event.mouse_y) or self.drag_attr:
+            context.window.cursor_set('PAINT_BRUSH')
+        else:  # cursor wrapping is handled in handle_drag_event
             context.window.cursor_set('DEFAULT')
             modal_status = 'PASS_THROUGH'
-        else:
-            context.window.cursor_set('PAINT_BRUSH')
+
 
         matching_event = get_matching_event(event)
         if matching_event is None and is_nav_event(context.window_manager.keyconfigs, event):
@@ -300,7 +301,22 @@ class BaseLightPaintTool:
         except ValueError as e:
             self.report({'ERROR'}, str(e))
 
-        self.drag_prev_mouse_x = event.mouse_x
+        # wrap cursor around X-axis when going beyond region, allowing forever dragging
+        region = context.region
+        mouse_region_x = event.mouse_region_x
+        drag_prev_mouse_region_x = self.drag_prev_mouse_x - region.x
+        wrap_left_screen_edge = mouse_region_x <= 1 and mouse_region_x < drag_prev_mouse_region_x
+        wrap_right_screen_edge = mouse_region_x >= region.width - 1 and mouse_region_x > drag_prev_mouse_region_x
+
+        if wrap_left_screen_edge or wrap_right_screen_edge:
+            if wrap_left_screen_edge:
+                new_width = region.x + region.width + 1
+            else:
+                new_width = region.x - 1
+            context.window.cursor_warp(new_width, event.mouse_y)
+            self.drag_prev_mouse_x = new_width
+        else:
+            self.drag_prev_mouse_x = event.mouse_x
 
     def invoke(self, context, _event):
         if context.area.type == 'VIEW_3D':
