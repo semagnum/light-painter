@@ -189,8 +189,8 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
             ) + get_drag_mode_header()
 
         return super().get_header_text() + (
-            '{}: offset mode, '
-            '{}: radius mode, '
+            '{}: offset mode, '.format(UCS['OFFSET_MODE']) +
+            ('{}: radius mode, '.format(UCS['SIZE_MODE']) if bpy.context.active_object.data.type != 'AREA' else '') +
             '{}: power mode, '
             '{}: relative power ({}), '
             '{}{}{}{}: axis ({}), '
@@ -199,8 +199,6 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
             '{}: Specular ({}), '
             '{}: Volume ({})'
         ).format(
-            UCS['OFFSET_MODE'],
-            UCS['SIZE_MODE'],
             UCS['POWER_MODE'],
             UCS['RELATIVE_POWER_TOGGLE'], 'ON' if self.is_power_relative else 'OFF',
             UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
@@ -216,7 +214,7 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
         if is_event_command(event, 'OFFSET_MODE'):
             self.set_drag_attr('offset', mouse_x)
 
-        elif is_event_command(event, 'SIZE_MODE'):
+        elif is_event_command(event, 'SIZE_MODE') and context.active_object.data.type != 'AREA':
             self.set_drag_attr('radius', mouse_x, drag_increment=0.01, drag_precise_increment=0.001)
 
         elif is_event_command(event, 'POWER_MODE'):
