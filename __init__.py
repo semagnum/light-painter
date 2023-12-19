@@ -44,7 +44,7 @@ bl_info = {
     'tracker_url': 'https://github.com/semagnum/light-painter/issues',
 }
 
-operators = (
+operators_to_register = (
     operators.LIGHTPAINTER_OT_Lamp,
     operators.LIGHTPAINTER_OT_Lamp_Adjust,
     operators.LIGHTPAINTER_OT_Mesh,
@@ -71,7 +71,7 @@ REGISTERED_WITH_UI = False
 
 def register():
     """Registers Light Painter operators and tools."""
-    for cls in operators:
+    for cls in operators_to_register:
         bpy.utils.register_class(cls)
 
     bpy.types.WindowManager.lightpainter_texture_type = bpy.props.EnumProperty(
@@ -117,7 +117,7 @@ def unregister():
 
         bpy.utils.unregister_class(panel.LIGHTPAINTER_PT_Texture)
 
-    for cls in operators[::-1]:
+    for cls in operators_to_register[::-1]:
         bpy.utils.unregister_class(cls)
 
 
