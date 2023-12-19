@@ -44,20 +44,12 @@ def is_nav_event(keyconfigs: bpy.types.KeyConfig, event: bpy.types.Event) -> boo
                for km in keymaps)
 
 
-def is_in_area(context, mouse_x, mouse_y):
-    area = context.area
-    regions = dict()
-    for region in bpy.context.area.regions:
-        regions[region.type] = region
-
-    ui_width = regions["UI"].width
-    header_height = regions["HEADER"].height + regions["TOOL_HEADER"].height
-    tools_width = regions["TOOLS"].width
-
-    area_min_x, area_min_y = area.x + tools_width, area.y
-    area_max_x, area_max_y = area.x + area.width - tools_width - ui_width, area.y + area.height - header_height
-
-    return area_min_x < mouse_x < area_max_x and area_min_y < mouse_y < area_max_y
+def is_in_area(area, mouse_x, mouse_y):
+    """Checks if mouse coordinates are within Blender UI area."""
+    return (
+            (area.x <= mouse_x <= area.x + area.width) and
+            (area.y <= mouse_y <= area.y + area.height)
+    )
 
 
 class BaseLightPaintTool:
@@ -250,12 +242,11 @@ class BaseLightPaintTool:
 
         context.area.tag_redraw()
 
-        if is_in_area(context, event.mouse_x, event.mouse_y) or self.drag_attr:
+        if is_in_area(context.area, event.mouse_x, event.mouse_y) or self.drag_attr:
             context.window.cursor_set('PAINT_BRUSH')
         else:  # cursor wrapping is handled in handle_drag_event
             context.window.cursor_set('DEFAULT')
             modal_status = 'PASS_THROUGH'
-
 
         matching_event = get_matching_event(event)
         if matching_event is None and is_nav_event(context.window_manager.keyconfigs, event):
