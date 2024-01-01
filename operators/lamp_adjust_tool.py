@@ -269,17 +269,48 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
         """Use lamp's current parameters as a starting point.
 
         Sets light power, sun's power and angle, area's shape, and radius."""
-        lamp_data = context.active_object.data
+        lamp = context.active_object
+        lamp_data = lamp.data
         lamp_type = lamp_data.type
 
+        # copied to ensure original value persists
+        self.prev_matrix_world = lamp.matrix_world.copy()
+
         self.power = lamp_data.energy
+        self.prev_power = self.power
 
         if lamp_type == 'SUN':
             self.sun_power = lamp_data.energy
             self.angle = lamp_data.angle
+
+            self.prev_sun_power = self.sun_power
+            self.prev_angle = self.angle
         elif lamp_type == 'AREA':
             self.shape = lamp_data.shape
+            self.prev_shape = self.shape
+            self.prev_size = lamp_data.size
+            self.prev_size_y = lamp_data.size_y
         else:
             self.radius = lamp_data.shadow_soft_size
+            self.prev_radius = self.radius
 
         return super().invoke(context, event)
+
+    def cancel_callback(self, context):
+        """Resets lamp properties."""
+        lamp = context.active_object
+        lamp_data = lamp.data
+        lamp_type = lamp_data.type
+
+        lamp.matrix_world = self.prev_matrix_world
+        lamp_data.energy = self.prev_power
+
+        if lamp_type == 'SUN':
+            lamp_data.energy = self.prev_sun_power
+            lamp_data.angle = self.prev_angle
+        elif lamp_type == 'AREA':
+            lamp_data.shape = self.prev_shape
+            lamp_data.size = self.prev_size
+            lamp_data.size_y = self.prev_size_y
+        else:
+            lamp_data.shadow_soft_size = self.prev_radius
