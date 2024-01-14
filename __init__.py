@@ -18,14 +18,37 @@
 
 if "bpy" in locals():
     import importlib
-    reloadable_modules = [
-        'axis',
-        'operators',
-        'panel',
-    ]
-    for module_name in reloadable_modules:
-        if module_name in locals():
-            importlib.reload(locals()[module_name])
+    import os
+    import types
+
+    # double-check this add-on is imported, so it can be referenced and reloaded
+    import lightpainter
+
+    def reload_package(package):
+        assert (hasattr(package, '__package__'))
+        fn = package.__file__
+        fn_dir = os.path.dirname(fn) + os.sep
+        module_visit = {fn}
+        del fn
+
+        def reload_recursive_ex(module):
+            module_iter = (
+                module_child
+                for module_child in vars(module).values()
+                if isinstance(module_child, types.ModuleType)
+            )
+            for module_child in module_iter:
+                fn_child = getattr(module_child, '__file__', None)
+                if (fn_child is not None) and fn_child.startswith(fn_dir) and fn_child not in module_visit:
+                    # print('Reloading:', fn_child, 'from', module)
+                    module_visit.add(fn_child)
+                    reload_recursive_ex(module_child)
+
+            importlib.reload(module)
+
+        return reload_recursive_ex(package)
+
+    reload_package(lightpainter)
 
 import bpy
 
@@ -34,7 +57,7 @@ from . import axis, operators, panel
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 2, 4),
+    'version': (1, 2, 5),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
