@@ -103,6 +103,7 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
     bl_description = 'Adds mesh flag(s) to shadow surfaces specified by selected lights and annotations'
 
     tool_id = 'view3d.lightpaint_flag'
+    prev_vertices = dict()
 
     # FLAG PROPERTIES
     factor: bpy.props.FloatProperty(
@@ -210,7 +211,6 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def add_card_for_lamp(self, context, mesh_obj, light_obj, vertices):
         mesh = mesh_obj.data
-        mesh.clear_geometry()
 
         if light_obj.data.type == 'SUN':
             direction = (light_obj.matrix_world.to_3x3() @ Vector((0, 0, -1))).normalized()
@@ -226,13 +226,18 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
                                       for v in vertices
                                       for light_v in get_light_points(light_obj))
 
-        mesh.from_pydata(mesh_vertices, [], [])
+        # only updates geometry if changed
+        # mitigates GH issue #50 in mesh constantly re-evaluating
+        if light_obj.name not in self.prev_vertices or self.prev_vertices[light_obj.name] != str(mesh_vertices):
+            mesh.clear_geometry()
+            mesh.from_pydata(mesh_vertices, [], [])
 
-        # go into edit mode, convex hull, then get out
-        context.view_layer.objects.active = mesh_obj
-        bpy.ops.object.editmode_toggle()
-        bpy.ops.mesh.convex_hull()
-        bpy.ops.object.editmode_toggle()
+            # go into edit mode, convex hull, then get out
+            context.view_layer.objects.active = mesh_obj
+            bpy.ops.object.editmode_toggle()
+            bpy.ops.mesh.convex_hull()
+            bpy.ops.object.editmode_toggle()
+            self.prev_vertices[light_obj.name] = str(mesh_vertices)
 
         self.set_visibility(mesh_obj)
 

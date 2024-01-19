@@ -48,6 +48,7 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
     bl_description = 'Adds mesh light to light surfaces specified by annotations'
 
     tool_id = 'view3d.lightpaint_mesh'
+    prev_vertices = ''
 
     axis: axis_prop('mesh')
 
@@ -176,13 +177,19 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         mesh_vertices = self.generate_mesh(vertices, normals, self.flatten)
         mesh_obj = context.active_object
         mesh = mesh_obj.data
-        mesh.clear_geometry()
-        mesh.from_pydata(mesh_vertices, [], [])
 
-        # go into edit mode, convex hull, cleanup, then get out
-        bpy.ops.object.editmode_toggle()
-        bpy.ops.mesh.convex_hull()
-        bpy.ops.object.editmode_toggle()
+        # only updates geometry if changed
+        # mitigates GH issue #50 in mesh constantly re-evaluating
+        if str(mesh_vertices) != self.prev_vertices:
+            mesh.clear_geometry()
+            mesh.from_pydata(mesh_vertices, [], [])
+
+            # go into edit mode, convex hull, cleanup, then get out
+            bpy.ops.object.editmode_toggle()
+            bpy.ops.mesh.convex_hull()
+            bpy.ops.object.editmode_toggle()
+
+            self.prev_vertices = str(mesh_vertices)
 
         # get emissive material, update emission value
         material = mesh_obj.data.materials[0]
@@ -232,6 +239,8 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
     bl_description = 'Adds or repositions mesh tube to light surfaces specified by annotations'
 
     tool_id = 'view3d.lightpaint_tube_light'
+    prev_edges = ''
+    prev_vertices = ''
 
     axis: axis_prop('light tube')
 
@@ -390,15 +399,22 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
 
         mesh_obj = context.active_object
         mesh = mesh_obj.data
-        mesh.clear_geometry()
-        mesh.from_pydata(vertices, edge_idx, [])
 
-        bpy.ops.mesh.customdata_skin_add()  # forces skin modifier data to exist/update
+        # only updates geometry if changed
+        # mitigates GH issue #50 in mesh constantly re-evaluating
+        if str(edge_idx) != self.prev_edges or str(vertices) != self.prev_vertices:
+            mesh.clear_geometry()
+            mesh.from_pydata(vertices, edge_idx, [])
 
-        bpy.ops.object.editmode_toggle()
-        bpy.ops.mesh.remove_doubles(threshold=self.merge_distance)
-        bpy.ops.object.skin_root_mark()
-        bpy.ops.object.editmode_toggle()
+            bpy.ops.mesh.customdata_skin_add()  # forces skin modifier data to exist/update
+
+            bpy.ops.object.editmode_toggle()
+            bpy.ops.mesh.remove_doubles(threshold=self.merge_distance)
+            bpy.ops.object.skin_root_mark()
+            bpy.ops.object.editmode_toggle()
+
+            self.prev_vertices = vertices
+            self.prev_edges = edge_idx
 
         for v in mesh_obj.data.skin_vertices[0].data:
             v.radius = [self.skin_radius, self.skin_radius]
