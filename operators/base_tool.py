@@ -242,11 +242,14 @@ class BaseLightPaintTool:
 
         context.area.tag_redraw()
 
-        if is_in_area(context.area, event.mouse_x, event.mouse_y) or self.drag_attr:
-            context.window.cursor_set('PAINT_BRUSH')
-        else:  # cursor wrapping is handled in handle_drag_event
-            context.window.cursor_set('DEFAULT')
+        cursor_type = 'PAINT_BRUSH'
+        if self.drag_attr:  # cursor wrapping is handled in handle_drag_event
+            cursor_type = 'SCROLL_X'
+        elif not is_in_area(context.area, event.mouse_x, event.mouse_y):
+            cursor_type = 'DEFAULT'
             modal_status = 'PASS_THROUGH'
+
+        context.window.cursor_set(cursor_type)
 
         matching_event = get_matching_event(event)
         if matching_event is None and is_nav_event(context.window_manager.keyconfigs, event):

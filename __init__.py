@@ -57,7 +57,7 @@ from . import axis, operators, panel
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 2, 6),
+    'version': (1, 2, 7),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
