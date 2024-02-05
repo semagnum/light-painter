@@ -1,12 +1,13 @@
-from config import SINGLE_POINT
-
-
+from math import pi
+from numpy import isclose as np_isclose
 import os
 from pathlib import Path
 import pytest
 
 import bpy
 import addon_utils
+
+from config import `SINGLE_POINT`
 
 
 def get_zip_file_in_parent_dir():
@@ -120,3 +121,28 @@ def test_gobos(context, ops):
         context.window_manager.lightpainter_texture_type = texture_type
         ops.lightpainter.lamp_texture()
         ops.lightpainter.lamp_texture_remove()
+
+def test_conversion():
+    from mathutils import Vector
+    from lightpainter.operators.lamp_util import geo_to_dir
+
+    # vector -> latitude, longitude
+    TEST_CONVERSIONS = [
+        # y-axis
+        (Vector((0, 1, 0)), (0, 0)),
+        (Vector((0, -1, 0)), (0, pi)),
+
+        # x-axis
+        (Vector((1, 0, 0)), (0, pi / 2)),
+        (Vector((-1, 0, 0)), (0, -pi / 2)),
+
+        # z-up
+        (Vector((0, 0, 1)), (pi / 2, 0)),
+    ]
+
+    def compare_vectors(vec1, vec2):
+        return all(np_isclose(v2, v1, atol=0.001, rtol=0.001) for v1, v2 in zip(vec1, vec2))
+
+    for v, geo in TEST_CONVERSIONS:
+        result = geo_to_dir(geo[0], geo[1])
+        assert compare_vectors(result, v), 'geo_to_dir {} => {} != {}'.format(geo, result, v)
