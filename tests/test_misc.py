@@ -7,7 +7,7 @@ import pytest
 import bpy
 import addon_utils
 
-from config import `SINGLE_POINT`
+from config import SINGLE_POINT
 
 
 def get_zip_file_in_parent_dir():
