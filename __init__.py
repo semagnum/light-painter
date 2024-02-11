@@ -1,5 +1,5 @@
 #     Light Painter, Blender add-on that creates lights based on where the user paints.
-#     Copyright (C) 2023 Spencer Magnusson
+#     Copyright (C) 2024 Spencer Magnusson
 #     semagnum@gmail.com
 #
 #     This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ from . import axis, operators, panel
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 2, 7),
+    'version': (1, 2, 8),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -97,15 +97,21 @@ def register():
     for cls in operators_to_register:
         bpy.utils.register_class(cls)
 
+    texture_type_items = [
+        ('NOISE', 'Noise', ''),
+        ('MAGIC', 'Magic', ''),
+        ('MUSGRAVE', 'Musgrave', ''),
+        ('VORONOI', 'Voronoi', ''),
+        ('WAVE', 'Wave', ''),
+    ]
+
+    # Musgrave node is merged into the Noise mode in Blender 4.1
+    if bpy.app.version >= (4, 1, 0):
+        texture_type_items.pop(2)
+
     bpy.types.WindowManager.lightpainter_texture_type = bpy.props.EnumProperty(
         name='Texture Type',
-        items=[
-            ('NOISE', 'Noise', ''),
-            ('MAGIC', 'Magic', ''),
-            ('MUSGRAVE', 'Musgrave', ''),
-            ('VORONOI', 'Voronoi', ''),
-            ('WAVE', 'Wave', ''),
-        ],
+        items=texture_type_items,
         default='NOISE',
     )
 
