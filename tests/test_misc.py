@@ -116,6 +116,12 @@ def test_gobos(context, ops):
     context.view_layer.objects.active = light_obj
 
     from lightpainter.operators.lamp_add_gobos import TEXTURE_TYPE_TO_NODE
+
+    # Musgrave doesn't exist in 4.0+, remove for tests of that version or higher
+    import bpy
+    if bpy.app.version[0] >= 4:
+        TEXTURE_TYPE_TO_NODE.pop('MUSGRAVE')
+
     texture_types = list(TEXTURE_TYPE_TO_NODE)
     for texture_type in texture_types:
         context.window_manager.lightpainter_texture_type = texture_type
