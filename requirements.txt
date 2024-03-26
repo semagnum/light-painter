@@ -1,3 +1,2 @@
 bpy
 pytest
-numpy
