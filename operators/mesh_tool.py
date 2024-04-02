@@ -7,6 +7,11 @@ from .visibility import VisibilitySettings
 from ..axis import prep_stroke
 from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR as UCS
 
+if bpy.app.version >= (4, 1):
+    from bpy.app.translations import pgettext_rpt as rpt_
+else:
+    from bpy.app.translations import pgettext_tip as rpt_
+
 EMISSIVE_MAT_NAME = 'LightPaint_Emissive'
 MESH_DATA_NAME = 'LightPaint_Convex'
 TUBE_DATA_NAME = 'LightPaint_Tube'
@@ -112,33 +117,61 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
         return True
 
+    # def get_header_text(self):
+    #     if self.drag_attr == 'offset':
+    #         return 'Offset: {}'.format(
+    #             convert_val_to_unit_str(self.offset, 'LENGTH') + get_drag_mode_header()
+    #         )
+    #     elif self.drag_attr == 'emit_value':
+    #         return 'Power: {}'.format(self.emit_value) + get_drag_mode_header()
+
+    #     return super().get_header_text() + (
+    #         '{}: flatten ({}), '
+    #         '{}: offset mode, '
+    #         '{}: power mode, '
+    #         '{}{}{}{}: axis ({}), '
+    #         '{}: Camera ({}), '
+    #         '{}: Diffuse ({}), '
+    #         '{}: Specular ({}), '
+    #         '{}: Volume ({})'
+    #     ).format(
+    #         UCS['FLATTEN_TOGGLE'], 'ON' if self.flatten else 'OFF',
+    #         UCS['OFFSET_MODE'],
+    #         UCS['POWER_MODE'],
+    #         UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
+    #         UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+    #     )
     def get_header_text(self):
         if self.drag_attr == 'offset':
-            return 'Offset: {}'.format(
+            return rpt_('Offset: {}').format(
                 convert_val_to_unit_str(self.offset, 'LENGTH') + get_drag_mode_header()
             )
         elif self.drag_attr == 'emit_value':
-            return 'Power: {}'.format(self.emit_value) + get_drag_mode_header()
+            return rpt_('Power: {}').format(self.emit_value) + get_drag_mode_header()
 
         return super().get_header_text() + (
-            '{}: flatten ({}), '
-            '{}: offset mode, '
-            '{}: power mode, '
-            '{}{}{}{}: axis ({}), '
-            '{}: Camera ({}), '
-            '{}: Diffuse ({}), '
-            '{}: Specular ({}), '
-            '{}: Volume ({})'
+            '{}: {} ({}), '
+            '{}: {}, '
+            '{}: {}, '
+            '{}{}{}{}: {} ({}), '
+            '{}: {}, ({})'  # Camera mode, visibility status
+            '{}: {}, ({})'  # Diffuse mode, visibility status
+            '{}: {}, ({})'  # Specular mode, visibility status
+            '{}: {}, ({})'  # Volume mode, visibility status
         ).format(
-            UCS['FLATTEN_TOGGLE'], 'ON' if self.flatten else 'OFF',
-            UCS['OFFSET_MODE'],
-            UCS['POWER_MODE'],
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
-            UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-            UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-            UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-            UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+            UCS['FLATTEN_TOGGLE'], rpt_('flatten'), 'ON' if self.flatten else 'OFF',
+            UCS['OFFSET_MODE'],rpt_('offset mode'),
+            UCS['POWER_MODE'],rpt_('power mode'),
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
+            UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), rpt_('ON' if self.visible_camera else 'OFF'),
+            UCS['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), rpt_('ON' if self.visible_diffuse else 'OFF'),
+            UCS['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), rpt_('ON' if self.visible_specular else 'OFF'),
+            UCS['VISIBILITY_TOGGLE_VOLUME'], rpt_('Volume'), rpt_('ON' if self.visible_volume else 'OFF'),
         )
+
 
     @staticmethod
     def generate_mesh(vertices, normals, flatten: bool):
