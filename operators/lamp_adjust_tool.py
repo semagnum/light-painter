@@ -214,15 +214,15 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
 
     def get_header_text(self):
         if self.drag_attr == 'offset':
-            return rpt_('Offset: {}').format(
+            return '{}: {}'.format(rpt_('Offset'),
                 convert_val_to_unit_str(self.offset, 'LENGTH')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'radius':
-            return rpt_('Lamp radius: {}').format(
+            return '{}: {}'.format(rpt_('Lamp radius'),
                 convert_val_to_unit_str(self.radius, 'LENGTH')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return rpt_('Power: {}{}').format(
+            return '{}: {}{}'.format(rpt_('Power'),
                 convert_val_to_unit_str(self.power, 'POWER'),
                 ' (relative)' if self.is_power_relative else ''
             ) + get_drag_mode_header()

@@ -168,11 +168,11 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
 
     def get_header_text(self):
         if self.drag_attr == 'size':
-            return rpt_('Sun size: {}').format(
+            return '{}: {}'.format(rpt_('Sun size'),
                 convert_val_to_unit_str(self.size, 'ROTATION')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return rpt_('Power: {}').format(self.power) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Power: {}'),self.power) + get_drag_mode_header()
 
         return super().get_header_text() + (
             '{}: {}, '
@@ -432,11 +432,11 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
 
     def get_header_text(self):
         if self.drag_attr == 'angle':
-            return rpt_('Sun lamp radius: {}').format(
+            return '{}: {}'.format(rpt_('Sun lamp radius'),
                 convert_val_to_unit_str(self.angle, 'ROTATION')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return rpt_('Power: {}').format(self.power) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Power'),self.power) + get_drag_mode_header()
 
         return super().get_header_text() + (
             '{}: {}, '

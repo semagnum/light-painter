@@ -216,13 +216,13 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def get_header_text(self):
         if self.drag_attr == 'factor':
-            return rpt_('Factor: {}').format(self.factor) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Factor'),self.factor) + get_drag_mode_header()
         elif self.drag_attr == 'offset':
-            return rpt_('Offset (for sun lamps): {}').format(
+            return '{}: {}'.format(rpt_('Offset (for sun lamps)'),
                 convert_val_to_unit_str(self.offset, 'LENGTH')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'opacity':
-            return rpt_('Opacity: {}').format(self.opacity) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Opacity'),self.opacity) + get_drag_mode_header()
 
         return super().get_header_text() + (
             '{}: {}, '  # lamp factor mode
