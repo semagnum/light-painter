@@ -2,7 +2,7 @@ import os
 import zipfile
 import ast
 
-allowed_file_extensions = ('.py', 'LICENSE', '.md', '.dat')
+allowed_file_extensions = ('.py', 'LICENSE', '.md', '.dat', '.toml')
 ignore_folders = ('doc', 'venv', 'tests')
 
 
