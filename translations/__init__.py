@@ -3,14 +3,6 @@ import json
 import os
 import importlib
 
-####记得要在插件的总__init__.py文件里添加下面几行翻译才有用
-# from . import translations
-# def register():
-#     translations.register()
-# def unregister():
-#     translations.unregister()
-####
-
 class TranslationHelper():
     def __init__(self, name: str, data: dict, lang='zh_CN'):
         self.name = name

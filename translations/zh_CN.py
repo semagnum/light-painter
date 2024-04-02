@@ -101,15 +101,15 @@ data = {
     "Sun light\'s emit value" : "太阳光的亮度",
     "Nishita" : "西下",
     "Preetham" : "Preetham",
-    "Camera" : "相机",
+ 
     "If unchecked, object will not be directly visible by camera (although it will still emit light)" : "如果未选中此选项，摄像机将无法直接看到对象（尽管它仍会发光）",
-    "Diffuse" : "扩散",
+
     "If unchecked, object will not be directly visible by diffuse rays" : "如果未选中，漫射光线将无法直接看到对象",
-    "Specular" : "镜面",
+
     "If unchecked, object will not be directly visible by specular or glossy rays" : "如果未选中此选项，镜面反射或光泽光线将无法直接看到对象",
-    "Volume" : "体积",
+ 
     "If unchecked, object will not be directly visible by volumetric rays" : "如果未选中，则体积射线将无法直接看到对象",
-    "Ray visibility" : "射线可见度",
+    "Ray visibility" : "射线可见度", 
 
     ##base_tool#
     'paint line':'绘制要照亮的区域',
@@ -118,45 +118,40 @@ data = {
     'local view':'局部视图',
 
     ##flag_tool#
-    'Factor: {}': '因素: {}',
-    'Offset (for sun lamps): {}': '偏移（适用于太阳灯）: {}',
-    'Opacity: {}': '不透明度: {}',
+    'Offset (for sun lamps)': '偏移(适用于太阳灯)',
+    'Opacity': '不透明度',
     'lamp factor mode': '灯光因素模式',
-    'sun lamp offset mode': '太阳灯偏移模式',
+    'sun lamp offset mode': '太阳偏移模式',
     'opacity mode': '不透明度模式',
-    'Camera': '相机',
-    'Diffuse': '漫反射',
-    'Specular': '镜面反射',
-    'Volume': '体积',
     'ON': '开启',
     'OFF': '关闭',
 
     ##lamp_adjust_tool.py##
-    'Offset: {}': '偏移: {}',
-    'Lamp radius: {}': '灯半径: {}',
-    'Power: {}{}': '功率: {}{}',
+    'Offset': '偏移',
+    'Lamp radius': '灯半径',
+    
     'offset mode': '偏移模式',
     'radius mode': '半径模式',
     'power mode': '功率模式',
     'relative power': '相对功率',
 
     ##lamp_tool#
-    'Offset: {}': '偏移: {}',
-    'Lamp radius: {}': '灯泡半径: {}',
-    'Power: {}{}': '功率: {}{}',
+ 
+    'Lamp radius': '灯泡半径',
+
     'lamp type': '灯类型',
 
 
     ##mesh_tool#
-    'Offset: {}': '偏移: {}',
-    'Power: {}': '功率: {}',
-    'flatten': '平整',
+
+    'flatten': '扁平化',
+    'Tube radius': '灯管半径',
+    'tube radius mode': '灯管模式',
 
 
     ##sky_tool#
-    'Sun size: {}': '太阳大小: {}',
-    'Power: {}': '功率: {}',
-    'Sun lamp radius: {}': '太阳半径: {}',
+    'Sun size': '太阳大小',
+    'Sun lamp radius': '太阳半径',
     'sun radius mode': '太阳半径模式',
 
 }
