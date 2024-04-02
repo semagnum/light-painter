@@ -1,6 +1,7 @@
 .idea/
 
 _build/
+**/__pycache__/
 venv/
 
 *.zip
