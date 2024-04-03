@@ -145,22 +145,6 @@ class BaseLightPaintTool:
 
         return True
 
-    # def get_header_text(self):
-    #     return ('{}: confirm, '
-    #             '{}: cancel, '
-    #             # '{}: undo, '
-    #             '{}: paint line, '
-    #             '{}: erase, '
-    #             '{}: new stroke, '
-    #             '{}/{}: eraser size, ').format(
-    #         UNIVERSAL_COMMAND_STR['FINISH'],
-    #         UNIVERSAL_COMMAND_STR['CANCEL'],
-    #         UNIVERSAL_COMMAND_STR['PAINT'],
-    #         UNIVERSAL_COMMAND_STR['ERASE'],
-    #         UNIVERSAL_COMMAND_STR['END_STROKE'],
-    #         UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
-    #         UNIVERSAL_COMMAND_STR['ERASER_INCREASE'],
-    #     )
     def get_header_text(self):
         return ('{}: {}, '
                 '{}: {}, '

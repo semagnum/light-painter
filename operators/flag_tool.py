@@ -185,34 +185,6 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
         return True
 
-    # def get_header_text(self):
-    #     if self.drag_attr == 'factor':
-    #         return 'Factor: {}'.format(self.factor) + get_drag_mode_header()
-    #     elif self.drag_attr == 'offset':
-    #         return 'Offset (for sun lamps): {}'.format(
-    #             convert_val_to_unit_str(self.offset, 'LENGTH')
-    #         ) + get_drag_mode_header()
-    #     elif self.drag_attr == 'opacity':
-    #         return 'Opacity: {}'.format(self.opacity) + get_drag_mode_header()
-
-    #     return super().get_header_text() + (
-    #         '{}: lamp factor mode, '
-    #         '{}: sun lamp offset mode, '
-    #         '{}: opacity mode, '
-    #         '{}: Camera ({}), '
-    #         '{}: Diffuse ({}), '
-    #         '{}: Specular ({}), '
-    #         '{}: Volume ({})'
-    #     ).format(
-    #         UNIVERSAL_COMMAND_STR['SIZE_MODE'],
-    #         UNIVERSAL_COMMAND_STR['OFFSET_MODE'],
-    #         UNIVERSAL_COMMAND_STR['POWER_MODE'],
-    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
-    #     )
-
     def get_header_text(self):
         if self.drag_attr == 'factor':
             return '{}: {}'.format(rpt_('Factor'),self.factor) + get_drag_mode_header()
