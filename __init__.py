@@ -52,7 +52,7 @@ if "bpy" in locals():
 
 import bpy
 
-from 。 import axis, operators, panel
+from . import axis, operators, panel
 from . import translations
 
 bl_info = {
