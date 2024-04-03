@@ -1,5 +1,5 @@
 #     Light Painter, Blender add-on that creates lights based on where the user paints.
-#     Copyright (C) 2024 Spencer Magnusson
+#     Copyright (C) 2023 Spencer Magnusson
 #     semagnum@gmail.com
 #
 #     This program is free software: you can redistribute it and/or modify
@@ -53,11 +53,12 @@ if "bpy" in locals():
 import bpy
 
 from . import axis, operators, panel
+from . import translations
 
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 2, 8),
+    'version': (1, 2, 7),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -97,21 +98,15 @@ def register():
     for cls in operators_to_register:
         bpy.utils.register_class(cls)
 
-    texture_type_items = [
-        ('NOISE', 'Noise', ''),
-        ('MAGIC', 'Magic', ''),
-        ('MUSGRAVE', 'Musgrave', ''),
-        ('VORONOI', 'Voronoi', ''),
-        ('WAVE', 'Wave', ''),
-    ]
-
-    # Musgrave node is merged into the Noise mode in Blender 4.1
-    if bpy.app.version >= (4, 1, 0):
-        texture_type_items.pop(2)
-
     bpy.types.WindowManager.lightpainter_texture_type = bpy.props.EnumProperty(
         name='Texture Type',
-        items=texture_type_items,
+        items=[
+            ('NOISE', 'Noise', ''),
+            ('MAGIC', 'Magic', ''),
+            ('MUSGRAVE', 'Musgrave', ''),
+            ('VORONOI', 'Voronoi', ''),
+            ('WAVE', 'Wave', ''),
+        ],
         default='NOISE',
     )
 
@@ -135,6 +130,7 @@ def register():
 
         bpy.utils.register_class(panel.LIGHTPAINTER_PT_Texture)
 
+        translations.register()
 
 def unregister():
     """Unregisters Light Painter operators and lamp_tool_group."""
@@ -149,6 +145,7 @@ def unregister():
     for cls in operators_to_register[::-1]:
         bpy.utils.unregister_class(cls)
 
+    translations.unregister()
 
 if __name__ == '__main__':
     register()

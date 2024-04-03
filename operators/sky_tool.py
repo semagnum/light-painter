@@ -10,6 +10,11 @@ from .visibility import VisibilitySettings
 from ..axis import prep_stroke
 from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR as UCS
 
+if bpy.app.version >= (4, 1):
+    from bpy.app.translations import pgettext_rpt as rpt_
+else:
+    from bpy.app.translations import pgettext_tip as rpt_
+
 WORLD_DATA_NAME = 'Light Painter World'
 
 
@@ -135,31 +140,58 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
 
         return True
 
+    # def get_header_text(self):
+    #     if self.drag_attr == 'size':
+    #         return 'Sun size: {}'.format(
+    #             convert_val_to_unit_str(self.size, 'ROTATION')
+    #         ) + get_drag_mode_header()
+    #     elif self.drag_attr == 'power':
+    #         return 'Power: {}'.format(self.power) + get_drag_mode_header()
+
+    #     return super().get_header_text() + (
+    #         '{}: radius mode, '
+    #         '{}: power mode, '
+    #         '{}{}{}{}: axis ({}), '
+    #         '{}: Camera ({}), '
+    #         '{}: Diffuse ({}), '
+    #         '{}: Specular ({}), '
+    #         '{}: Volume ({})'
+    #     ).format(
+    #         UCS['SIZE_MODE'],
+    #         UCS['POWER_MODE'],
+    #         UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
+    #         UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+    #     )
+
     def get_header_text(self):
         if self.drag_attr == 'size':
-            return 'Sun size: {}'.format(
+            return '{}: {}'.format(rpt_('Sun size'),
                 convert_val_to_unit_str(self.size, 'ROTATION')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return 'Power: {}'.format(self.power) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Power: {}'),self.power) + get_drag_mode_header()
 
         return super().get_header_text() + (
-            '{}: radius mode, '
-            '{}: power mode, '
-            '{}{}{}{}: axis ({}), '
-            '{}: Camera ({}), '
-            '{}: Diffuse ({}), '
-            '{}: Specular ({}), '
-            '{}: Volume ({})'
+            '{}: {}, '
+            '{}: {}, '
+            '{}{}{}{}: {} ({}), '
+            '{}: {} ({}), '
+            '{}: {} ({}), '
+            '{}: {} ({}), '
+            '{}: {} ({})'
         ).format(
-            UCS['SIZE_MODE'],
-            UCS['POWER_MODE'],
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
-            UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-            UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-            UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-            UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+            UCS['SIZE_MODE'], rpt_('radius mode'),
+            UCS['POWER_MODE'], rpt_('power mode'),
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
+            UCS['VISIBILITY_TOGGLE_CAMERA'],rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
+            UCS['VISIBILITY_TOGGLE_DIFFUSE'],rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
+            UCS['VISIBILITY_TOGGLE_SPECULAR'],rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
+            UCS['VISIBILITY_TOGGLE_VOLUME'],rpt_('Volume'), 'ON' if self.visible_volume else 'OFF',
         )
+
 
     def paint_sky_texture(self, context, sun_normal):
         bpy_data = context.blend_data
@@ -372,31 +404,58 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
 
         return True
 
+    # def get_header_text(self):
+    #     if self.drag_attr == 'angle':
+    #         return 'Sun lamp radius: {}'.format(
+    #             convert_val_to_unit_str(self.angle, 'ROTATION')
+    #         ) + get_drag_mode_header()
+    #     elif self.drag_attr == 'power':
+    #         return 'Power: {}'.format(self.power) + get_drag_mode_header()
+
+    #     return super().get_header_text() + (
+    #         '{}: sun radius mode, '
+    #         '{}: power mode, '
+    #         '{}{}{}{}: axis ({}), '
+    #         '{}: Camera ({}), '
+    #         '{}: Diffuse ({}), '
+    #         '{}: Specular ({}), '
+    #         '{}: Volume ({})'
+    #     ).format(
+    #         UCS['SIZE_MODE'],
+    #         UCS['POWER_MODE'],
+    #         UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
+    #         UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
+    #         UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+    #     )
+
     def get_header_text(self):
         if self.drag_attr == 'angle':
-            return 'Sun lamp radius: {}'.format(
+            return '{}: {}'.format(rpt_('Sun lamp radius'),
                 convert_val_to_unit_str(self.angle, 'ROTATION')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return 'Power: {}'.format(self.power) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Power'),self.power) + get_drag_mode_header()
 
         return super().get_header_text() + (
-            '{}: sun radius mode, '
-            '{}: power mode, '
-            '{}{}{}{}: axis ({}), '
-            '{}: Camera ({}), '
-            '{}: Diffuse ({}), '
-            '{}: Specular ({}), '
-            '{}: Volume ({})'
+            '{}: {}, '
+            '{}: {}, '
+            '{}{}{}{}: {} ({}), '
+            '{}: {} ({}), '
+            '{}: {} ({}), '
+            '{}: {} ({}), '
+            '{}: {} ({})'
         ).format(
-            UCS['SIZE_MODE'],
-            UCS['POWER_MODE'],
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
-            UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-            UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-            UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-            UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+            UCS['SIZE_MODE'], rpt_('sun radius mode'),
+            UCS['POWER_MODE'], rpt_('power mode'),
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
+            UCS['VISIBILITY_TOGGLE_CAMERA'],rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
+            UCS['VISIBILITY_TOGGLE_DIFFUSE'],rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
+            UCS['VISIBILITY_TOGGLE_SPECULAR'],rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
+            UCS['VISIBILITY_TOGGLE_VOLUME'],rpt_('Volume'), 'ON' if self.visible_volume else 'OFF',
         )
+
 
     def update_light(self, context):
         stroke_vertices = [coord for stroke in self.mouse_path for coord, normal in stroke]

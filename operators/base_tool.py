@@ -29,6 +29,11 @@ PRECISE_INCREMENT_VAL = 0.01
 SNAP_INCREMENT_VAL = 1
 SNAP_PRECISE_INCREMENT_VAL = 0.1
 
+if bpy.app.version >= (4, 1):
+    from bpy.app.translations import pgettext_rpt as rpt_
+else:
+    from bpy.app.translations import pgettext_tip as rpt_
+
 
 def is_nav_event(keyconfigs: bpy.types.KeyConfig, event: bpy.types.Event) -> bool:
     """Returns True if user event is for 3D viewport navigation, False otherwise.
@@ -141,22 +146,40 @@ class BaseLightPaintTool:
 
         return True
 
+    # def get_header_text(self):
+    #     return ('{}: confirm, '
+    #             '{}: cancel, '
+    #             # '{}: undo, '
+    #             '{}: paint line, '
+    #             '{}: erase, '
+    #             '{}: new stroke, '
+    #             '{}/{}: eraser size, ').format(
+    #         UNIVERSAL_COMMAND_STR['FINISH'],
+    #         UNIVERSAL_COMMAND_STR['CANCEL'],
+    #         UNIVERSAL_COMMAND_STR['PAINT'],
+    #         UNIVERSAL_COMMAND_STR['ERASE'],
+    #         UNIVERSAL_COMMAND_STR['END_STROKE'],
+    #         UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
+    #         UNIVERSAL_COMMAND_STR['ERASER_INCREASE'],
+    #     )
     def get_header_text(self):
-        return ('{}: confirm, '
-                '{}: cancel, '
-                # '{}: undo, '
-                '{}: paint line, '
-                '{}: erase, '
-                '{}: new stroke, '
-                '{}/{}: eraser size, ').format(
-            UNIVERSAL_COMMAND_STR['FINISH'],
-            UNIVERSAL_COMMAND_STR['CANCEL'],
-            UNIVERSAL_COMMAND_STR['PAINT'],
-            UNIVERSAL_COMMAND_STR['ERASE'],
-            UNIVERSAL_COMMAND_STR['END_STROKE'],
+        return ('{}: {}, '
+                '{}: {}, '
+                # '{}: {}, '
+                '{}: {}, '
+                '{}: {}, '
+                '{}: {}, '
+                '{}/{}: {}, ').format(
+            UNIVERSAL_COMMAND_STR['FINISH'], rpt_('confirm'),
+            UNIVERSAL_COMMAND_STR['CANCEL'], rpt_('cancel'),
+            # UNIVERSAL_COMMAND_STR['UNDO'], rpt_('undo'),
+            UNIVERSAL_COMMAND_STR['PAINT'], rpt_('paint line'),
+            UNIVERSAL_COMMAND_STR['ERASE'], rpt_('erase'),
+            UNIVERSAL_COMMAND_STR['END_STROKE'], rpt_('new stroke'),
             UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
-            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'],
+            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'], rpt_('local view'),###eraser size？？？
         )
+
 
     def paint_controls(self, context, event):
         region = context.region

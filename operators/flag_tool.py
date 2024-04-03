@@ -25,6 +25,11 @@ from .prop_util import convert_val_to_unit_str, get_drag_mode_header
 from .visibility import VisibilitySettings
 from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR
 
+if bpy.app.version >= (4, 1):
+    from bpy.app.translations import pgettext_rpt as rpt_
+else:
+    from bpy.app.translations import pgettext_tip as rpt_
+    
 IS_BPY_V3 = bpy.app.version < (4, 0, 0)
 
 FLAG_DATA_NAME = 'LightPaint_Flag'
@@ -181,33 +186,62 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
         return True
 
+    # def get_header_text(self):
+    #     if self.drag_attr == 'factor':
+    #         return 'Factor: {}'.format(self.factor) + get_drag_mode_header()
+    #     elif self.drag_attr == 'offset':
+    #         return 'Offset (for sun lamps): {}'.format(
+    #             convert_val_to_unit_str(self.offset, 'LENGTH')
+    #         ) + get_drag_mode_header()
+    #     elif self.drag_attr == 'opacity':
+    #         return 'Opacity: {}'.format(self.opacity) + get_drag_mode_header()
+
+    #     return super().get_header_text() + (
+    #         '{}: lamp factor mode, '
+    #         '{}: sun lamp offset mode, '
+    #         '{}: opacity mode, '
+    #         '{}: Camera ({}), '
+    #         '{}: Diffuse ({}), '
+    #         '{}: Specular ({}), '
+    #         '{}: Volume ({})'
+    #     ).format(
+    #         UNIVERSAL_COMMAND_STR['SIZE_MODE'],
+    #         UNIVERSAL_COMMAND_STR['OFFSET_MODE'],
+    #         UNIVERSAL_COMMAND_STR['POWER_MODE'],
+    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
+    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
+    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
+    #         UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+    #     )
+
     def get_header_text(self):
         if self.drag_attr == 'factor':
-            return 'Factor: {}'.format(self.factor) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Factor'),self.factor) + get_drag_mode_header()
         elif self.drag_attr == 'offset':
-            return 'Offset (for sun lamps): {}'.format(
+            return '{}: {}'.format(rpt_('Offset (for sun lamps)'),
                 convert_val_to_unit_str(self.offset, 'LENGTH')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'opacity':
-            return 'Opacity: {}'.format(self.opacity) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Opacity'),self.opacity) + get_drag_mode_header()
 
         return super().get_header_text() + (
-            '{}: lamp factor mode, '
-            '{}: sun lamp offset mode, '
-            '{}: opacity mode, '
-            '{}: Camera ({}), '
-            '{}: Diffuse ({}), '
-            '{}: Specular ({}), '
-            '{}: Volume ({})'
+            '{}: {}, '  # lamp factor mode
+            '{}: {}, '  # sun lamp offset mode
+            '{}: {}, '  # opacity mode
+            '{}: {}, ({})'  # Camera mode, visibility status
+            '{}: {}, ({})'  # Diffuse mode, visibility status
+            '{}: {}, ({})'  # Specular mode, visibility status
+            '{}: {}, ({})'  # Volume mode, visibility status
         ).format(
-            UNIVERSAL_COMMAND_STR['SIZE_MODE'],
-            UNIVERSAL_COMMAND_STR['OFFSET_MODE'],
-            UNIVERSAL_COMMAND_STR['POWER_MODE'],
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
+            UNIVERSAL_COMMAND_STR['SIZE_MODE'], rpt_('lamp factor mode'),
+            UNIVERSAL_COMMAND_STR['OFFSET_MODE'], rpt_('sun lamp offset mode'),
+            UNIVERSAL_COMMAND_STR['POWER_MODE'], rpt_('opacity mode'),
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), rpt_('ON' if self.visible_camera else 'OFF'),
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), rpt_('ON' if self.visible_diffuse else 'OFF'),
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), rpt_('ON' if self.visible_specular else 'OFF'),
+            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_VOLUME'], rpt_('Volume'), rpt_('ON' if self.visible_volume else 'OFF'),
         )
+
 
     def add_card_for_lamp(self, context, mesh_obj, light_obj, vertices):
         mesh = mesh_obj.data
