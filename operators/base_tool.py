@@ -22,6 +22,10 @@ from bpy_extras import view3d_utils
 
 from ..keymap import is_event_command, get_matching_event, UNIVERSAL_COMMAND_STR, UNIVERSAL_KEYMAP
 from .draw import draw_callback_px
+if bpy.app.version >= (4, 1):
+    from bpy.app.translations import pgettext_rpt as rpt_
+else:
+    from bpy.app.translations import pgettext_tip as rpt_
 
 ERASER_SIZE_RATE = 10
 INCREMENT_VAL = 0.1
@@ -110,7 +114,7 @@ class BaseLightPaintTool:
             (command_name
              for command_name in UNIVERSAL_KEYMAP.keys()
              if command_name.startswith('AXIS_') and is_event_command(event, command_name))
-            , None
+            ， None
         )
 
         if axis_command is None:
@@ -129,7 +133,7 @@ class BaseLightPaintTool:
             (command_name
              for command_name in UNIVERSAL_KEYMAP.keys()
              if command_name.startswith('VISIBILITY_TOGGLE_') and is_event_command(event, command_name))
-            , None
+            ， None
         )
 
         if matching_visibility_event is None:
@@ -141,21 +145,38 @@ class BaseLightPaintTool:
 
         return True
 
+    # def get_header_text(self):
+    #     return ('{}: confirm, '
+    #             '{}: cancel, '
+    #             # '{}: undo, '
+    #             '{}: paint line, '
+    #             '{}: erase, '
+    #             '{}: new stroke, '
+    #             '{}/{}: eraser size, ').format(
+    #         UNIVERSAL_COMMAND_STR['FINISH'],
+    #         UNIVERSAL_COMMAND_STR['CANCEL'],
+    #         UNIVERSAL_COMMAND_STR['PAINT'],
+    #         UNIVERSAL_COMMAND_STR['ERASE'],
+    #         UNIVERSAL_COMMAND_STR['END_STROKE'],
+    #         UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
+    #         UNIVERSAL_COMMAND_STR['ERASER_INCREASE'],
+    #     )
     def get_header_text(self):
-        return ('{}: confirm, '
-                '{}: cancel, '
-                # '{}: undo, '
-                '{}: paint line, '
-                '{}: erase, '
-                '{}: new stroke, '
-                '{}/{}: eraser size, ').format(
-            UNIVERSAL_COMMAND_STR['FINISH'],
-            UNIVERSAL_COMMAND_STR['CANCEL'],
-            UNIVERSAL_COMMAND_STR['PAINT'],
-            UNIVERSAL_COMMAND_STR['ERASE'],
-            UNIVERSAL_COMMAND_STR['END_STROKE'],
+        return ('{}: {}, '
+                '{}: {}, '
+                # '{}: {}, '
+                '{}: {}, '
+                '{}: {}, '
+                '{}: {}, '
+                '{}/{}: {}, ').format(
+            UNIVERSAL_COMMAND_STR['FINISH'], rpt_('confirm'),
+            UNIVERSAL_COMMAND_STR['CANCEL'], rpt_('cancel'),
+            # UNIVERSAL_COMMAND_STR['UNDO'], rpt_('undo'),
+            UNIVERSAL_COMMAND_STR['PAINT'], rpt_('paint line'),
+            UNIVERSAL_COMMAND_STR['ERASE'], rpt_('erase'),
+            UNIVERSAL_COMMAND_STR['END_STROKE'], rpt_('new stroke'),
             UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
-            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'],
+            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'], rpt_('local view'),###eraser size？？？
         )
 
     def paint_controls(self, context, event):
