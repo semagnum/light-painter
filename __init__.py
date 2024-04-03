@@ -52,7 +52,8 @@ if "bpy" in locals():
 
 import bpy
 
-from . import axis, operators, panel
+from 。 import axis, operators, panel
+from . import translations
 
 bl_info = {
     'name': 'Light Painter',
@@ -135,6 +136,8 @@ def register():
 
         bpy.utils.register_class(panel.LIGHTPAINTER_PT_Texture)
 
+        translations.register()
+
 
 def unregister():
     """Unregisters Light Painter operators and lamp_tool_group."""
@@ -148,7 +151,8 @@ def unregister():
 
     for cls in operators_to_register[::-1]:
         bpy.utils.unregister_class(cls)
-
+        
+    translations.unregister()
 
 if __name__ == '__main__':
     register()
