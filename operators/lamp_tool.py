@@ -77,44 +77,6 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
 
         self.draw_visibility_props(layout)
 
-    # def get_header_text(self):
-    #     if self.drag_attr == 'offset':
-    #         return 'Offset: {}'.format(
-    #             convert_val_to_unit_str(self.offset, 'LENGTH'),
-    #         ) + get_drag_mode_header()
-    #     elif self.drag_attr == 'radius':
-    #         return 'Lamp radius: {}'.format(
-    #             convert_val_to_unit_str(self.radius, 'LENGTH'),
-    #         ) + get_drag_mode_header()
-    #     elif self.drag_attr == 'power':
-    #         return 'Power: {}{}'.format(
-    #             convert_val_to_unit_str(self.power, 'POWER'),
-    #             ' (relative)' if self.is_power_relative else ''
-    #         ) + get_drag_mode_header()
-
-    #     return super().get_header_text() + (
-    #         '{}: lamp type, '
-    #         '{}: offset mode, '.format(
-    #             UCS['TYPE_TOGGLE'],
-    #             UCS['OFFSET_MODE'],
-    #         ) +
-    #         ('{}: radius mode, '.format(UCS['SIZE_MODE']) if self.lamp_type != 'AREA' else '') +
-    #         '{}: power mode, '
-    #         '{}: relative power ({}), '
-    #         '{}{}{}{}: axis ({}), '
-    #         '{}: Camera ({}), '
-    #         '{}: Diffuse ({}), '
-    #         '{}: Specular ({}), '
-    #         '{}: Volume ({})'
-    #     ).format(
-    #         UCS['POWER_MODE'],
-    #         UCS['RELATIVE_POWER_TOGGLE'], 'ON' if self.is_power_relative else 'OFF',
-    #         UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
-    #         UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
-    #     )
     def get_header_text(self):
         if self.drag_attr == 'offset':
             return '{}: {}'.format(rpt_('Offset'),
@@ -125,7 +87,7 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
                 convert_val_to_unit_str(self.radius, 'LENGTH'),
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return 'Power: {}{}'.format(rpt_('Power'),
+            return '{}: {}{}'.format(rpt_('Power'),
                 convert_val_to_unit_str(self.power, 'POWER'),
                 ' (relative)' if self.is_power_relative else ''
             ) + get_drag_mode_header()

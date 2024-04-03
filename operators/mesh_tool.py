@@ -116,33 +116,6 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
         return True
 
-    # def get_header_text(self):
-    #     if self.drag_attr == 'offset':
-    #         return 'Offset: {}'.format(
-    #             convert_val_to_unit_str(self.offset, 'LENGTH') + get_drag_mode_header()
-    #         )
-    #     elif self.drag_attr == 'emit_value':
-    #         return 'Power: {}'.format(self.emit_value) + get_drag_mode_header()
-
-    #     return super().get_header_text() + (
-    #         '{}: flatten ({}), '
-    #         '{}: offset mode, '
-    #         '{}: power mode, '
-    #         '{}{}{}{}: axis ({}), '
-    #         '{}: Camera ({}), '
-    #         '{}: Diffuse ({}), '
-    #         '{}: Specular ({}), '
-    #         '{}: Volume ({})'
-    #     ).format(
-    #         UCS['FLATTEN_TOGGLE'], 'ON' if self.flatten else 'OFF',
-    #         UCS['OFFSET_MODE'],
-    #         UCS['POWER_MODE'],
-    #         UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
-    #         UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
-    #     )
     def get_header_text(self):
         if self.drag_attr == 'offset':
             return '{}: {}'.format(rpt_('Offset'),
@@ -376,37 +349,6 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
 
         return True
 
-    # def get_header_text(self):
-    #     if self.drag_attr == 'offset':
-    #         return 'Offset: {}'.format(
-    #             convert_val_to_unit_str(self.offset, 'LENGTH')
-    #         ) + get_drag_mode_header()
-    #     elif self.drag_attr == 'skin_radius':
-    #         return 'Tube radius: {}'.format(
-    #             convert_val_to_unit_str(self.skin_radius, 'LENGTH')
-    #         ) + get_drag_mode_header()
-    #     elif self.drag_attr == 'emit_value':
-    #         return 'Power: {}'.format(self.emit_value) + get_drag_mode_header()
-
-    #     return super().get_header_text() + (
-    #         '{}: offset mode, '
-    #         '{}: tube radius mode, '
-    #         '{}: power mode, '
-    #         '{}{}{}{}: axis ({}), '
-    #         '{}: Camera ({}), '
-    #         '{}: Diffuse ({}), '
-    #         '{}: Specular ({}), '
-    #         '{}: Volume ({})'
-    #     ).format(
-    #         UCS['OFFSET_MODE'],
-    #         UCS['SIZE_MODE'],
-    #         UCS['POWER_MODE'],
-    #         UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], self.axis,
-    #         UCS['VISIBILITY_TOGGLE_CAMERA'], 'ON' if self.visible_camera else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_DIFFUSE'], 'ON' if self.visible_diffuse else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_SPECULAR'], 'ON' if self.visible_specular else 'OFF',
-    #         UCS['VISIBILITY_TOGGLE_VOLUME'], 'ON' if self.visible_volume else 'OFF',
-    #     )
     def get_header_text(self):
         if self.drag_attr == 'offset':
             return '{}: {}'.format(rpt_('Offset'),
