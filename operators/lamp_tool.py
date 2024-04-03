@@ -88,9 +88,9 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
             return '{}: {}{}'.format(rpt_('Power'),
-                convert_val_to_unit_str(self.power, 'POWER'),
-                ' (relative)' if self.is_power_relative else ''
-            ) + get_drag_mode_header()
+                                     convert_val_to_unit_str(self.power, 'POWER'),
+                                     (' (relative)' if self.is_power_relative else '')
+                                     ) + get_drag_mode_header()
 
         return super().get_header_text() + (
             '{}: {}, '
