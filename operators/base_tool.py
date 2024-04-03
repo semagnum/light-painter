@@ -114,7 +114,7 @@ class BaseLightPaintTool:
             (command_name
              for command_name in UNIVERSAL_KEYMAP.keys()
              if command_name.startswith('AXIS_') and is_event_command(event, command_name))
-            ， None
+            , None
         )
 
         if axis_command is None:
@@ -133,7 +133,7 @@ class BaseLightPaintTool:
             (command_name
              for command_name in UNIVERSAL_KEYMAP.keys()
              if command_name.startswith('VISIBILITY_TOGGLE_') and is_event_command(event, command_name))
-            ， None
+            , None
         )
 
         if matching_visibility_event is None:
