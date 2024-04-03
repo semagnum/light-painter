@@ -444,11 +444,14 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         bpy.ops.object.modifier_add(type='SKIN')
         bpy.ops.object.modifier_add(type='SUBSURF')
 
-        mesh_obj.modifiers['Skin'].use_smooth_shade = self.is_smooth
-        mesh_obj.modifiers['Subdivision'].levels = self.pre_subdiv
-        mesh_obj.modifiers['Subdivision'].render_levels = self.pre_subdiv
-        mesh_obj.modifiers['Subdivision.001'].levels = self.post_subdiv
-        mesh_obj.modifiers['Subdivision.001'].render_levels = self.post_subdiv
+        skin_mod = next(mod for mod in mesh_obj.modifiers if mod.type == 'SKIN')
+        subdiv_1, subdiv_2 = [mod for mod in mesh_obj.modifiers if mod.type == 'SUBSURF']
+
+        skin_mod.use_smooth_shade = self.is_smooth
+        subdiv_1.levels = self.pre_subdiv
+        subdiv_1.render_levels = self.pre_subdiv
+        subdiv_2.levels = self.post_subdiv
+        subdiv_2.render_levels = self.post_subdiv
 
         assign_emissive_material(mesh_obj, self.light_color, self.emit_value)
 

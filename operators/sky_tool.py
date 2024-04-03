@@ -175,7 +175,7 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
             world_node_tree = new_world.node_tree
 
             # add sky texture node, connect to background node
-            background_node = world_node_tree.nodes['Background']
+            background_node = next(node for node in world_node_tree.nodes if node.type == 'BACKGROUND')
             sky_node = world_node_tree.nodes.new('ShaderNodeTexSky')
             world_node_tree.links.new(sky_node.outputs[0], background_node.inputs[0])
         else:
@@ -183,7 +183,7 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
             context.scene.world = existing_world
             world_node_tree = existing_world.node_tree
 
-            sky_node = world_node_tree.nodes['Sky Texture']
+            sky_node = next(node for node in world_node_tree.nodes if node.type == 'TEX_SKY')
 
         # add data for sky texture
         # set sky type based on render engine
@@ -250,7 +250,7 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
         world_node_tree = new_world.node_tree
 
         # add sky texture node, connect to background node
-        background_node = world_node_tree.nodes['Background']
+        background_node = next(node for node in world_node_tree.nodes if node.type == 'BACKGROUND')
         sky_node = world_node_tree.nodes.new('ShaderNodeTexSky')
         world_node_tree.links.new(sky_node.outputs[0], background_node.inputs[0])
 
@@ -382,7 +382,7 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
                 convert_val_to_unit_str(self.angle, 'ROTATION')
             ) + get_drag_mode_header()
         elif self.drag_attr == 'power':
-            return '{}: {}'.format(rpt_('Power'),self.power) + get_drag_mode_header()
+            return '{}: {}'.format(rpt_('Power'), self.power) + get_drag_mode_header()
 
         return super().get_header_text() + (
             '{}: {}, '
@@ -395,7 +395,7 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
         ).format(
             UCS['SIZE_MODE'], rpt_('sun radius mode'),
             UCS['POWER_MODE'], rpt_('power mode'),
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
             UCS['VISIBILITY_TOGGLE_CAMERA'],rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
             UCS['VISIBILITY_TOGGLE_DIFFUSE'],rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
             UCS['VISIBILITY_TOGGLE_SPECULAR'],rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',

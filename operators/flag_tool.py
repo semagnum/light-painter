@@ -63,7 +63,7 @@ def assign_flag_material(obj, color, opacity):
     tree = material.node_tree
 
     # find PBR and set color
-    pbr_node = tree.nodes['Principled BSDF']
+    pbr_node = next(node for node in tree.nodes if node.type == 'BSDF_PRINCIPLED')
     pbr_node.inputs[0].default_value = color
     if IS_BPY_V3:
         pbr_node.inputs[21].default_value = opacity
@@ -249,7 +249,7 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         tree = material.node_tree
 
         # find PBR and set color
-        pbr_node = tree.nodes['Principled BSDF']
+        pbr_node = next(node for node in tree.nodes if node.type == 'BSDF_PRINCIPLED')
         if IS_BPY_V3:
             pbr_node.inputs[21].default_value = self.opacity
         else:
