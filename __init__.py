@@ -58,7 +58,7 @@ from . import translations
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 2, 8),
+    'version': (1, 3, 0),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -148,11 +148,11 @@ def unregister():
             bpy.utils.unregister_tool(tool)
 
         bpy.utils.unregister_class(panel.LIGHTPAINTER_PT_Texture)
+        translations.unregister()
 
     for cls in operators_to_register[::-1]:
         bpy.utils.unregister_class(cls)
-        
-    translations.unregister()
+
 
 if __name__ == '__main__':
     register()
