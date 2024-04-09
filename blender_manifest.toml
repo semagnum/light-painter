@@ -1,0 +1,29 @@
+schema_version = "1.0.0"
+
+id = "lightpainter"
+version = "1.3.0"
+name = "Light Painter"
+tagline = "Do not place your lights, paint them"
+maintainer = "Spencer Magnusson <semagnum+blenderextensions@gmail.com>"
+type = "add-on"
+
+# Optional link to documentation, support, source files, etc
+website = "https://github.com/semagnum/light-painter"
+
+# Optional list defined by Blender and server, see:
+# https://docs.blender.org/manual/en/dev/extensions/tags.html
+tags = ["3D View", "Lighting", "Object"]
+
+blender_version_min = "4.2.0"
+# Optional: maximum supported Blender version, but currently no max version at the moment
+# blender_version_max = "5.1.0"
+
+# License conforming to https://spdx.org/licenses/ (use "SPDX: prefix)
+# https://docs.blender.org/manual/en/dev/extensions/licenses.html
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+# Optional: required by some licenses.
+copyright = [
+  "2024 Spencer Magnusson",
+]
