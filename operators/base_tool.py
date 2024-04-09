@@ -160,7 +160,7 @@ class BaseLightPaintTool:
             UNIVERSAL_COMMAND_STR['ERASE'], rpt_('erase'),
             UNIVERSAL_COMMAND_STR['END_STROKE'], rpt_('new stroke'),
             UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
-            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'], rpt_('local view'),###eraser size？？？
+            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'], rpt_('eraser size'),
         )
 
     def paint_controls(self, context, event):
