@@ -1,7 +1,4 @@
 import bpy
-import json
-import os
-import importlib
 
 class TranslationHelper():
     def __init__(self, name: str, data: dict, lang='zh_CN'):
