@@ -37,6 +37,8 @@ def install_addon(request):
 
     yield
 
+    bpy.ops.preferences.addon_disable(module='lightpainter')
+
     # In my case (using symlinks), since this add-on is already enabled,
     # this installs the add-on twice.
     # So I need to delete the newly installed add-on folder afterward.
