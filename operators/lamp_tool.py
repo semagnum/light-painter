@@ -63,6 +63,9 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
         if self.lamp_type == 'AREA':
             layout.prop(self, 'shape')
             layout.prop(self, 'min_size')
+            layout.prop(self, 'spread')
+        elif self.lamp_type == 'SPOT':
+            layout.prop(self, 'spot_blend')
         else:
             layout.prop(self, 'radius')
 

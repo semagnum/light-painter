@@ -192,6 +192,15 @@ class LampUtils(VisibilitySettings):
         subtype='COLOR',
     )
 
+    spot_blend: bpy.props.FloatProperty(
+        name='Beam Shape Blend',
+        description='The softness of the spotlight edge',
+        min=0.0, soft_min=0.0,
+        max=1.0, soft_max=1.0,
+        default=0.15,
+        subtype='FACTOR'
+    )
+
     # AREA SETTINGS
     min_size: bpy.props.FloatVectorProperty(
         name='Minimum size',
@@ -212,6 +221,16 @@ class LampUtils(VisibilitySettings):
             ('ELLIPSE', 'Ellipse', ''),
         ],
         default='RECTANGLE',
+    )
+
+    spread: bpy.props.FloatProperty(
+        name='Beam Shape Spread',
+        description='How widely the emitted light fans out, as in the case of a gridded softbox (Cycles only)',
+        min=0.0, soft_min=0.0,
+        max=math.pi, soft_max=math.pi,
+        default=math.pi,
+        step=25,
+        subtype='ANGLE'
     )
 
     def update_area_lamp(self, lamp, stroke):
@@ -243,6 +262,7 @@ class LampUtils(VisibilitySettings):
         lamp.rotation_euler = rotation
         lamp.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         lamp.data.shape = self.shape
+        lamp.data.spread = self.spread
         if self.shape in {'RECTANGLE', 'ELLIPSE'}:
             lamp.data.size = max(self.min_size[0], x_size)
             lamp.data.size_y = max(self.min_size[1], y_size)
@@ -315,4 +335,5 @@ class LampUtils(VisibilitySettings):
         lamp.data.spot_size = spot_angle
         lamp.data.energy = calc_power(self.power, self.offset) if self.is_power_relative else self.power
         lamp.data.shadow_soft_size = self.radius
+        lamp.data.spot_blend = self.spot_blend
         self.set_visibility(lamp)
