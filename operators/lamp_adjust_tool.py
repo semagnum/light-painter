@@ -103,23 +103,25 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, 'axis')
-        layout.prop(self, 'offset')
-
-        layout.separator()
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
         lamp_type = context.active_object.data.type
 
         if lamp_type == 'SUN':
-            layout.label(text='Method:')
-            row = layout.row()
-            row.prop(self, 'normal_method', expand=True)
+            layout.prop(self, 'normal_method', expand=True)
 
             col = layout.column()
             col.active = self.normal_method == 'OCCLUSION'
             col.prop(self, 'longitude_samples')
             col.prop(self, 'latitude_samples')
             layout.prop(self, 'elevation_clamp', slider=True)
+
+            layout.separator()
+
+            col = layout.column(align=True)
+            col.prop(self, 'axis')
+            col.prop(self, 'offset', text='Amount')
 
             layout.separator()
 
@@ -138,10 +140,16 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
 
             layout.separator()
 
+            col = layout.column(align=True)
+            col.prop(self, 'axis')
+            col.prop(self, 'offset', text='Amount')
+
+            layout.separator()
+
             layout.prop(self, 'light_color')
-            row = layout.row()
-            row.prop(self, 'power')
-            row.prop(self, 'is_power_relative', toggle=True)
+            col = layout.column(align=True)
+            col.prop(self, 'power')
+            col.prop(self, 'is_power_relative')
 
         layout.separator()
 
