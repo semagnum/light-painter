@@ -193,7 +193,7 @@ class LampUtils(VisibilitySettings):
     )
 
     spot_blend: bpy.props.FloatProperty(
-        name='Beam Shape Blend',
+        name='Beam Blend',
         description='The softness of the spotlight edge',
         min=0.0, soft_min=0.0,
         max=1.0, soft_max=1.0,
@@ -224,7 +224,7 @@ class LampUtils(VisibilitySettings):
     )
 
     spread: bpy.props.FloatProperty(
-        name='Beam Shape Spread',
+        name='Beam Spread',
         description='How widely the emitted light fans out, as in the case of a gridded softbox (Cycles only)',
         min=0.0, soft_min=0.0,
         max=math.pi, soft_max=math.pi,

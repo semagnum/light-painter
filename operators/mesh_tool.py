@@ -82,15 +82,24 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def draw(self, _context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
-        layout.prop(self, 'axis')
-        layout.prop(self, 'offset')
-        layout.prop(self, 'flatten')
+        col = layout.column(heading='Mesh')
+        col.prop(self, 'flatten')
+
+        layout.separator()
+
+        col = layout.column(align=True)
+        col.prop(self, 'axis')
+        col.prop(self, 'offset', text='Amount')
 
         layout.separator()
 
         layout.prop(self, 'light_color')
         layout.prop(self, 'emit_value')
+
+        layout.separator()
 
         self.draw_visibility_props(layout)
 
@@ -305,25 +314,31 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.prop(self, 'axis')
-        layout.prop(self, 'offset')
-
-        layout.separator()
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
         layout.prop(self, 'merge_distance')
         layout.prop(self, 'skin_radius')
         layout.prop(self, 'is_smooth')
 
-        layout.label(text='Subdivision')
-        row = layout.row()
-        row.prop(self, 'pre_subdiv', text='Path')
-        row.prop(self, 'post_subdiv', text='Surface')
+        layout.separator()
+
+        col = layout.column(align=True)
+        col.prop(self, 'pre_subdiv', text='Subdivisions Path')
+        col.prop(self, 'post_subdiv', text='Surface')
+
+        layout.separator()
+
+        col = layout.column(align=True)
+        col.prop(self, 'axis')
+        col.prop(self, 'offset', text='Amount')
 
         layout.separator()
 
         layout.prop(self, 'light_color', text='Color')
         layout.prop(self, 'emit_value')
+
+        layout.separator()
 
         self.draw_visibility_props(layout)
 

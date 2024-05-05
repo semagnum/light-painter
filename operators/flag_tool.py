@@ -150,17 +150,23 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
         light_objs = get_selected_by_type(context, 'LIGHT')
         has_sun = any(obj.data.type == 'SUN' for obj in light_objs)
         has_other_lamps = any(obj.data.type != 'SUN' for obj in light_objs)
         if has_sun:
-            layout.prop(self, 'offset')
+            layout.prop(self, 'offset', text='Sun Flag Offset')
         if has_other_lamps:
-            layout.prop(self, 'factor')
+            layout.prop(self, 'factor', text='Lamp Flag Factor')
+
+        layout.separator()
 
         layout.prop(self, 'shadow_color')
         layout.prop(self, 'opacity', slider=True)
+
+        layout.separator()
 
         self.draw_visibility_props(layout)
 

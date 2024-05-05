@@ -92,27 +92,26 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
 
     def draw(self, _context):
         layout = self.layout
-        layout.prop(self, 'axis')
-        layout.prop(self, 'size')
-        layout.prop(self, 'power')
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
-        layout.separator()
-
-        layout.label(text='Sky Texture Model:')
-        row = layout.row()
-        row.prop(self, 'texture_type', expand=True)
-
-        layout.separator()
-
-        layout.label(text='Method:')
-        row = layout.row()
-        row.prop(self, 'normal_method', expand=True)
+        layout.prop(self, 'texture_type')
+        layout.prop(self, 'normal_method')
 
         col = layout.column()
         col.active = self.normal_method == 'OCCLUSION'
         col.prop(self, 'longitude_samples')
         col.prop(self, 'latitude_samples')
         col.prop(self, 'elevation_clamp', slider=True)
+
+        layout.separator()
+
+        layout.prop(self, 'axis')
+
+        layout.separator()
+
+        layout.prop(self, 'size')
+        layout.prop(self, 'power')
 
         layout.separator()
 
@@ -336,22 +335,26 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
 
     def draw(self, _context):
         layout = self.layout
-        layout.prop(self, 'axis')
-        layout.prop(self, 'light_color')
-        layout.prop(self, 'power')
-        layout.prop(self, 'angle')
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
-        layout.separator()
-
-        layout.label(text='Method:')
-        row = layout.row()
-        row.prop(self, 'normal_method', expand=True)
+        layout.prop(self, 'normal_method')
 
         col = layout.column()
         col.active = self.normal_method == 'OCCLUSION'
         col.prop(self, 'longitude_samples')
         col.prop(self, 'latitude_samples')
         col.prop(self, 'elevation_clamp', slider=True)
+
+        layout.separator()
+
+        layout.prop(self, 'axis')
+
+        layout.separator()
+
+        layout.prop(self, 'light_color')
+        layout.prop(self, 'power')
+        layout.prop(self, 'angle')
 
         layout.separator()
 

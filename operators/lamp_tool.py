@@ -51,15 +51,10 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
 
     def draw(self, _context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
+
         layout.prop(self, 'lamp_type')
-
-        layout.separator()
-
-        layout.prop(self, 'axis')
-        layout.prop(self, 'offset')
-
-        layout.separator()
-
         if self.lamp_type == 'AREA':
             layout.prop(self, 'shape')
             layout.prop(self, 'min_size')
@@ -71,10 +66,16 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
 
         layout.separator()
 
+        col = layout.column(align=True)
+        col.prop(self, 'axis')
+        col.prop(self, 'offset', text='Amount')
+
+        layout.separator()
+
         layout.prop(self, 'light_color')
-        row = layout.row()
-        row.prop(self, 'power')
-        row.prop(self, 'is_power_relative', toggle=True)
+        col = layout.column(align=True)
+        col.prop(self, 'power')
+        col.prop(self, 'is_power_relative')
 
         layout.separator()
 

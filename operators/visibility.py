@@ -27,8 +27,7 @@ class VisibilitySettings:
     )
 
     def draw_visibility_props(self, layout):
-        layout.label(text='Ray visibility')
-        col = layout.column_flow(align=True, columns=2)
+        col = layout.column(heading='Ray Visibility')
         col.prop(self, 'visible_camera')
         col.prop(self, 'visible_diffuse')
         col.prop(self, 'visible_specular')
