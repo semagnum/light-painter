@@ -205,10 +205,8 @@ class LIGHTPAINTER_PT_Texture(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-
-        if context.active_object.data.type not in {'POINT', 'SPOT'}:
-            layout.label(text='Gobos are best with point or spot lamps.', icon='ERROR')
-            layout.label(text='Results may not be as expected.')
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation
 
         layout.prop(context.window_manager, 'lightpainter_texture_type')
 

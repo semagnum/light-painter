@@ -11,6 +11,8 @@ TEXTURE_TYPE_TO_NODE = {
 
 IS_BPY_V3 = bpy.app.version < (4, 0, 0)
 OFFSET_AMOUNT = 180
+GOBOS_WARNING = ('Gobos are best with point or spot lamps. '
+                 'Results may not be as expected.')
 
 
 def offset_node(curr_node, downstream_node):
@@ -38,6 +40,13 @@ class LIGHTPAINTER_OT_Lamp_Texture(bpy.types.Operator):
     def poll(cls, context):
         active_obj = context.active_object
         return active_obj is not None and active_obj.type == 'LIGHT' and context.engine == 'CYCLES'
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(
+            self, event,
+            message=GOBOS_WARNING,
+            confirm_text='Continue'
+        )
 
     def execute(self, context):
         lamp = context.active_object
