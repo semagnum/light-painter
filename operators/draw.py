@@ -13,13 +13,14 @@ ERASE_COLOR = (1.0, 1.0, 1.0, 1.0)
 
 CULLING_DOT_PRODUCT_FACTOR = 0.1
 
+shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+
 
 def draw_callback_px(self, context):
     region = context.region
     rv3d = context.region_data
 
     # 50% alpha, 2 pixel width line
-    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
     gpu.state.blend_set('ALPHA')
     gpu.state.line_width_set(DRAW_LINE_SIZE)
 
