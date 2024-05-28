@@ -1,3 +1,4 @@
+import ast
 from math import pi
 from numpy import isclose as np_isclose
 import os
@@ -8,6 +9,37 @@ import bpy
 import addon_utils
 
 from config import SINGLE_POINT
+
+
+def get_init_version(filepath):
+    with open(filepath, 'r') as f:
+        node = ast.parse(f.read())
+
+    n: ast.Module
+    for n in ast.walk(node):
+        for b in n.body:
+            if isinstance(b, ast.Assign) and isinstance(b.value, ast.Dict) and (
+                    any(t.id == 'bl_info' for t in b.targets)):
+                bl_info_dict = ast.literal_eval(b.value)
+                return bl_info_dict['version']
+
+    raise AssertionError(filepath + ' has no version')
+
+
+def get_extension_version(filepath):
+    with open(filepath, 'r') as f:
+        node = ast.parse(f.read())
+
+    n: ast.Module
+    for n in ast.walk(node):
+        for b in n.body:
+            if (isinstance(b, ast.Assign) and
+                isinstance(b.value, ast.Str) and
+                any(t.id == 'version' for t in b.targets)
+            ):
+                return tuple(map(int, str(ast.literal_eval(b.value)).split('.')))
+
+    raise AssertionError(filepath + ' has no version')
 
 
 def get_zip_file_in_parent_dir():
@@ -157,39 +189,9 @@ def test_conversion():
 
 
 def test_assert_version_parity_manifest():
-    import ast
     root_folder = Path(__file__).parent.parent
     init = root_folder / '__init__.py'
     extension_manifest = root_folder / 'blender_manifest.toml'
-
-    def get_init_version(filepath):
-        with open(filepath, 'r') as f:
-            node = ast.parse(f.read())
-
-        n: ast.Module
-        for n in ast.walk(node):
-            for b in n.body:
-                if isinstance(b, ast.Assign) and isinstance(b.value, ast.Dict) and (
-                        any(t.id == 'bl_info' for t in b.targets)):
-                    bl_info_dict = ast.literal_eval(b.value)
-                    return bl_info_dict['version']
-
-        raise AssertionError(filepath + ' has no version')
-
-    def get_extension_version(filepath):
-        with open(filepath, 'r') as f:
-            node = ast.parse(f.read())
-
-        n: ast.Module
-        for n in ast.walk(node):
-            for b in n.body:
-                if (isinstance(b, ast.Assign) and
-                    isinstance(b.value, ast.Str) and
-                    any(t.id == 'version' for t in b.targets)
-                ):
-                    return tuple(map(int, str(ast.literal_eval(b.value)).split('.')))
-
-        raise AssertionError(filepath + ' has no version')
 
     init_version, extension_version = get_init_version(init), get_extension_version(extension_manifest)
     assert init_version == extension_version
