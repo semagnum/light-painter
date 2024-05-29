@@ -8,7 +8,7 @@ maintainer = "Spencer Magnusson <semagnum+blenderextensions@gmail.com>"
 type = "add-on"
 
 # Optional link to documentation, support, source files, etc
-website = "https://github.com/semagnum/light-painter"
+website = "https://projects.blender.org/SMagnusson/light-painter"
 
 # Optional list defined by Blender and server, see:
 # https://docs.blender.org/manual/en/dev/extensions/tags.html
