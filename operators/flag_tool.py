@@ -305,6 +305,5 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def cancel_callback(self, context):
         """Deletes active object (our new lamp)."""
-        if self.initialized:
-            with context.temp_override(selected_objects=get_selected_by_type(context, 'MESH')):
-                bpy.ops.object.delete(use_global=False)
+        for selected in get_selected_by_type(context, 'MESH'):
+            bpy.data.objects.remove(selected, do_unlink=True)

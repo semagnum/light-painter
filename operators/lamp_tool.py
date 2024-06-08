@@ -186,5 +186,4 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
 
     def cancel_callback(self, context):
         """Deletes active object (our new lamp)."""
-        with context.temp_override(selected_objects=[context.active_object]):
-            bpy.ops.object.delete(use_global=False)
+        bpy.data.objects.remove(context.active_object, do_unlink=True)

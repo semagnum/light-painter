@@ -256,8 +256,7 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
-        with context.temp_override(selected_objects=[context.active_object]):
-            bpy.ops.object.delete(use_global=False)
+        bpy.data.objects.remove(context.active_object, do_unlink=True)
 
 
 class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, VisibilitySettings):
@@ -499,5 +498,4 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
 
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
-        with context.temp_override(selected_objects=[context.active_object]):
-            bpy.ops.object.delete(use_global=False)
+        bpy.data.objects.remove(context.active_object, do_unlink=True)
