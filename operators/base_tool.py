@@ -20,12 +20,15 @@ from math import floor, log10
 import bpy
 from bpy_extras import view3d_utils
 
-from ..keymap import is_event_command, get_matching_event, UNIVERSAL_COMMAND_STR, UNIVERSAL_KEYMAP
+from ..keymap import is_event_command, get_matching_event, AXIS_KEYMAP, UNIVERSAL_COMMAND_STR, VISIBILITY_KEYMAP
 from .draw import draw_callback_px
 if bpy.app.version >= (4, 1):
     from bpy.app.translations import pgettext_rpt as rpt_
 else:
     from bpy.app.translations import pgettext_tip as rpt_
+
+AXIS_PREFIX_LEN = len('AXIS_')
+VISIBILITY_PREFIX_LEN = len('VISIBILITY_TOGGLE_')
 
 ERASER_SIZE_RATE = 10
 INCREMENT_VAL = 0.1
@@ -112,15 +115,15 @@ class BaseLightPaintTool:
         assert hasattr(self, 'axis')
         axis_command = next(
             (command_name
-             for command_name in UNIVERSAL_KEYMAP.keys()
-             if command_name.startswith('AXIS_') and is_event_command(event, command_name))
+             for command_name in AXIS_KEYMAP.keys()
+             if is_event_command(event, command_name))
             , None
         )
 
         if axis_command is None:
             return False
 
-        axis_pressed = axis_command[len('AXIS_'):]
+        axis_pressed = axis_command[AXIS_PREFIX_LEN:]
         self.axis = 'NORMAL' if self.axis == axis_pressed else axis_pressed
 
         return True
@@ -131,15 +134,15 @@ class BaseLightPaintTool:
         """
         matching_visibility_event = next(
             (command_name
-             for command_name in UNIVERSAL_KEYMAP.keys()
-             if command_name.startswith('VISIBILITY_TOGGLE_') and is_event_command(event, command_name))
+             for command_name in VISIBILITY_KEYMAP.keys()
+             if is_event_command(event, command_name))
             , None
         )
 
         if matching_visibility_event is None:
             return False
 
-        visibility_pressed = matching_visibility_event[len('VISIBILITY_TOGGLE_'):]
+        visibility_pressed = matching_visibility_event[VISIBILITY_PREFIX_LEN:]
         visibility_attr = 'visible_' + visibility_pressed.lower()
         setattr(self, visibility_attr, not getattr(self, visibility_attr))
 

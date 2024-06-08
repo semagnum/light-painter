@@ -1,5 +1,48 @@
 from __future__ import annotations
 
+
+AXIS_KEYMAP = {
+    'AXIS_X': {
+        'type': 'X',
+        'value': 'PRESS',
+    },
+    'AXIS_Y': {
+        'type': 'Y',
+        'value': 'PRESS',
+    },
+    'AXIS_Z': {
+        'type': 'Z',
+        'value': 'PRESS',
+    },
+    'AXIS_REFLECT': {
+        'type': 'C',
+        'value': 'PRESS',
+    },
+}
+
+VISIBILITY_KEYMAP = {
+    'VISIBILITY_TOGGLE_CAMERA': {
+        'type': 'ONE',
+        'visual_key': '1',
+        'value': 'PRESS',
+    },
+    'VISIBILITY_TOGGLE_DIFFUSE': {
+        'type': 'TWO',
+        'visual_key': '2',
+        'value': 'PRESS',
+    },
+    'VISIBILITY_TOGGLE_SPECULAR': {
+        'type': 'THREE',
+        'visual_key': '3',
+        'value': 'PRESS',
+    },
+    'VISIBILITY_TOGGLE_VOLUME': {
+        'type': 'FOUR',
+        'visual_key': '4',
+        'value': 'PRESS',
+    },
+}
+
 UNIVERSAL_KEYMAP = {
     'PAINT': {
         'type': 'LEFTMOUSE',
@@ -34,44 +77,6 @@ UNIVERSAL_KEYMAP = {
     'FINISH': {
         'type': ('RET', 'NUMPAD_ENTER', 'SPACE'),
         'visual_key': 'Enter/Space',
-        'value': 'PRESS',
-    },
-
-    'AXIS_X': {
-        'type': 'X',
-        'value': 'PRESS',
-    },
-    'AXIS_Y': {
-        'type': 'Y',
-        'value': 'PRESS',
-    },
-    'AXIS_Z': {
-        'type': 'Z',
-        'value': 'PRESS',
-    },
-    'AXIS_REFLECT': {
-        'type': 'C',
-        'value': 'PRESS',
-    },
-
-    'VISIBILITY_TOGGLE_CAMERA': {
-        'type': 'ONE',
-        'visual_key': '1',
-        'value': 'PRESS',
-    },
-    'VISIBILITY_TOGGLE_DIFFUSE': {
-        'type': 'TWO',
-        'visual_key': '2',
-        'value': 'PRESS',
-    },
-    'VISIBILITY_TOGGLE_SPECULAR': {
-        'type': 'THREE',
-        'visual_key': '3',
-        'value': 'PRESS',
-    },
-    'VISIBILITY_TOGGLE_VOLUME': {
-        'type': 'FOUR',
-        'visual_key': '4',
         'value': 'PRESS',
     },
 
@@ -126,6 +131,9 @@ The format is as follows:
 Note that if a modifier key like `ctrl` isn't in the keymap, the event can still match despite it being pressed.
 So if a key is used for 2+ events but with different modifiers, be sure to mark one with its modifier(s) as False.
 """
+
+UNIVERSAL_KEYMAP.update(AXIS_KEYMAP)
+UNIVERSAL_KEYMAP.update(VISIBILITY_KEYMAP)
 
 UNIVERSAL_COMMAND_STR = {
     key: UNIVERSAL_KEYMAP[key].get('visual_key', str(UNIVERSAL_KEYMAP[key].get('type')))
