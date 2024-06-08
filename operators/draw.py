@@ -13,7 +13,12 @@ ERASE_COLOR = (1.0, 1.0, 1.0, 1.0)
 
 CULLING_DOT_PRODUCT_FACTOR = 0.1
 
-shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+try:
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+except SystemError:
+    import logging
+    logging.error('Failed to load GPU API (likely running Blender in background mode).')
+    shader = None
 
 
 def draw_callback_px(self, context):
