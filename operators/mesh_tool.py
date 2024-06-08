@@ -1,6 +1,7 @@
 import bpy
 
 from .base_tool import BaseLightPaintTool
+from .flag_tool import get_selected_by_type
 from .lamp_util import get_average_normal
 from .prop_util import axis_prop, convert_val_to_unit_str, get_drag_mode_header, offset_prop
 from .visibility import VisibilitySettings
@@ -53,6 +54,7 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     tool_id = 'view3d.lightpaint_mesh'
     prev_vertices = ''
+    prev_selected_meshes = []
 
     axis: axis_prop('mesh')
 
@@ -232,6 +234,11 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         return {'FINISHED'}
 
     def startup_callback(self, context):
+        # deselect meshes to prevent manipulation by bpy.ops
+        for mesh_obj in get_selected_by_type(context, 'MESH'):
+            mesh_obj.select_set(False)
+            self.prev_selected_meshes.append(mesh_obj)
+
         mesh = bpy.data.meshes.new('LightPaint_Convex')
         mesh_obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
@@ -239,6 +246,13 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         context.view_layer.objects.active = mesh_obj
 
         assign_emissive_material(mesh_obj, self.light_color, self.emit_value)
+
+    def cancel(self, context):
+        super().cancel(context)
+
+        # restore selection
+        for mesh_obj in self.prev_selected_meshes:
+            mesh_obj.select_set(True)
 
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
@@ -254,6 +268,7 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
     tool_id = 'view3d.lightpaint_tube_light'
     prev_edges = ''
     prev_vertices = ''
+    prev_selected_meshes = []
 
     axis: axis_prop('light tube')
 
@@ -449,6 +464,11 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         return {'FINISHED'}
 
     def startup_callback(self, context):
+        # deselect meshes to prevent manipulation by bpy.ops
+        for mesh_obj in get_selected_by_type(context, 'MESH'):
+            mesh_obj.select_set(False)
+            self.prev_selected_meshes.append(mesh_obj)
+
         mesh = bpy.data.meshes.new(TUBE_DATA_NAME)
         mesh_obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
@@ -469,6 +489,13 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         subdiv_2.render_levels = self.post_subdiv
 
         assign_emissive_material(mesh_obj, self.light_color, self.emit_value)
+
+    def cancel(self, context):
+        super().cancel(context)
+
+        # restore selection
+        for mesh_obj in self.prev_selected_meshes:
+            mesh_obj.select_set(True)
 
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
