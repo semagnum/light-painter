@@ -237,7 +237,7 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         # deselect meshes to prevent manipulation by bpy.ops
         for mesh_obj in get_selected_by_type(context, 'MESH'):
             mesh_obj.select_set(False)
-            self.prev_selected_meshes.append(mesh_obj)
+            self.prev_selected_meshes.append(mesh_obj.name)
 
         mesh = bpy.data.meshes.new('LightPaint_Convex')
         mesh_obj = bpy.data.objects.new(mesh.name, mesh)
@@ -251,8 +251,9 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         super().cancel(context)
 
         # restore selection
-        for mesh_obj in self.prev_selected_meshes:
-            mesh_obj.select_set(True)
+        for mesh_name in self.prev_selected_meshes:
+            if mesh_name in context.scene.objects:
+                context.scene.objects[mesh_name].select_set(True)
 
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
@@ -466,7 +467,7 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         # deselect meshes to prevent manipulation by bpy.ops
         for mesh_obj in get_selected_by_type(context, 'MESH'):
             mesh_obj.select_set(False)
-            self.prev_selected_meshes.append(mesh_obj)
+            self.prev_selected_meshes.append(mesh_obj.name)
 
         mesh = bpy.data.meshes.new(TUBE_DATA_NAME)
         mesh_obj = bpy.data.objects.new(mesh.name, mesh)
@@ -493,8 +494,9 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         super().cancel(context)
 
         # restore selection
-        for mesh_obj in self.prev_selected_meshes:
-            mesh_obj.select_set(True)
+        for mesh_name in self.prev_selected_meshes:
+            if mesh_name in context.scene.objects:
+                context.scene.objects[mesh_name].select_set(True)
 
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
