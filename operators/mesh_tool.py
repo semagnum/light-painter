@@ -1,7 +1,6 @@
 import bpy
 
 from .base_tool import BaseLightPaintTool
-from .flag_tool import get_selected_by_type
 from .lamp_util import get_average_normal
 from .prop_util import axis_prop, convert_val_to_unit_str, get_drag_mode_header, offset_prop
 from .visibility import VisibilitySettings
@@ -54,7 +53,7 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     tool_id = 'view3d.lightpaint_mesh'
     prev_vertices = ''
-    prev_selected_meshes = []
+    prev_selected = []
 
     axis: axis_prop('mesh')
 
@@ -235,29 +234,27 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
 
     def startup_callback(self, context):
         # deselect meshes to prevent manipulation by bpy.ops
-        for mesh_obj in get_selected_by_type(context, 'MESH'):
-            mesh_obj.select_set(False)
-            self.prev_selected_meshes.append(mesh_obj.name)
+        for obj in context.selected_objects[:]:
+            obj.select_set(False)
+            self.prev_selected.append(obj.name)
 
         mesh = bpy.data.meshes.new('LightPaint_Convex')
         mesh_obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
         col.objects.link(mesh_obj)
+        mesh_obj.select_set(True)
         context.view_layer.objects.active = mesh_obj
 
         assign_emissive_material(mesh_obj, self.light_color, self.emit_value)
 
-    def cancel(self, context):
-        super().cancel(context)
-
-        # restore selection
-        for mesh_name in self.prev_selected_meshes:
-            if mesh_name in context.scene.objects:
-                context.scene.objects[mesh_name].select_set(True)
-
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
         bpy.data.objects.remove(context.active_object, do_unlink=True)
+
+        # restore selection
+        for obj_name in self.prev_selected:
+            if obj_name in context.scene.objects:
+                context.scene.objects[obj_name].select_set(True)
 
 
 class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, VisibilitySettings):
@@ -268,7 +265,7 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
     tool_id = 'view3d.lightpaint_tube_light'
     prev_edges = ''
     prev_vertices = ''
-    prev_selected_meshes = []
+    prev_selected = []
 
     axis: axis_prop('light tube')
 
@@ -465,14 +462,15 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
 
     def startup_callback(self, context):
         # deselect meshes to prevent manipulation by bpy.ops
-        for mesh_obj in get_selected_by_type(context, 'MESH'):
-            mesh_obj.select_set(False)
-            self.prev_selected_meshes.append(mesh_obj.name)
+        for obj in context.selected_objects[:]:
+            obj.select_set(False)
+            self.prev_selected.append(obj.name)
 
         mesh = bpy.data.meshes.new(TUBE_DATA_NAME)
         mesh_obj = bpy.data.objects.new(mesh.name, mesh)
         col = context.collection
         col.objects.link(mesh_obj)
+        mesh_obj.select_set(True)
         context.view_layer.objects.active = mesh_obj
 
         bpy.ops.object.modifier_add(type='SUBSURF')
@@ -493,11 +491,10 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
     def cancel(self, context):
         super().cancel(context)
 
-        # restore selection
-        for mesh_name in self.prev_selected_meshes:
-            if mesh_name in context.scene.objects:
-                context.scene.objects[mesh_name].select_set(True)
-
     def cancel_callback(self, context):
         """Deletes only our active object (our new tube light)."""
         bpy.data.objects.remove(context.active_object, do_unlink=True)
+
+        for obj_name in self.prev_selected:
+            if obj_name in context.scene.objects:
+                context.scene.objects[obj_name].select_set(True)
