@@ -206,8 +206,7 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
 
         return super().get_header_text() + (
             '{}: {}, '.format(UCS['OFFSET_MODE'], rpt_('offset mode'),) +
-            ('{}: {}, '.format((UCS['SIZE_MODE']) if bpy.context.active_object.data.type != 'AREA' else '',rpt_('radius mode'))) +
-               
+            ('{}: {}, '.format((UCS['SIZE_MODE']),rpt_('radius mode')) if bpy.context.active_object.data.type != 'AREA' else '') +
             '{}: {}, '
             '{}: {} ({}), '
             '{}{}{}{}: {}axis ({}), '

@@ -102,7 +102,7 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
                 UCS['TYPE_TOGGLE'], rpt_('lamp type'),
                 UCS['OFFSET_MODE'], rpt_('offset mode'),
             ) +
-            ('{}: {}, '.format((UCS['SIZE_MODE']) if self.lamp_type != 'AREA' else '', rpt_('radius mode'))) +
+            ('{}: {}, '.format((UCS['SIZE_MODE']), rpt_('radius mode')) if self.lamp_type != 'AREA' else '') +
             '{}: {}, '
             '{}: {} ({}), '
             '{}{}{}{}: {} ({}), '
