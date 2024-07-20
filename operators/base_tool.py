@@ -36,6 +36,8 @@ PRECISE_INCREMENT_VAL = 0.01
 SNAP_INCREMENT_VAL = 1
 SNAP_PRECISE_INCREMENT_VAL = 0.1
 
+KEYCONFIGS_CACHE = []
+
 
 def is_nav_event(keyconfigs: bpy.types.KeyConfig, event: bpy.types.Event) -> bool:
     """Returns True if user event is for 3D viewport navigation, False otherwise.
@@ -43,12 +45,24 @@ def is_nav_event(keyconfigs: bpy.types.KeyConfig, event: bpy.types.Event) -> boo
     :param keyconfigs: Blender keymap configuration.
     :param event: user event (pressing a key, moving the mouse, etc.).
     """
-    keymaps = (km.keymap_items.match_event(event)
-               for kc in keyconfigs
-               for km in kc.keymaps)
-    return any(km is not None and
-               km.idname.startswith('view3d')
-               for km in keymaps)
+    # initialize cache
+    global KEYCONFIGS_CACHE
+    if not KEYCONFIGS_CACHE:
+        KEYCONFIGS_CACHE = [
+            km
+            for kc in keyconfigs
+            for km in kc.keymaps
+            if km is not None and
+            any(
+                kmi.idname.startswith('view3d')
+                for kmi in km.keymap_items
+            )
+        ]
+
+    return any(
+        km.keymap_items.match_event(event)
+        for km in KEYCONFIGS_CACHE
+    )
 
 
 def is_in_area(area, mouse_x, mouse_y):
