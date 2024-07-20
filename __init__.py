@@ -19,10 +19,8 @@
 if "bpy" in locals():
     import importlib
     import os
+    import sys
     import types
-
-    # double-check this add-on is imported, so it can be referenced and reloaded
-    import lightpainter
 
     def reload_package(package):
         assert (hasattr(package, '__package__'))
@@ -48,7 +46,7 @@ if "bpy" in locals():
 
         return reload_recursive_ex(package)
 
-    reload_package(lightpainter)
+    reload_package(sys.modules[__name__])
 
 import bpy
 
