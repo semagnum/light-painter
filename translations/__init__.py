@@ -1,6 +1,7 @@
 import bpy
 
-class TranslationHelper():
+
+class TranslationHelper:
     def __init__(self, name: str, data: dict, lang='zh_CN'):
         self.name = name
         self.translations_dict = dict()
@@ -14,7 +15,7 @@ class TranslationHelper():
     def register(self):
         try:
             bpy.app.translations.register(self.name, self.translations_dict)
-        except(ValueError):
+        except ValueError:
             pass
 
     def unregister(self):
