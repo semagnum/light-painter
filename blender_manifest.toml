@@ -27,3 +27,15 @@ license = [
 copyright = [
   "2024 Spencer Magnusson",
 ]
+
+[build]
+paths_exclude_pattern = [
+    ".git/",
+    "venv/",
+    "__pycache__/",
+    "*.zip",
+    ".idea/",
+    ".vscode/",
+    "docs/",
+    "tests/",
+]
