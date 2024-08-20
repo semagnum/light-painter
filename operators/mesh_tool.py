@@ -139,10 +139,10 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
             '{}: {}, '
             '{}: {}, '
             '{}{}{}{}: {} ({}), '
-            '{}: {}, ({})'  # Camera mode, visibility status
-            '{}: {}, ({})'  # Diffuse mode, visibility status
-            '{}: {}, ({})'  # Specular mode, visibility status
-            '{}: {}, ({})'  # Volume mode, visibility status
+            '{}: {} ({}), '  # Camera mode, visibility status
+            '{}: {} ({}), '  # Diffuse mode, visibility status
+            '{}: {} ({}), '  # Specular mode, visibility status
+            '{}: {} ({})'  # Volume mode, visibility status
         ).format(
             UCS['FLATTEN_TOGGLE'], rpt_('flatten'), 'ON' if self.flatten else 'OFF',
             UCS['OFFSET_MODE'], rpt_('offset mode'),
@@ -393,10 +393,10 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
             '{}: {}, '
             '{}: {}, '
             '{}{}{}{}: {} ({}), '
-            '{}: {}, ({})'  # Camera mode, visibility status
-            '{}: {}, ({})'  # Diffuse mode, visibility status
-            '{}: {}, ({})'  # Specular mode, visibility status
-            '{}: {}, ({})'  # Volume mode, visibility status
+            '{}: {} ({}), '  # Camera mode, visibility status
+            '{}: {} ({}), '  # Diffuse mode, visibility status
+            '{}: {} ({}), '  # Specular mode, visibility status
+            '{}: {} ({})'  # Volume mode, visibility status
         ).format(
             UCS['OFFSET_MODE'], rpt_('offset mode'),
             UCS['SIZE_MODE'], rpt_('tube radius mode'),
