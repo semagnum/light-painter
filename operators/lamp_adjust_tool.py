@@ -206,7 +206,7 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
 
         return super().get_header_text() + (
             '{}: {}, '.format(UCS['OFFSET_MODE'], rpt_('offset mode'),) +
-            ('{}: {}, '.format((UCS['SIZE_MODE']),rpt_('radius mode')) if bpy.context.active_object.data.type != 'AREA' else '') +
+            ('{}: {}, '.format((UCS['SIZE_MODE']), rpt_('radius mode')) if bpy.context.active_object.data.type != 'AREA' else '') +
             '{}: {}, '
             '{}: {} ({}), '
             '{}{}{}{}: {}axis ({}), '
@@ -215,7 +215,7 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
             '{}: {} ({}), '
             '{}: {} ({})'
         ).format(
-            UCS['POWER_MODE'],rpt_('power mode'),
+            UCS['POWER_MODE'], rpt_('power mode'),
             UCS['RELATIVE_POWER_TOGGLE'], rpt_('relative power'),'ON' if self.is_power_relative else 'OFF',
             UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
             UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',

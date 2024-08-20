@@ -157,11 +157,11 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
         ).format(
             UCS['SIZE_MODE'], rpt_('radius mode'),
             UCS['POWER_MODE'], rpt_('power mode'),
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
-            UCS['VISIBILITY_TOGGLE_CAMERA'],rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
-            UCS['VISIBILITY_TOGGLE_DIFFUSE'],rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
-            UCS['VISIBILITY_TOGGLE_SPECULAR'],rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
-            UCS['VISIBILITY_TOGGLE_VOLUME'],rpt_('Volume'), 'ON' if self.visible_volume else 'OFF',
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
+            UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
+            UCS['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
+            UCS['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
+            UCS['VISIBILITY_TOGGLE_VOLUME'], rpt_('Volume'), 'ON' if self.visible_volume else 'OFF',
         )
 
     def paint_sky_texture(self, context, sun_normal):
@@ -399,10 +399,10 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
             UCS['SIZE_MODE'], rpt_('sun radius mode'),
             UCS['POWER_MODE'], rpt_('power mode'),
             UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
-            UCS['VISIBILITY_TOGGLE_CAMERA'],rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
-            UCS['VISIBILITY_TOGGLE_DIFFUSE'],rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
-            UCS['VISIBILITY_TOGGLE_SPECULAR'],rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
-            UCS['VISIBILITY_TOGGLE_VOLUME'],rpt_('Volume'), 'ON' if self.visible_volume else 'OFF',
+            UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
+            UCS['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
+            UCS['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
+            UCS['VISIBILITY_TOGGLE_VOLUME'], rpt_('Volume'), 'ON' if self.visible_volume else 'OFF',
         )
 
     def update_light(self, context):

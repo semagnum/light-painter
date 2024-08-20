@@ -145,9 +145,9 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
             '{}: {}, ({})'  # Volume mode, visibility status
         ).format(
             UCS['FLATTEN_TOGGLE'], rpt_('flatten'), 'ON' if self.flatten else 'OFF',
-            UCS['OFFSET_MODE'],rpt_('offset mode'),
-            UCS['POWER_MODE'],rpt_('power mode'),
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
+            UCS['OFFSET_MODE'], rpt_('offset mode'),
+            UCS['POWER_MODE'], rpt_('power mode'),
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
             UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), rpt_('ON' if self.visible_camera else 'OFF'),
             UCS['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), rpt_('ON' if self.visible_diffuse else 'OFF'),
             UCS['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), rpt_('ON' if self.visible_specular else 'OFF'),
@@ -398,10 +398,10 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
             '{}: {}, ({})'  # Specular mode, visibility status
             '{}: {}, ({})'  # Volume mode, visibility status
         ).format(
-            UCS['OFFSET_MODE'],rpt_('offset mode'),
-            UCS['SIZE_MODE'],rpt_('tube radius mode'),
-            UCS['POWER_MODE'],rpt_('power mode'),
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'],rpt_('axis'), self.axis,
+            UCS['OFFSET_MODE'], rpt_('offset mode'),
+            UCS['SIZE_MODE'], rpt_('tube radius mode'),
+            UCS['POWER_MODE'], rpt_('power mode'),
+            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
             UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), rpt_('ON' if self.visible_camera else 'OFF'),
             UCS['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), rpt_('ON' if self.visible_diffuse else 'OFF'),
             UCS['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), rpt_('ON' if self.visible_specular else 'OFF'),
