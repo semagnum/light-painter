@@ -83,19 +83,20 @@ UNIVERSAL_KEYMAP = {
     # Lamp
     'OFFSET_MODE': {
         'type': 'G',
-        'value': 'PRESS',
+        'value': 'RELEASE',
     },
 
     'SIZE_MODE': {
         'type': 'F',
         'shift': False,
-        'value': 'PRESS',
+        'value': 'RELEASE',
     },
 
     'POWER_MODE': {
         'type': 'F',
         'shift': True,
         'visual_key': 'Shift F',
+        'value': 'RELEASE',
     },
     'RELATIVE_POWER_TOGGLE': {
         'type': 'R',
