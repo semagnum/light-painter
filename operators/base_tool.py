@@ -52,11 +52,7 @@ def is_nav_event(keyconfigs: bpy.types.KeyConfig, event: bpy.types.Event) -> boo
             km
             for kc in keyconfigs
             for km in kc.keymaps
-            if km is not None and
-            any(
-                kmi.idname.startswith('view3d')
-                for kmi in km.keymap_items
-            )
+            if km is not None and km.name == '3D View'
         ]
 
     return any(
