@@ -107,6 +107,7 @@ UNIVERSAL_KEYMAP = {
     'FLATTEN_TOGGLE': {
         'type': 'F',
         'value': 'PRESS',
+        'shift': False,
     },
 
     # Lamp type

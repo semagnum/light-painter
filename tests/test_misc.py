@@ -162,6 +162,7 @@ def test_gobos(context, ops):
         ops.lightpainter.lamp_texture()
         ops.lightpainter.lamp_texture_remove()
 
+
 def test_conversion():
     from mathutils import Vector
     from lightpainter.operators.lamp_util import geo_to_dir
@@ -195,3 +196,74 @@ def test_assert_version_parity_manifest():
 
     init_version, extension_version = get_init_version(init), get_extension_version(extension_manifest)
     assert init_version == extension_version
+
+
+def test_keymap_unique_without_clashes():
+    from lightpainter.keymap import UNIVERSAL_KEYMAP, is_event_command
+
+    # Only exclusion as the mesh light tool does not adjust size
+    # so flatten toggle does not overwrite size mode, and vice versa
+    EXCLUSIONS = {'SIZE_MODE': ['FLATTEN_TOGGLE'], 'FLATTEN_TOGGLE': ['SIZE_MODE']}
+
+    class MockEvent:
+        def __init__(self, event_type, shift, alt, ctrl, value):
+            self.type = event_type
+            self.shift = shift
+            self.alt = alt
+            self.ctrl = ctrl
+            self.value = value
+
+        def __repr__(self):
+            return 'MockEvent({}: {}, shift={}, alt={}, ctrl={})'.format(
+                self.type,
+                self.value,
+                self.shift,
+                self.alt,
+                self.ctrl
+            )
+
+    possible_values = {UNIVERSAL_KEYMAP[key].get('value', 'PRESS') for key in UNIVERSAL_KEYMAP}
+
+    failed_keymaps = []
+    for key in UNIVERSAL_KEYMAP:
+        keymap = UNIVERSAL_KEYMAP[key]
+
+        if isinstance(keymap['type'], str):
+            event_types = [keymap['type']]
+        else:
+            event_types = keymap['type']
+
+        # try all possible event values, since RELEASE and PRESS can happen close together
+        events_to_test = [
+            MockEvent(
+                event_type=event_type,
+                value=event_value,
+                shift=keymap.get('shift', False),
+                alt=keymap.get('alt', False),
+                ctrl=keymap.get('ctrl', False),
+            )
+            for event_type in event_types
+            for event_value in possible_values
+        ]
+
+        # merge matches to (hopefully) the same command
+        matching_commands = list({
+            command_name
+            for event in events_to_test
+            for command_name in UNIVERSAL_KEYMAP.keys()
+            if is_event_command(event, command_name)
+        })
+        for command_name in EXCLUSIONS.get(key, []):
+            matching_commands.remove(command_name)
+        msg = '{} key has {} matching commands: {}'.format(
+            key,
+            len(matching_commands),
+            matching_commands
+        )
+        if len(matching_commands) == 1 and matching_commands[0] == key:
+            pass # this is correct, consider it pass-ing the test
+        else:
+            failed_keymaps.append(msg)
+
+    if failed_keymaps:
+        pytest.fail('Expected all keymaps to be unique, found matches:\n' + '\n'.join(failed_keymaps))
