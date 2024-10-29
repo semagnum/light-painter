@@ -1,177 +1,207 @@
 from __future__ import annotations
 
+import bpy
 
-AXIS_KEYMAP = {
-    'AXIS_X': {
-        'type': 'X',
-        'value': 'PRESS',
-    },
-    'AXIS_Y': {
-        'type': 'Y',
-        'value': 'PRESS',
-    },
-    'AXIS_Z': {
-        'type': 'Z',
-        'value': 'PRESS',
-    },
-    'AXIS_REFLECT': {
-        'type': 'C',
-        'value': 'PRESS',
-    },
-}
+PREFIX = 'LIGHT_PAINTER_'
 
-VISIBILITY_KEYMAP = {
-    'VISIBILITY_TOGGLE_CAMERA': {
-        'type': 'ONE',
-        'visual_key': '1',
-        'value': 'PRESS',
-    },
-    'VISIBILITY_TOGGLE_DIFFUSE': {
-        'type': 'TWO',
-        'visual_key': '2',
-        'value': 'PRESS',
-    },
-    'VISIBILITY_TOGGLE_SPECULAR': {
-        'type': 'THREE',
-        'visual_key': '3',
-        'value': 'PRESS',
-    },
-    'VISIBILITY_TOGGLE_VOLUME': {
-        'type': 'FOUR',
-        'visual_key': '4',
-        'value': 'PRESS',
-    },
-}
-
-UNIVERSAL_KEYMAP = {
-    'PAINT': {
+UNIVERSAL_KEYMAP = (
+    {
+        'name': 'PAINT',
         'type': 'LEFTMOUSE',
-        'visual_key': 'LMB',
-        'ctrl': False,
+        'value': 'ANY',
+        'ctrl': 0,
     },
 
-    'ERASE': {
+    {
+        'name': 'ERASE',
         'type': 'LEFTMOUSE',
-        'ctrl': True,
-        'visual_key': 'Ctrl LMB',
+        'value': 'ANY',
+        'ctrl': 1,
     },
-    'ERASER_DECREASE': {
+    {
+        'name': 'ERASER_DECREASE',
         'type': 'LEFT_BRACKET',
-        'visual_key': '[',
+        'value': 'PRESS',
     },
-    'ERASER_INCREASE': {
+    {
+        'name': 'ERASER_INCREASE',
         'type': 'RIGHT_BRACKET',
-        'visual_key': ']',
+        'value': 'PRESS',
     },
 
-    'END_STROKE': {
+    {
+        'name': 'END_STROKE',
         'type': 'RIGHTMOUSE',
-        'visual_key': 'RMB',
         'value': 'PRESS',
     },
-    'CANCEL': {
+    {
+        'name': 'CANCEL',
         'type': 'ESC',
-        'visual_key': 'Esc',
         'value': 'PRESS',
     },
-    'FINISH': {
-        'type': ('RET', 'NUMPAD_ENTER', 'SPACE'),
-        'visual_key': 'Enter/Space',
+    {
+        'name': 'FINISH',
+        'type': 'RET',
         'value': 'PRESS',
     },
 
-    # Lamp
-    'OFFSET_MODE': {
+    # MODES
+
+    {
+        'name': 'OFFSET_MODE',
         'type': 'G',
         'value': 'RELEASE',
     },
 
-    'SIZE_MODE': {
+    {
+        'name': 'SIZE_MODE',
         'type': 'F',
-        'shift': False,
+        'shift': 0,
         'value': 'RELEASE',
     },
 
-    'POWER_MODE': {
+    {
+        'name': 'POWER_MODE',
         'type': 'F',
-        'shift': True,
-        'visual_key': 'Shift F',
+        'shift': 1,
         'value': 'RELEASE',
     },
-    'RELATIVE_POWER_TOGGLE': {
+
+    # TOGGLES
+
+    {
+        'name': 'RELATIVE_POWER_TOGGLE',
         'type': 'R',
         'value': 'PRESS',
     },
 
-    # Mesh
-    'FLATTEN_TOGGLE': {
-        'type': 'F',
-        'value': 'PRESS',
-        'shift': False,
-    },
-
-    # Lamp type
-    'TYPE_TOGGLE': {
+    {
+        'name': 'TYPE_TOGGLE',
         'type': 'T',
         'value': 'PRESS',
     },
-}
-"""Contains a coherent keymap for all the Light Paint tools. Reconfigure to suit your preferences.
-The format is as follows:
-{
-    'PAINT': { # name of the command
-        'type': 'LEFTMOUSE', # name of the event. See https://docs.blender.org/api/current/bpy_types_enum_items/event_type_items.html
-        'visual_key': 'LMB', # event's name for the user to see in the header
-        'ctrl': True, # if Ctrl must be used to register the command
-        'alt': True, # if Alt must be used to register the command
-        'shift': True, # if Shift must be used to register the command
-        'value': 'PRESS' # it will only register when the key is pressed ('RELEASE' for only when released)
+
+    # MESH
+    {
+        'name': 'FLATTEN_TOGGLE',
+        'type': 'F',
+        'value': 'PRESS',
+        'shift': 0,
     },
-    # ...
-}
 
-Note that if a modifier key like `ctrl` isn't in the keymap, the event can still match despite it being pressed.
-So if a key is used for 2+ events but with different modifiers, be sure to mark one with its modifier(s) as False.
-"""
+    # AXIS
+    {
+        'name': 'AXIS_X',
+        'type': 'X',
+        'value': 'PRESS',
+    },
+    {
+        'name': 'AXIS_Y',
+        'type': 'Y',
+        'value': 'PRESS',
+    },
+    {
+        'name': 'AXIS_Z',
+        'type': 'Z',
+        'value': 'PRESS',
+    },
+    {
+        'name': 'AXIS_REFLECT',
+        'type': 'C',
+        'value': 'PRESS',
+    },
 
-UNIVERSAL_KEYMAP.update(AXIS_KEYMAP)
-UNIVERSAL_KEYMAP.update(VISIBILITY_KEYMAP)
+    # Visibility
 
-UNIVERSAL_COMMAND_STR = {
-    key: UNIVERSAL_KEYMAP[key].get('visual_key', str(UNIVERSAL_KEYMAP[key].get('type')))
-    for key in UNIVERSAL_KEYMAP
-}
-"""A smaller dict containing just the visual_key attrs. Simplifies references when generating the header text."""
+    {
+        'name': 'VISIBILITY_TOGGLE_CAMERA',
+        'type': 'ONE',
+        'value': 'PRESS',
+    },
+    {
+        'name': 'VISIBILITY_TOGGLE_DIFFUSE',
+        'type': 'TWO',
+        'value': 'PRESS',
+    },
+    {
+        'name': 'VISIBILITY_TOGGLE_SPECULAR',
+        'type': 'THREE',
+        'value': 'PRESS',
+    },
+    {
+        'name': 'VISIBILITY_TOGGLE_VOLUME',
+        'type': 'FOUR',
+        'value': 'PRESS',
+    },
+)
+"""Contains default keymap for all Light Painter tools."""
+
+for kmi in UNIVERSAL_KEYMAP:
+    kmi['name'] = PREFIX + kmi['name']
+
+
+UNIVERSAL_KEYMAP_NAMES = tuple(kmi['name'] for kmi in UNIVERSAL_KEYMAP)
+AXIS_KEYMAP = tuple(name for name in UNIVERSAL_KEYMAP_NAMES if '_AXIS_' in name)
+VISIBILITY_KEYMAP = tuple(name for name in UNIVERSAL_KEYMAP_NAMES if '_VISIBILITY_' in name)
+
+
+def compare_kmi_to_event(item, event):
+    data = item.type
+    event_data = event.type
+    if item.value != 'ANY':
+        data += item.value
+        event_data += event.value
+    data += str(item.shift * 1 | item.ctrl * 2 | item.alt * 4 | item.oskey * 8)
+    event_data += str(event.shift * 1 | event.ctrl * 2 | event.alt * 4 | event.oskey * 8)
+
+    return data == event_data
 
 
 def get_matching_event(event) -> str | None:
     """Checks if Blender event matches our UNIVERSAL_KEYMAP,
     returns the matching command name (if none match, return None).
     """
+    from .preferences import get_lightpainter_kmi
+
     return next(
-        (command_name
-         for command_name in UNIVERSAL_KEYMAP.keys()
-         if is_event_command(event, command_name))
-        , None
+        (
+            item.properties.name.replace(PREFIX, '')
+            for item in get_lightpainter_kmi(bpy.context)
+            if compare_kmi_to_event(item, event)
+        ),
+        None,
     )
 
 
 def is_event_command(event, command_name) -> bool:
-    """Checks if Blender event matches a specific command, return True, False otherwise."""
-    keymap_item = UNIVERSAL_KEYMAP.get(command_name, None)
-    if keymap_item is None:
+    from .preferences import get_lightpainter_kmi
+
+    if not command_name.startswith(PREFIX):
+        command_name = PREFIX + command_name
+
+    item = next(
+        (item for item in get_lightpainter_kmi(bpy.context) if item.properties.name == command_name),
+        None,
+    )
+
+    if item is None:
         return False
 
-    kmi_types = keymap_item.get('type', [])
-    if isinstance(kmi_types, str):
-        matching_type = (event.type == kmi_types)
-    else:
-        matching_type = any(event.type == kmi_type for kmi_type in kmi_types)
+    return compare_kmi_to_event(item, event)
 
-    return (
-            matching_type and
-            ('value' not in keymap_item or event.value == keymap_item.get('value')) and
-            ('shift' not in keymap_item or event.shift == keymap_item.get('shift')) and
-            ('alt' not in keymap_item or event.alt == keymap_item.get('alt')) and
-            ('ctrl' not in keymap_item or event.ctrl == keymap_item.get('ctrl'))
+
+def get_kmi_str(command_name):
+    from .preferences import get_lightpainter_kmi
+
+    if not command_name.startswith(PREFIX):
+        command_name = PREFIX + command_name
+
+    item = next(
+        (item for item in get_lightpainter_kmi(bpy.context) if item.properties.name == command_name),
+        None,
     )
+
+    if item is None:
+        return ''
+
+    return item.to_string()

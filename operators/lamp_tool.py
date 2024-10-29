@@ -21,7 +21,7 @@ from .base_tool import BaseLightPaintTool
 from .lamp_util import LampUtils
 from .prop_util import axis_prop, convert_val_to_unit_str, get_drag_mode_header
 from ..axis import prep_stroke
-from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR as UCS
+from ..keymap import get_kmi_str, is_event_command
 if bpy.app.version >= (4, 1):
     from bpy.app.translations import pgettext_rpt as rpt_
 else:
@@ -99,10 +99,10 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
         return super().get_header_text() + (
             '{}: {}, '
             '{}: {}, '.format(
-                UCS['TYPE_TOGGLE'], rpt_('lamp type'),
-                UCS['OFFSET_MODE'], rpt_('offset mode'),
+                get_kmi_str('TYPE_TOGGLE'), rpt_('lamp type'),
+                get_kmi_str('OFFSET_MODE'), rpt_('offset mode'),
             ) +
-            ('{}: {}, '.format((UCS['SIZE_MODE']), rpt_('radius mode')) if self.lamp_type != 'AREA' else '') +
+            ('{}: {}, '.format((get_kmi_str('SIZE_MODE')), rpt_('radius mode')) if self.lamp_type != 'AREA' else '') +
             '{}: {}, '
             '{}: {} ({}), '
             '{}{}{}{}: {} ({}), '
@@ -111,13 +111,13 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
             '{}: {} ({}), '
             '{}: {} ({})'
         ).format(
-            UCS['POWER_MODE'], rpt_('power mode'),
-            UCS['RELATIVE_POWER_TOGGLE'], rpt_('relative power'), 'ON' if self.is_power_relative else 'OFF',
-            UCS['AXIS_X'], UCS['AXIS_Y'], UCS['AXIS_Z'], UCS['AXIS_REFLECT'], rpt_('axis'), self.axis,
-            UCS['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
-            UCS['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
-            UCS['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
-            UCS['VISIBILITY_TOGGLE_VOLUME'],  rpt_('Volume'),'ON' if self.visible_volume else 'OFF',
+            get_kmi_str('POWER_MODE'), rpt_('power mode'),
+            get_kmi_str('RELATIVE_POWER_TOGGLE'), rpt_('relative power'), 'ON' if self.is_power_relative else 'OFF',
+            get_kmi_str('AXIS_X'), get_kmi_str('AXIS_Y'), get_kmi_str('AXIS_Z'), get_kmi_str('AXIS_REFLECT'), rpt_('axis'), self.axis,
+            get_kmi_str('VISIBILITY_TOGGLE_CAMERA'), rpt_('Camera'), 'ON' if self.visible_camera else 'OFF',
+            get_kmi_str('VISIBILITY_TOGGLE_DIFFUSE'), rpt_('Diffuse'), 'ON' if self.visible_diffuse else 'OFF',
+            get_kmi_str('VISIBILITY_TOGGLE_SPECULAR'), rpt_('Specular'), 'ON' if self.visible_specular else 'OFF',
+            get_kmi_str('VISIBILITY_TOGGLE_VOLUME'),  rpt_('Volume'),'ON' if self.visible_volume else 'OFF',
         )
 
     def extra_paint_controls(self, context, event):

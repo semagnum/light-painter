@@ -1,6 +1,6 @@
 import bpy
 
-from ..keymap import UNIVERSAL_COMMAND_STR
+from ..keymap import get_kmi_str
 
 
 def axis_prop(obj_descriptor: str) -> bpy.props.EnumProperty:
@@ -48,4 +48,4 @@ def convert_val_to_unit_str(val, unit_category, precision=5):
 
 
 def get_drag_mode_header():
-    return ', {}: cancel, any other tool key: confirm'.format(UNIVERSAL_COMMAND_STR['CANCEL'])
+    return ', {}: cancel, any other tool key: confirm'.format(get_kmi_str('CANCEL'))

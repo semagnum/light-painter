@@ -50,13 +50,13 @@ if "bpy" in locals():
 
 import bpy
 
-from . import axis, operators, panel
+from . import axis, operators, panel, preferences
 from . import translations
 
 bl_info = {
     'name': 'Light Painter',
     'author': 'Spencer Magnusson',
-    'version': (1, 3, 9),
+    'version': (1, 4, 0),
     'blender': (3, 6, 0),
     'description': 'Creates lights based on where the user paints',
     'location': 'View 3D > Light Paint',
@@ -76,6 +76,8 @@ operators_to_register = (
     operators.LIGHTPAINTER_OT_Flag,
     operators.LIGHTPAINTER_OT_Lamp_Texture,
     operators.LIGHTPAINTER_OT_Lamp_Texture_Remove,
+
+    preferences.VIEW3D_AddonPreferences,
 )
 
 tools = (
@@ -89,6 +91,7 @@ tools = (
 )
 
 REGISTERED_WITH_UI = False
+kmi_added = []
 
 
 def register():
@@ -120,8 +123,24 @@ def register():
     kc = wm.keyconfigs.addon
 
     if kc:
-        global REGISTERED_WITH_UI
+        global REGISTERED_WITH_UI, kmi_added
         REGISTERED_WITH_UI = True
+
+        km_lightpainter = kc.keymaps.get(preferences.KEYMAP_NAME)
+        if km_lightpainter is None:
+            km_lightpainter = kc.keymaps.new(name=preferences.KEYMAP_NAME, space_type='VIEW_3D', region_type='WINDOW')
+        kmi_lightpainter = km_lightpainter.keymap_items
+
+        from .keymap import UNIVERSAL_KEYMAP
+
+        for default_keymap in list(UNIVERSAL_KEYMAP)[::-1]:
+            km_copy = dict(default_keymap)
+            name = km_copy.pop('name')
+            kmi = kmi_lightpainter.new('wm.call_menu', **km_copy)
+            kmi.properties.name = name
+            kmi.active = False
+            kmi_added.append(kmi)
+
         bpy.utils.register_tool(panel.VIEW3D_T_light_paint, separator=True)
 
         bpy.utils.register_tool(panel.VIEW3D_T_sky_paint, group=True)
@@ -140,8 +159,19 @@ def register():
 def unregister():
     """Unregisters Light Painter operators and lamp_tool_group."""
 
-    global REGISTERED_WITH_UI
+    global REGISTERED_WITH_UI, kmi_added
     if REGISTERED_WITH_UI:
+        keymaps = bpy.context.window_manager.keyconfigs.addon.keymaps
+        km = keymaps.get(preferences.KEYMAP_NAME)
+        if km:
+            kmi = km.keymap_items
+            for item in kmi_added:
+                kmi.remove(item)
+
+            # only delete if it's empty!!
+            if len(km.keymap_items) == 0:
+                keymaps.remove(km)
+
         for tool in tools[::-1]:
             bpy.utils.unregister_tool(tool)
 

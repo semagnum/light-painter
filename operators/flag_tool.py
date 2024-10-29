@@ -23,7 +23,7 @@ from mathutils import Vector
 from .base_tool import BaseLightPaintTool
 from .prop_util import convert_val_to_unit_str, get_drag_mode_header
 from .visibility import VisibilitySettings
-from ..keymap import is_event_command, UNIVERSAL_COMMAND_STR
+from ..keymap import get_kmi_str, is_event_command
 if bpy.app.version >= (4, 1):
     from bpy.app.translations import pgettext_rpt as rpt_
 else:
@@ -210,13 +210,13 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
             '{}: {}, ({})'  # Specular mode, visibility status
             '{}: {}, ({})'  # Volume mode, visibility status
         ).format(
-            UNIVERSAL_COMMAND_STR['SIZE_MODE'], rpt_('lamp factor mode'),
-            UNIVERSAL_COMMAND_STR['OFFSET_MODE'], rpt_('sun lamp offset mode'),
-            UNIVERSAL_COMMAND_STR['POWER_MODE'], rpt_('opacity mode'),
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_CAMERA'], rpt_('Camera'), rpt_('ON' if self.visible_camera else 'OFF'),
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_DIFFUSE'], rpt_('Diffuse'), rpt_('ON' if self.visible_diffuse else 'OFF'),
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_SPECULAR'], rpt_('Specular'), rpt_('ON' if self.visible_specular else 'OFF'),
-            UNIVERSAL_COMMAND_STR['VISIBILITY_TOGGLE_VOLUME'], rpt_('Volume'), rpt_('ON' if self.visible_volume else 'OFF'),
+            get_kmi_str('SIZE_MODE'), rpt_('lamp factor mode'),
+            get_kmi_str('OFFSET_MODE'), rpt_('sun lamp offset mode'),
+            get_kmi_str('POWER_MODE'), rpt_('opacity mode'),
+            get_kmi_str('VISIBILITY_TOGGLE_CAMERA'), rpt_('Camera'), rpt_('ON' if self.visible_camera else 'OFF'),
+            get_kmi_str('VISIBILITY_TOGGLE_DIFFUSE'), rpt_('Diffuse'), rpt_('ON' if self.visible_diffuse else 'OFF'),
+            get_kmi_str('VISIBILITY_TOGGLE_SPECULAR'), rpt_('Specular'), rpt_('ON' if self.visible_specular else 'OFF'),
+            get_kmi_str('VISIBILITY_TOGGLE_VOLUME'), rpt_('Volume'), rpt_('ON' if self.visible_volume else 'OFF'),
         )
 
     def add_card_for_lamp(self, context, mesh_obj, light_obj, vertices):

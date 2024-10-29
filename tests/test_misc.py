@@ -199,19 +199,23 @@ def test_assert_version_parity_manifest():
 
 
 def test_keymap_unique_without_clashes():
-    from lightpainter.keymap import UNIVERSAL_KEYMAP, is_event_command
+    from lightpainter.keymap import UNIVERSAL_KEYMAP
 
     # Only exclusion as the mesh light tool does not adjust size
     # so flatten toggle does not overwrite size mode, and vice versa
-    EXCLUSIONS = {'SIZE_MODE': ['FLATTEN_TOGGLE'], 'FLATTEN_TOGGLE': ['SIZE_MODE']}
+    EXCLUSIONS = {
+        'LIGHT_PAINTER_SIZE_MODE': ['LIGHT_PAINTER_FLATTEN_TOGGLE'],
+        'LIGHT_PAINTER_FLATTEN_TOGGLE': ['LIGHT_PAINTER_SIZE_MODE']
+    }
 
     class MockEvent:
-        def __init__(self, event_type, shift, alt, ctrl, value):
+        def __init__(self, event_type, shift, alt, ctrl, value, oskey):
             self.type = event_type
             self.shift = shift
             self.alt = alt
             self.ctrl = ctrl
             self.value = value
+            self.oskey = oskey
 
         def __repr__(self):
             return 'MockEvent({}: {}, shift={}, alt={}, ctrl={})'.format(
@@ -222,48 +226,38 @@ def test_keymap_unique_without_clashes():
                 self.ctrl
             )
 
-    possible_values = {UNIVERSAL_KEYMAP[key].get('value', 'PRESS') for key in UNIVERSAL_KEYMAP}
+    def mock_compare_kmi_to_event(item, event):
+        """Same as compare_kmi_to_event but we ignore the value"""
+        data = item.type
+        event_data = event.type
+        data += str(item.shift * 1 | item.ctrl * 2 | item.alt * 4 | item.oskey * 8)
+        event_data += str(event.shift * 1 | event.ctrl * 2 | event.alt * 4 | event.oskey * 8)
+
+        return data == event_data
 
     failed_keymaps = []
-    for key in UNIVERSAL_KEYMAP:
-        keymap = UNIVERSAL_KEYMAP[key]
-
-        if isinstance(keymap['type'], str):
-            event_types = [keymap['type']]
-        else:
-            event_types = keymap['type']
-
-        # try all possible event values, since RELEASE and PRESS can happen close together
-        events_to_test = [
-            MockEvent(
-                event_type=event_type,
-                value=event_value,
-                shift=keymap.get('shift', False),
-                alt=keymap.get('alt', False),
-                ctrl=keymap.get('ctrl', False),
+    for i in range(len(UNIVERSAL_KEYMAP)):
+        for j in range(i + 1, len(UNIVERSAL_KEYMAP)):
+            kmi1, kmi2 = UNIVERSAL_KEYMAP[i], UNIVERSAL_KEYMAP[j]
+            event1 = MockEvent(
+                event_type=kmi1.get('type'),
+                value=kmi1.get('value'),
+                shift=kmi1.get('shift', 0),
+                alt=kmi1.get('alt', 0),
+                ctrl=kmi1.get('ctrl', 0),
+                oskey=kmi1.get('oskey', 0),
             )
-            for event_type in event_types
-            for event_value in possible_values
-        ]
+            event2 = MockEvent(
+                event_type=kmi2.get('type'),
+                value=kmi2.get('value'),
+                shift=kmi2.get('shift', 0),
+                alt=kmi2.get('alt', 0),
+                ctrl=kmi2.get('ctrl', 0),
+                oskey=kmi2.get('oskey', 0),
+            )
 
-        # merge matches to (hopefully) the same command
-        matching_commands = list({
-            command_name
-            for event in events_to_test
-            for command_name in UNIVERSAL_KEYMAP.keys()
-            if is_event_command(event, command_name)
-        })
-        for command_name in EXCLUSIONS.get(key, []):
-            matching_commands.remove(command_name)
-        msg = '{} key has {} matching commands: {}'.format(
-            key,
-            len(matching_commands),
-            matching_commands
-        )
-        if len(matching_commands) == 1 and matching_commands[0] == key:
-            pass # this is correct, consider it pass-ing the test
-        else:
-            failed_keymaps.append(msg)
+            if mock_compare_kmi_to_event(event1, event2) and kmi2.get('name') not in EXCLUSIONS.get(kmi1.get('name'), []):
+                failed_keymaps.append('Duplicated keymap: {} <=> {}'.format(kmi1.get('name'), kmi2.get('name')))
 
     if failed_keymaps:
         pytest.fail('Expected all keymaps to be unique, found matches:\n' + '\n'.join(failed_keymaps))

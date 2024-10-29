@@ -20,7 +20,7 @@ from math import floor, log10
 import bpy
 from bpy_extras import view3d_utils
 
-from ..keymap import is_event_command, get_matching_event, AXIS_KEYMAP, UNIVERSAL_COMMAND_STR, VISIBILITY_KEYMAP
+from ..keymap import get_kmi_str, is_event_command, get_matching_event, AXIS_KEYMAP, VISIBILITY_KEYMAP, PREFIX
 from .draw import draw_callback_px
 if bpy.app.version >= (4, 1):
     from bpy.app.translations import pgettext_rpt as rpt_
@@ -86,6 +86,7 @@ class BaseLightPaintTool:
         self.show_eraser = False
         self.curr_mouse_pos = None
         self.eraser_size = 50
+        self.area = None
 
         self.drag_attr = ''
         self.drag_prev_mouse_x = 0
@@ -124,8 +125,8 @@ class BaseLightPaintTool:
     def check_axis_event(self, event) -> bool:
         assert hasattr(self, 'axis')
         axis_command = next(
-            (command_name
-             for command_name in AXIS_KEYMAP.keys()
+            (command_name.replace(PREFIX, '')
+             for command_name in AXIS_KEYMAP
              if is_event_command(event, command_name))
             , None
         )
@@ -143,8 +144,8 @@ class BaseLightPaintTool:
         returns the matching command name (if none match, return None).
         """
         matching_visibility_event = next(
-            (command_name
-             for command_name in VISIBILITY_KEYMAP.keys()
+            (command_name.replace(PREFIX, '')
+             for command_name in VISIBILITY_KEYMAP
              if is_event_command(event, command_name))
             , None
         )
@@ -161,19 +162,17 @@ class BaseLightPaintTool:
     def get_header_text(self):
         return ('{}: {}, '
                 '{}: {}, '
-                # '{}: {}, '
                 '{}: {}, '
                 '{}: {}, '
                 '{}: {}, '
                 '{}/{}: {}, ').format(
-            UNIVERSAL_COMMAND_STR['FINISH'], rpt_('confirm'),
-            UNIVERSAL_COMMAND_STR['CANCEL'], rpt_('cancel'),
-            # UNIVERSAL_COMMAND_STR['UNDO'], rpt_('undo'),
-            UNIVERSAL_COMMAND_STR['PAINT'], rpt_('paint line'),
-            UNIVERSAL_COMMAND_STR['ERASE'], rpt_('erase'),
-            UNIVERSAL_COMMAND_STR['END_STROKE'], rpt_('new stroke'),
-            UNIVERSAL_COMMAND_STR['ERASER_DECREASE'],
-            UNIVERSAL_COMMAND_STR['ERASER_INCREASE'], rpt_('eraser size'),
+            get_kmi_str('FINISH'), rpt_('confirm'),
+            get_kmi_str('CANCEL'), rpt_('cancel'),
+            get_kmi_str('PAINT'), rpt_('paint line'),
+            get_kmi_str('ERASE'), rpt_('erase'),
+            get_kmi_str('END_STROKE'), rpt_('new stroke'),
+            get_kmi_str('ERASER_DECREASE'),
+            get_kmi_str('ERASER_INCREASE'), rpt_('eraser size'),
         )
 
     def paint_controls(self, context, event):
@@ -335,6 +334,7 @@ class BaseLightPaintTool:
             # Add the region drawing callback
             # the arguments we pass the callback
             args = (self, context)
+            self.area = context.area
             self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
 
             self.mouse_path = [[]]
