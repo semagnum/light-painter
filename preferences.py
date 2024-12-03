@@ -30,6 +30,16 @@ class VIEW3D_AddonPreferences(bpy.types.AddonPreferences):
         default=True,
         description='Show keymap in 3D view while using Light Painter tools (if there is enough space)',
     )
+    keymap_header: bpy.props.BoolProperty(
+        name='Shortcuts in 3D view header',
+        default=False,
+        description='Show keymap in 3D view header while using Light Painter tools',
+    )
+    keymap_status_bar: bpy.props.BoolProperty(
+        name='Shortcuts in status bar',
+        default=True,
+        description='Show keymap in status bar while using Light Painter tools',
+    )
 
     overlay_position: bpy.props.EnumProperty(
         name='Overlay Position',
@@ -56,12 +66,19 @@ class VIEW3D_AddonPreferences(bpy.types.AddonPreferences):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        layout.label(text='Tool Keymap')
+        layout.label(text='Tools Keymap')
 
-        col = layout.column(heading='Display in 3D View')
-        col.prop(self, 'keymap_overlay', text='')
-        col.prop(self, 'overlay_position', text='Position')
-        col.prop(self, 'overlay_font_scale', text='Font Scale')
+        col = layout.column(align=True, heading='Display')
+        col.prop(self, 'keymap_header', text='3D View Header')
+        col.prop(self, 'keymap_status_bar', text='Status Bar')
+        col.prop(self, 'keymap_overlay', text='Overlay')
+
+        col = layout.column()
+        col.active = self.keymap_overlay
+        col.prop(self, 'overlay_position')
+        col.prop(self, 'overlay_font_scale', text='Scale')
+
+        col = layout.column()
 
         keymap = context.window_manager.keyconfigs.user.keymaps[KEYMAP_NAME]
         light_painter_kmi = get_lightpainter_kmi(context)

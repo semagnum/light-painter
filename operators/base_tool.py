@@ -20,6 +20,7 @@ from math import floor, log10
 import bpy
 from bpy_extras import view3d_utils
 
+from .. import __package__ as base_package
 from ..keymap import get_kmi_str, is_event_command, get_matching_event, AXIS_KEYMAP, VISIBILITY_KEYMAP, PREFIX
 from .draw import draw_callback_px
 if bpy.app.version >= (4, 1):
@@ -101,6 +102,7 @@ class BaseLightPaintTool:
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
         context.window.cursor_set('DEFAULT')
         context.area.header_text_set(None)
+        context.workspace.status_text_set_internal(None)
 
     def set_drag_attr(self, attr: str, mouse_x,
                       drag_increment: float = INCREMENT_VAL, drag_precise_increment: float = PRECISE_INCREMENT_VAL
@@ -251,6 +253,15 @@ class BaseLightPaintTool:
                 new_mouse_path.append(list())
         return new_mouse_path
 
+    def update_keymap_text(self, context):
+        preferences = self.preferences
+        if preferences.keymap_header or preferences.keymap_status_bar:
+            header_text = self.get_header_text()
+            if preferences.keymap_header:
+                context.area.header_text_set(header_text)
+            if preferences.keymap_status_bar:
+                context.workspace.status_text_set_internal(header_text)
+
     def modal(self, context, event):
         modal_status = 'RUNNING_MODAL'
 
@@ -282,7 +293,7 @@ class BaseLightPaintTool:
         else:
             self.handle_drag_event(context, event, matching_event)
 
-        context.area.header_text_set(self.get_header_text())
+        self.update_keymap_text(context)
 
         if modal_status in {'CANCELLED', 'FINISHED'}:
             self.cancel(context)
@@ -341,6 +352,8 @@ class BaseLightPaintTool:
             self.is_erasing = False
             self.curr_mouse_pos = None
             self.eraser_size = 50
+
+            self.preferences = context.preferences.addons[base_package].preferences
 
             # force set current tool
             bpy.ops.wm.tool_set_by_id(name=self.tool_id)

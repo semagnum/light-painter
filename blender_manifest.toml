@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "lightpainter"
-version = "1.4.0"
+version = "1.4.1"
 name = "Light Painter"
 tagline = "Do not place your lights, paint them"
 maintainer = "Spencer Magnusson <semagnum+blenderextensions@gmail.com>"
