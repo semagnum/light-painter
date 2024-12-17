@@ -71,7 +71,8 @@ def assign_flag_material(obj, color, opacity):
         pbr_node.inputs[4].default_value = opacity
 
     material.blend_method = 'BLEND'
-    material.shadow_method = 'HASHED'
+    if hasattr(material, 'shadow_method'):  # no longer exists in Eevee Next
+        material.shadow_method = 'HASHED'
 
     # Assign the new material.
     obj.data.materials.append(material)
