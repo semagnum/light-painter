@@ -156,6 +156,7 @@ def test_gobos(context, ops):
     if bpy.app.version[0] >= 4:
         TEXTURE_TYPE_TO_NODE.pop('MUSGRAVE')
 
+    context.scene.render.engine = 'CYCLES'
     texture_types = list(TEXTURE_TYPE_TO_NODE)
     for texture_type in texture_types:
         context.window_manager.lightpainter_texture_type = texture_type
