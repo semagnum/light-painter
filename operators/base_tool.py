@@ -17,8 +17,10 @@
 
 from math import floor, log10
 
+import bmesh
 import bpy
 from bpy_extras import view3d_utils
+from mathutils.bvhtree import BVHTree
 
 from .. import __package__ as base_package
 from ..keymap import get_kmi_str, is_event_command, get_matching_event, AXIS_KEYMAP, VISIBILITY_KEYMAP, PREFIX
@@ -70,6 +72,36 @@ def is_in_area(area, mouse_x, mouse_y):
     )
 
 
+def get_convex_hit(clip_end, depsgraph, hit_location, hit_normal, hit_obj, ray_origin, view_vector, convex_bvh):
+    distance = (hit_location - ray_origin).length
+
+    if hit_obj.name in convex_bvh:
+        obj_bvh = convex_bvh[hit_obj.name]
+    else:
+        obj_bmesh = bmesh.new()
+        obj_bmesh.from_mesh(hit_obj.evaluated_get(depsgraph).data)
+        bmesh.ops.convex_hull(obj_bmesh, input=obj_bmesh.verts)
+        obj_bvh = BVHTree.FromBMesh(obj_bmesh)
+        convex_bvh[hit_obj.name] = obj_bvh
+
+    world_matrix = hit_obj.matrix_world
+    world_quaternion = world_matrix.to_quaternion()
+    local_matrix = world_matrix.inverted()
+    world_destination = ray_origin + (view_vector * distance)
+    local_origin = local_matrix @ ray_origin
+    local_destination = local_matrix @ world_destination
+    local_direction = (local_destination - local_origin)
+
+    bvh_location, bvh_normal, _, _ = obj_bvh.ray_cast(local_origin, local_direction, clip_end)
+
+    if bvh_location is not None:
+        hit_location = world_matrix @ bvh_location
+        hit_normal = bvh_normal
+        hit_normal.rotate(world_quaternion)
+
+    return hit_location, hit_normal
+
+
 class BaseLightPaintTool:
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -80,6 +112,9 @@ class BaseLightPaintTool:
     def __init__(self):
         """Initialize variables to play nicely with pytest usage."""
         self._handle = None
+
+        self.convex_hull = False
+        self.convex_bvh = dict()
 
         self.mouse_path = []
         self.is_painting = False
@@ -167,12 +202,14 @@ class BaseLightPaintTool:
                 '{}: {}, '
                 '{}: {}, '
                 '{}: {}, '
+                '{}: {} ({}), '
                 '{}/{}: {}, ').format(
             get_kmi_str('FINISH'), rpt_('confirm'),
             get_kmi_str('CANCEL'), rpt_('cancel'),
             get_kmi_str('PAINT'), rpt_('paint line'),
             get_kmi_str('ERASE'), rpt_('erase'),
             get_kmi_str('END_STROKE'), rpt_('new stroke'),
+            get_kmi_str('CONVEX_HULL_TOGGLE'), rpt_('convex hull'), 'ON' if self.convex_hull else 'OFF',
             get_kmi_str('ERASER_DECREASE'),
             get_kmi_str('ERASER_INCREASE'), rpt_('eraser size'),
         )
@@ -204,6 +241,9 @@ class BaseLightPaintTool:
             self.eraser_size += ERASER_SIZE_RATE
             self.show_eraser = True
 
+        if is_event_command(event, 'CONVEX_HULL_TOGGLE'):
+            self.convex_hull = not self.convex_hull
+
         if self.is_erasing:
             context.window.cursor_set('ERASER')
             self.mouse_path = self.erase_from_mouse_path(region, region_x, region_y, rv3d)
@@ -217,10 +257,14 @@ class BaseLightPaintTool:
             view_vector = view3d_utils.region_2d_to_vector_3d(region, rv3d, coord)
             ray_origin = view3d_utils.region_2d_to_origin_3d(region, rv3d, coord)
 
-            is_hit, hit_location, hit_normal, _, _, _ = scene.ray_cast(depsgraph, ray_origin, view_vector,
-                                                                       distance=clip_end)
+            is_hit, hit_location, hit_normal, _, hit_obj, _ = scene.ray_cast(depsgraph, ray_origin, view_vector,
+                                                                             distance=clip_end)
 
             if is_hit:
+                if self.convex_hull and hit_obj.type == 'MESH':
+                    hit_location, hit_normal = get_convex_hit(clip_end, depsgraph,
+                                                              hit_location, hit_normal, hit_obj,
+                                                              ray_origin, view_vector, self.convex_bvh)
                 self.mouse_path[-1].append((hit_location, hit_normal))
                 should_update = True
 

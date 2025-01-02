@@ -80,6 +80,11 @@ UNIVERSAL_KEYMAP = (
         'type': 'T',
         'value': 'PRESS',
     },
+    {
+        'name': 'CONVEX_HULL_TOGGLE',
+        'type': 'H',
+        'value': 'PRESS',
+    },
 
     # MESH
     {
