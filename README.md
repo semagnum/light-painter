@@ -56,6 +56,11 @@ Some general painting tips:
   a painted line representing the diameter is sufficient.
 - Area lamps prefer rectangles, squares, circles or a single painted line. You can change the area lamp's shape in the redo panel.
 - Point lamps are the most forgiving, since its rotation is irrelevant.
+- There is a new experimental "Convex Hull" option
+(default shortcut is `H`)
+that allows you to draw on a convex hull of a mesh surface.
+This can be especially effective on denser meshes
+where you want to keep the lines and normals smooth.
 
 Now there are keyboard shortcuts to adjust common parameters! 
 Once you start using a tool, see the 3D view's header for the keys and their respective commands.
