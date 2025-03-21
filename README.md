@@ -15,7 +15,8 @@ This will open up to greater exposure and discoverability,
 and therefore wider feedback and issue tracking.
 
 Both repositories will effectively be mirrors of each other until the transition is done.
-Afterwards, Light Painter will be removed from GitHub and continue to live on
+**This GitHub repository will be archived in May 2025.**
+**At the end of the year, Light Painter will be removed from GitHub** and continue to live on
 [projects.blender.org](https://projects.blender.org/SMagnusson/light-painter).
 
 ## Painting
