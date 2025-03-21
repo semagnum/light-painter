@@ -206,10 +206,10 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
             '{}: {}, '  # lamp factor mode
             '{}: {}, '  # sun lamp offset mode
             '{}: {}, '  # opacity mode
-            '{}: {}, ({})'  # Camera mode, visibility status
-            '{}: {}, ({})'  # Diffuse mode, visibility status
-            '{}: {}, ({})'  # Specular mode, visibility status
-            '{}: {}, ({})'  # Volume mode, visibility status
+            '{}: {} ({}), '  # Camera mode, visibility status
+            '{}: {} ({}), '  # Diffuse mode, visibility status
+            '{}: {} ({}), '  # Specular mode, visibility status
+            '{}: {} ({})'  # Volume mode, visibility status
         ).format(
             get_kmi_str('SIZE_MODE'), rpt_('lamp factor mode'),
             get_kmi_str('OFFSET_MODE'), rpt_('sun lamp offset mode'),
