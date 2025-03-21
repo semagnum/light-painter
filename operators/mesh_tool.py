@@ -81,6 +81,10 @@ class LIGHTPAINTER_OT_Mesh(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         default=2.0,
     )
 
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
+
     def draw(self, _context):
         layout = self.layout
         layout.use_property_split = True
@@ -323,6 +327,10 @@ class LIGHTPAINTER_OT_Tube_Light(bpy.types.Operator, BaseLightPaintTool, Visibil
         min=0.001,
         default=2.0,
     )
+
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
 
     def draw(self, _context):
         layout = self.layout

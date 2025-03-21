@@ -2,7 +2,8 @@ import bpy
 
 
 class TranslationHelper:
-    def __init__(self, name: str, data: dict, lang='zh_CN'):
+    def __init__(self, name: str, data: dict, lang='zh_CN', *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.name = name
         self.translations_dict = dict()
 

@@ -90,6 +90,10 @@ class LIGHTPAINTER_OT_Sky(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
         default=1,
     )
 
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
+
     def draw(self, _context):
         layout = self.layout
         layout.use_property_split = True
@@ -332,6 +336,10 @@ class LIGHTPAINTER_OT_Sun(bpy.types.Operator, BaseLightPaintTool, VisibilitySett
         step=10,
         subtype='ANGLE'
     )
+
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
 
     def draw(self, _context):
         layout = self.layout

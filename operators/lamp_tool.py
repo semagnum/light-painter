@@ -49,6 +49,10 @@ class LIGHTPAINTER_OT_Lamp(bpy.types.Operator, BaseLightPaintTool, LampUtils):
 
     axis: axis_prop('lamp')
 
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
+
     def draw(self, _context):
         layout = self.layout
         layout.use_property_split = True

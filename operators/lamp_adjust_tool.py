@@ -96,6 +96,10 @@ class LIGHTPAINTER_OT_Lamp_Adjust(bpy.types.Operator, BaseLightPaintTool, LampUt
         default=5,
     )
 
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
+
     @classmethod
     def poll(cls, context):
         active_obj = context.active_object

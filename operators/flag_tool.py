@@ -145,6 +145,10 @@ class LIGHTPAINTER_OT_Flag(bpy.types.Operator, BaseLightPaintTool, VisibilitySet
         max=1.0,
     )
 
+    def __init__(self, *args, **kwargs):
+        bpy.types.Operator.__init__(self, *args, **kwargs)
+        BaseLightPaintTool.__init__(self)
+
     @classmethod
     def poll(cls, context):
         return len(get_selected_by_type(context, 'LIGHT'))
